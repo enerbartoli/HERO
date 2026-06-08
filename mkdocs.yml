@@ -5,16 +5,29 @@ docs_dir: docs
 theme:
   name: material
   palette:
-    - scheme: hero
+    # Light mode (default) — Hasbro navy
+    - scheme: default
       primary: custom
       accent: custom
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    # Dark mode — slate base with Hasbro teal primary
+    - scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
   features:
+    - navigation.instant
     - navigation.sections
     - navigation.top
     - navigation.tracking
     - navigation.indexes
     - toc.follow
     - content.code.copy
+    - content.tooltips
     - search.highlight
     - search.suggest
 
@@ -22,6 +35,7 @@ extra_css:
   - stylesheets/extra.css
 
 markdown_extensions:
+  - abbr
   - admonition
   - pymdownx.details
   - pymdownx.superfences
@@ -32,12 +46,6 @@ markdown_extensions:
 
 plugins:
   - search
-
-# Links to pages not yet authored are kept in comments so they can be
-# uncommented once the source documents are converted.
-validation:
-  links:
-    not_found: ignore   # missing target pages documented in BUILD_NOTES.md
 
 nav:
   - Home: index.md
@@ -55,23 +63,20 @@ nav:
       - Forecast Reconciliation Template (FRT): tools/forecast-reconciliation-template.md
       - BU-SKU / Level 2.5 mode: tools/bu-sku-level-25-mode.md
       - Reference views & dashboards: tools/reference-views-dashboards.md
-# Workflows section — all pages missing, to be uncommented once authored
-# - Workflows:
-#     - End-to-end workflow: workflows/end-to-end-workflow.md
-#     - Tab-by-tab walkthrough: workflows/tab-by-tab-walkthrough.md
-#     - Timing & system sync: workflows/timing-system-sync.md
-#     - Field-by-field reference: workflows/field-by-field-reference.md
-# Examples section — all pages missing, to be uncommented once authored
-# - Examples:
-#     - Calculation reference: examples/calculation-reference.md
-#     - BU-SKU worked examples: examples/bu-sku-worked-examples.md
-# Help & troubleshooting section — all pages missing, to be uncommented once authored
-# - Help & troubleshooting:
-#     - Validation & error catalogue: help/validation-error-catalogue.md
-#     - FAQ & common gotchas: help/faq-common-gotchas.md
-#     - Glossary: help/glossary.md
-# Reference section — all pages missing, to be uncommented once authored
-# - Reference:
-#     - Logility array & mart mapping: reference/logility-array-mart-mapping.md
-#     - Deferred in v0: reference/deferred-in-v0.md
-#     - Documentation governance: reference/documentation-governance.md
+  - Workflows:
+      - End-to-end workflow: workflows/end-to-end-workflow.md
+      - Tab-by-tab walkthrough: workflows/tab-by-tab-walkthrough.md
+      - Timing & system sync: workflows/timing-system-sync.md
+      - Field-by-field reference: workflows/field-by-field-reference.md
+  - Examples:
+      - Calculation reference: examples/calculation-reference.md
+      - BU-SKU worked examples: examples/bu-sku-worked-examples.md
+  - Help & troubleshooting:
+      - Validation & error catalogue: help/validation-error-catalogue.md
+      - FAQ & common gotchas: help/faq-common-gotchas.md
+      - Glossary: help/glossary.md
+  - Reference:
+      - Logility array & mart mapping: reference/logility-array-mart-mapping.md
+      - Deferred in v0: reference/deferred-in-v0.md
+      - Open questions: reference/open-questions.md
+      - Documentation governance: reference/documentation-governance.md
