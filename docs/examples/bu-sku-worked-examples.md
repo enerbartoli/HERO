@@ -12,56 +12,145 @@ Show what HERO holds fixed and what can still move after a Level 2.5 adjustment,
 
 ## The core rule
 
-!!! warning "Level 2.5 holds the adjustment target, not the final total"
-    A BU-SKU weekly entry sets the **desired BU-SKU reconciliation-adjustment total** for that week. HERO recomputes the Level 1 partner deltas to land on it, using **current baseline share**. So:
-    `Final Rendered Weekly Total = Baseline + Reconciliation Adjustment + Enrichments` — the Level 2.5 edit fixes only the *reconciliation adjustment* piece.
+!!! warning "Level 2.5 holds the *adjustment target*, not the final total"
+    When you type a BU-SKU weekly value, you are setting the **target adjustment** for that week — not the final number. HERO then splits that target across the partners **by their share of the baseline**, and recomputes it whenever the baseline changes.
 
-## Example 1 — Baseline changes later
+    `Final weekly total = Baseline + Reconciliation adjustment + Enrichments`
 
-Start: Target baseline 100, Walmart 300 (share 25% / 75%); Level 2.5 adjustment **+40** → distributed +10 / +30 → finals 110 / 330 (**BU-SKU 440**). Baseline later rises to 120 / 360 (same shares) → still +10 / +30 → finals 130 / 390 (**BU-SKU 520**).
-**Stayed fixed:** adjustment +40. **Moved:** final total 440 → 520.
+    The Level 2.5 edit fixes only the **reconciliation adjustment** piece. The other two pieces can still move — which is what the examples below show.
 
-## Example 2 — Baseline share changes later
+In every example below there are two partners, **Target** and **Walmart**, that roll up to one **BU-SKU** total.
 
-Same +40. Baseline shifts to 200 / 200 (now 50% / 50%, total still 400) → redistributes +20 / +20 → finals 220 / 220 (**BU-SKU 440**).
-**Stayed fixed:** adjustment +40 and BU-SKU total 440. **Moved:** partner split 10/30 → 20/20.
+---
 
-## Example 3 — Level 1 enrichments change later
+## Example 1 — The baseline grows later
 
-Start finals 110 / 330 (BU-SKU 440). Add Level 1 enrichments +15 (Target) / +5 (Walmart) → finals 125 / 335 (**BU-SKU 460**).
-**Stayed fixed:** adjustment +40. **Moved:** final total +20, because enrichments are a separate component. Level 2.5 does not hold against later enrichment changes.
+You set a **+40** adjustment. Later the baseline grows, but you don't touch your +40.
 
-## Example 4 — Level 1 reconciliation changes later
+**At the time you set it:**
 
-Existing L1 reconciliation +5 / +15; Level 2.5 target +40 wants final partner reconciliation +10 / +30, so extra deltas +5 / +15. If L1 reconciliation later changes to 0 / +20, HERO re-nets: extra deltas become +10 / +10 — final still lands +10 / +30 (**total +40**).
-**Key behaviour:** later L1 reconciliation does not stack on top; HERO re-nets so the **active BU-SKU target wins** at aggregate level. This is why older L1 workbooks are stale after the L2.5 handoff.
+| Partner | Baseline | Share | Your +40, split by share | Final |
+|---|--:|--:|--:|--:|
+| Target | 100 | 25% | **+10** | 110 |
+| Walmart | 300 | 75% | **+30** | 330 |
+| **BU-SKU** | **400** | | **+40** | **440** |
 
-## Example 5 — A later Level 2.5 change replaces the earlier one
+**Later — baseline grows to 120 / 360 (shares unchanged):**
 
-Original +40 (+10 / +30). User changes the week to **+60** → with 25% / 75% share → +15 / +45 → finals 115 / 345 (**BU-SKU 460**). A newer Level 2.5 edit **replaces** the earlier intent for that week.
+| Partner | Baseline | Share | Your +40, split by share | Final |
+|---|--:|--:|--:|--:|
+| Target | 120 | 25% | **+10** | 130 |
+| Walmart | 360 | 75% | **+30** | 390 |
+| **BU-SKU** | **480** | | **+40** | **520** |
 
-## Example 6 — Baseline total stays similar but review still matters
+!!! note "Takeaway"
+    **Stayed fixed:** your adjustment (+40). **Moved:** the final total (440 → 520), because the baseline grew underneath it.
 
-Start: 150 / 250 (37.5% / 62.5%); +40 → +15 / +25. Baseline later moves to 260 / 140 (65% / 35%, total still 400) → +26 / +14. Total still +40 and the aggregate may look fine, but the **partner allocation changed substantially** — exactly the case to re-review.
+---
 
-## What to review
+## Example 2 — The split between partners changes later
 
-!!! tip "Re-review a BU-SKU-week when, after a Level 2.5 edit:"
+Same **+40**. The total baseline stays 400, but it shifts from 100/300 to 200/200, so the **shares** change.
+
+| | Baseline | Share | Your +40, split by share | Final |
+|---|--:|--:|--:|--:|
+| **Before** Target | 100 | 25% | +10 | 110 |
+| **Before** Walmart | 300 | 75% | +30 | 330 |
+| **After** Target | 200 | 50% | **+20** | 220 |
+| **After** Walmart | 200 | 50% | **+20** | 220 |
+
+!!! note "Takeaway"
+    **Stayed fixed:** your adjustment (+40) *and* the BU-SKU total (440). **Moved:** the per-partner split (10/30 → 20/20). Same headline number, different distribution underneath.
+
+---
+
+## Example 3 — Someone adds Level 1 enrichments later
+
+Start from Example 1 (finals 110 / 330, BU-SKU 440). Later, enrichments are added: **+15** to Target, **+5** to Walmart.
+
+| Partner | Final before | + Enrichment | Final after |
+|---|--:|--:|--:|
+| Target | 110 | +15 | 125 |
+| Walmart | 330 | +5 | 335 |
+| **BU-SKU** | **440** | **+20** | **460** |
+
+!!! note "Takeaway"
+    **Stayed fixed:** your adjustment (+40). **Moved:** the final total (+20). Enrichments are a **separate component** — your Level 2.5 adjustment does not absorb or block them.
+
+---
+
+## Example 4 — Someone changes Level 1 reconciliation later
+
+Here the focus is the **reconciliation deltas**, not the final units. There is already Level 1 reconciliation of **+5 / +15**, and your BU-SKU target is **+40** (which should land partner totals at +10 / +30).
+
+| Partner | Existing L1 recon | Needs to reach | Extra delta HERO adds |
+|---|--:|--:|--:|
+| Target | +5 | +10 | **+5** |
+| Walmart | +15 | +30 | **+15** |
+
+**Later, the L1 reconciliation is changed to 0 / +20.** HERO re-calculates the extra deltas so the target still holds:
+
+| Partner | New L1 recon | Needs to reach | Extra delta HERO adds |
+|---|--:|--:|--:|
+| Target | 0 | +10 | **+10** |
+| Walmart | +20 | +30 | **+10** |
+
+Final partner totals are still **+10 / +30 (BU-SKU +40).**
+
+!!! note "Takeaway"
+    Later L1 reconciliation does **not** stack on top of your target. HERO **re-nets** the rows so the active BU-SKU target still wins at the aggregate level. This is why older Level 1 workbooks are stale once Level 2.5 review has started.
+
+---
+
+## Example 5 — You change your own Level 2.5 value later
+
+Your original adjustment was **+40** (+10 / +30). Later you decide the week should be **+60** instead.
+
+| Partner | Baseline | Share | New +60, split by share | Final |
+|---|--:|--:|--:|--:|
+| Target | 100 | 25% | **+15** | 115 |
+| Walmart | 300 | 75% | **+45** | 345 |
+| **BU-SKU** | **400** | | **+60** | **460** |
+
+!!! note "Takeaway"
+    A newer Level 2.5 value **replaces** the earlier one for that week — HERO recomputes the partner split from the new target.
+
+---
+
+## Example 6 — The total looks fine, but the split moved a lot
+
+Start: baseline 150 / 250 (37.5% / 62.5%); your adjustment **+40** → +15 / +25. Later the total baseline is still **400**, but it swings to 260 / 140.
+
+| | Baseline | Share | Your +40, split by share |
+|---|--:|--:|--:|
+| **Before** Target | 150 | 37.5% | +15 |
+| **Before** Walmart | 250 | 62.5% | +25 |
+| **After** Target | 260 | 65% | **+26** |
+| **After** Walmart | 140 | 35% | **+14** |
+
+!!! note "Takeaway"
+    Your +40 and the BU-SKU total look unchanged, but the per-partner allocation swung sharply (15/25 → 26/14). The headline can look fine while the distribution underneath is now very different — exactly the case to re-review.
+
+---
+
+## When to re-review a BU-SKU week
+
+!!! tip "Re-open a BU-SKU week after any of these happen later:"
     - the baseline total moves materially,
-    - the baseline share across partners moves materially,
+    - the baseline **share** across partners moves materially,
     - overlapping Level 1 enrichments change,
     - overlapping Level 1 reconciliation changes,
     - another Level 2.5 adjustment is made.
 
-    Review question: *"The later-stage BU-SKU adjustment is still in place, but the underlying forecast moved afterward. Do we still want this same Level 2.5 adjustment?"*
+    The question to ask: *"My BU-SKU adjustment is still in place, but the forecast underneath moved — do I still want this same adjustment?"*
+
+!!! note "Review is manual"
+    HERO does not automatically flag these conditions — re-review is a manual step.
 
 ## Related pages
 
 - [BU-SKU / Level 2.5 mode](../tools/bu-sku-level-25-mode.md)
 - [Calculation reference](calculation-reference.md)
-
-!!! note "Review is manual"
-    HERO does not automatically flag these conditions — re-review is a manual step. After any later change to baseline, enrichments, or Level 1 reconciliation, re-open the affected BU-SKU-week and confirm the adjustment is still right.
 
 !!! success "No open questions identified"
     No open questions were identified from the available source material.
