@@ -12,7 +12,7 @@ You capture the real commercial events you know about and make customer-level re
 
 - Add **commercial enrichments** — promotions, sets, samples, pre-orders, Trade / pallet adjustments (TMO), phase-outs.
 - Review **account-level impact** on the rendered forecast.
-- Make **customer-level (Level 1) reconciliation** edits in your owned slice. Only Sales edits customer-level forecasts.
+- Make **customer-level (Level 1) reconciliation** edits in your owned slice.
 
 ## Tools and views you use
 
