@@ -12,7 +12,7 @@ You reconcile final numbers, use structured functions, and review aggregate outp
 
 - Review the rendered weekly numbers and **reconcile** final week-level totals.
 - Use **structured functions**: Version Change and Channel Shift, instead of manual week-by-week edits.
-- Review **BU-SKU (Business Unit–SKU) / Level 2.5** outputs and use the BU-level reconciliation template.
+- Review **BU-SKU (Business Unit–SKU) / Level 2.5** outputs and use the BU-level reconciliation template. Propose adjustments, and **author them at BU level when agreement with Sales is not reached** (HERO disaggregates proportionally to the customer rows).
 - Apply **Base Trend Adjustments** when the ongoing baseline itself is wrong (not for one-off events).
 - Facilitate reconciliation and help diagnose baseline / disaggregation issues.
 

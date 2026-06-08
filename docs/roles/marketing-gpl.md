@@ -9,7 +9,7 @@ Marketing users and Global Product Leads (GPLs) who add overlays and challenge f
 ## What you do in HERO
 
 - Add **marketing overlays** that reflect planned media and demand-shaping activity.
-- **Challenge final forecast outcomes** in review, and propose adjustments at aggregate (BU) level via the marketing / demand-planning reconciliation template.
+- **Challenge final forecast outcomes** in review, and propose adjustments at aggregate (BU) level via the marketing / demand-planning reconciliation template. If agreement with Sales is not reached, you can **author the adjustment at BU level**; HERO disaggregates it proportionally to the customer rows.
 
 !!! note "Where marketing overlays sit"
     Marketing overlays are read in a **separate weekly bucket after sales enrichments**. The order of operations is: baseline → sales enrichments → **MARKETING and DEMAND_PLANNING overlays** → reconciliation adjustments.
