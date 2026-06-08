@@ -1,0 +1,77 @@
+site_name: HERO User Manual
+site_description: Operational manual for HERO (Hasbro Enrichment & Reconciliation Optimizer) — UK pilot
+docs_dir: docs
+
+theme:
+  name: material
+  palette:
+    - scheme: hero
+      primary: custom
+      accent: custom
+  features:
+    - navigation.sections
+    - navigation.top
+    - navigation.tracking
+    - navigation.indexes
+    - toc.follow
+    - content.code.copy
+    - search.highlight
+    - search.suggest
+
+extra_css:
+  - stylesheets/extra.css
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - tables
+  - attr_list
+  - toc:
+      permalink: true
+
+plugins:
+  - search
+
+# Links to pages not yet authored are kept in comments so they can be
+# uncommented once the source documents are converted.
+validation:
+  links:
+    not_found: ignore   # missing target pages documented in BUILD_NOTES.md
+
+nav:
+  - Home: index.md
+  - Role-based guides:
+      - Demand Planner: roles/demand-planner.md
+      - Sales: roles/sales.md
+      - Marketing / GPL: roles/marketing-gpl.md
+  - Getting started:
+      - What HERO is: getting-started/what-hero-is.md
+      - Where HERO fits in the cycle: getting-started/hero-in-the-cycle.md
+      - Roles & permissions: getting-started/roles-permissions.md
+  - Tools & templates:
+      - HERO portal: tools/hero-portal.md
+      - Enrichment Capture Template (ECT): tools/enrichment-capture-template.md
+      - Forecast Reconciliation Template (FRT): tools/forecast-reconciliation-template.md
+      - BU-SKU / Level 2.5 mode: tools/bu-sku-level-25-mode.md
+      - Reference views & dashboards: tools/reference-views-dashboards.md
+# Workflows section — all pages missing, to be uncommented once authored
+# - Workflows:
+#     - End-to-end workflow: workflows/end-to-end-workflow.md
+#     - Tab-by-tab walkthrough: workflows/tab-by-tab-walkthrough.md
+#     - Timing & system sync: workflows/timing-system-sync.md
+#     - Field-by-field reference: workflows/field-by-field-reference.md
+# Examples section — all pages missing, to be uncommented once authored
+# - Examples:
+#     - Calculation reference: examples/calculation-reference.md
+#     - BU-SKU worked examples: examples/bu-sku-worked-examples.md
+# Help & troubleshooting section — all pages missing, to be uncommented once authored
+# - Help & troubleshooting:
+#     - Validation & error catalogue: help/validation-error-catalogue.md
+#     - FAQ & common gotchas: help/faq-common-gotchas.md
+#     - Glossary: help/glossary.md
+# Reference section — all pages missing, to be uncommented once authored
+# - Reference:
+#     - Logility array & mart mapping: reference/logility-array-mart-mapping.md
+#     - Deferred in v0: reference/deferred-in-v0.md
+#     - Documentation governance: reference/documentation-governance.md

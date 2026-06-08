@@ -1,0 +1,18 @@
+:root > * {
+  --md-primary-fg-color:        #0B1F3A; /* Hasbro navy */
+  --md-primary-fg-color--light: #16365e;
+  --md-primary-fg-color--dark:  #07142a;
+  --md-accent-fg-color:         #1FB6B6; /* teal */
+  --md-typeset-a-color:         #0E7C7B;
+}
+[data-md-color-scheme="hero"] {
+  --md-primary-fg-color:  #0B1F3A;
+  --md-accent-fg-color:   #1FB6B6;
+  --md-typeset-a-color:   #0E7C7B;
+}
+/* Accent yellow used for highlights / table headers */
+.md-typeset table:not([class]) th {
+  background-color: #0B1F3A;
+  color: #ffffff;
+}
+.md-typeset h2 { border-bottom: 2px solid #FFC72C; padding-bottom: .2rem; }
