@@ -6,14 +6,14 @@ docs/overrides/main.html can render a section banner with:
   * subtle pattern + light-streak SVG texture overlays,
   * the section label.
 
-Mapping follows BRAND_ASSETS.md / Prompt 4:
+Brand mapping rationale:
   - heroic characters (Transformers, D&D) lead the most visible sections;
   - non-hero franchises (Monopoly, Play-Doh, Peppa) sit on back sections;
   - dense sections (Tools, Workflows) use character-free gradients;
   - each section is paired with a Hasbro-OWNED brand logo as an accent.
 
 Partner brands (marvel-logo, star-wars-logo) are intentionally NOT used
-for primary branding — they are Disney/Lucasfilm IP (see BRAND_ASSETS.md).
+for primary branding — they are Disney/Lucasfilm IP.
 """
 
 # (url_prefix, hero_image, brand_logo, label)
