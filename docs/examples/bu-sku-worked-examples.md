@@ -60,5 +60,8 @@ Start: 150 / 250 (37.5% / 62.5%); +40 → +15 / +25. Baseline later moves to 260
 - [BU-SKU / Level 2.5 mode](../tools/bu-sku-level-25-mode.md)
 - [Calculation reference](calculation-reference.md)
 
-!!! question "Gaps & Open Questions"
-    - Confirm whether HERO will surface the proposed **review signals** ("baseline moved since the Level 2.5 edit", etc.) in the UI for the pilot, or whether review is manual.
+!!! note "Review is manual"
+    HERO does not automatically flag these conditions — re-review is a manual step. After any later change to baseline, enrichments, or Level 1 reconciliation, re-open the affected BU-SKU-week and confirm the adjustment is still right.
+
+!!! success "No open questions identified"
+    No open questions were identified from the available source material.

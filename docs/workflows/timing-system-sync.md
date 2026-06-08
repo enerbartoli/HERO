@@ -19,7 +19,7 @@ Explain why a download, an upload, a dashboard refresh, and a Logility export do
 | Download a **BU-SKU** workbook | Current aggregated BU-SKU reconciliation view | Immediately, at download |
 | **Upload** a valid workbook | HERO raw authored state | Immediately after upload succeeds |
 | View **resolved dashboard / reporting** | Resolved weekly reporting layer | After the backend refresh / post-processing run |
-| **Publish to Logility** | Resolved HERO state packaged into export arrays | On the configured export cadence `[DRAFT — confirm with SME]` |
+| **Publish to Logility** | Resolved HERO state packaged into export arrays | On the configured export cadence (delta-only) |
 
 ## Practical rules
 
@@ -29,10 +29,13 @@ Explain why a download, an upload, a dashboard refresh, and a Logility export do
     - **Re-download** if someone else has touched the same scope — especially before a later-stage reconciliation or sign-off session.
     - Uploading a workbook does **not** push Logility. Publication follows the separate export process.
 
+!!! note
+    The specific export schedule and review cadence are set by each market's operating model, not by the tool.
+
 ## Related pages
 
-- [Where HERO fits in the cycle](../getting-started/hero-in-the-cycle.md)
+- [Where HERO fits in the planning flow](../getting-started/hero-in-the-cycle.md)
 - [FAQ & common gotchas](../help/faq-common-gotchas.md)
 
-!!! question "Gaps & Open Questions"
-    - Confirm the **Logility export cadence** for the UK pilot (currently a draft default).
+!!! success "No open questions identified"
+    No open questions were identified from the available source material.

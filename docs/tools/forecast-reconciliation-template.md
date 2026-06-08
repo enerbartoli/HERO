@@ -35,6 +35,12 @@ Use reconciliation when the business needs to **directly change the final week-l
 
 Weeks in the actualized period use exact row-level shipment actuals where they exist, and 0 where no exact actual is available; values are zero-floored so negative net shipment weeks render as 0. **Shaded** cells mark the actualized shipment period (historical cutoff); **unshaded** cells are forward forecast weeks.
 
+!!! note "Channel shift moves the enrichments too"
+    A Channel Shift moves demand between `DOM` and `DI`. Make sure any enrichments associated with the moved volume are also moved to the correct channel. Capture a genuine change in total demand separately.
+
+!!! tip "Forecasting range (start / end dates)"
+    To stop forecasting a SKU for a customer, adjust the **forecasting range** by setting an end date — this is distinct from a phase-out enrichment. The forecasting range is derived upstream (from on-shelf dates via P2M) and maintained in Logility, which is the source of truth for it.
+
 ## Related pages
 
 - [Field-by-field reference](../workflows/field-by-field-reference.md)

@@ -23,8 +23,8 @@ Define each field, whether it is required / editable, and its allowed values.
 | Enrichment Type | Required | See [ECT types](../tools/enrichment-capture-template.md) | Determines bucket and downstream treatment. |
 | Status | Required | `PROPOSED` / `CONFIRMED` / `DECLINED` | Controls audit/reporting treatment. |
 | Shipment Impact Start Date | Required | `YYYY-MM-DD` | Defines which fiscal weeks receive the enrichment. |
-| Shipment Impact End Date | Required | `YYYY-MM-DD` | Together with start date, sets weekly coverage. |
-| Shipment Channel | Required | `DOM` / `DI` / `D2C` | Defines the time series. |
+| Shipment Impact End Date | Optional | `YYYY-MM-DD` | With the start date, sets weekly coverage. If left blank, the enrichment is treated as a **single-week** event (the start week only). |
+| Shipment Channel | Required | `DOM` / `DI` | Defines the time series. The reconciliation model uses `DOM` (domestic) and `DI` (direct import). |
 | Expected Shipment Lift, percent | Conditional | Excel percent (25% = 0.25) | Use percent **or** units, never both. Converted against baseline. |
 | Expected Shipment Lift, units | Conditional | Number | Use units **or** percent, never both. Spread evenly across covered weeks. |
 | Retail Promotion Mechanism | Required for `RETAIL_PROMOTION` | `DISCOUNT` / `BOGO` / `COUPON` / `OTHER` | Classification metadata. |
@@ -62,6 +62,5 @@ Define each field, whether it is required / editable, and its allowed values.
 - [Calculation reference](../examples/calculation-reference.md)
 - [Tab-by-tab walkthrough](tab-by-tab-walkthrough.md)
 
-!!! question "Gaps & Open Questions"
-    - Clarify the intended behaviour when **Shipment Impact End Date is blank** (current code treats the event as single-week only when the underlying value is missing).
-    - Confirm whether `D2C` is in scope for the UK pilot (reconciliation model references `DOM` / `DI`).
+!!! success "No open questions identified"
+    No open questions were identified from the available source material.

@@ -36,7 +36,7 @@ Describe every tab in the standard workbook and the BU-SKU workbook mode.
 !!! warning "Do not mix modes"
     Do not upload both standard reconciliation and BU-SKU reconciliation from the same workbook. Once teams move into BU-SKU review, older Level 1 workbooks are stale. Author BU-SKU rows only on the `reconciliation_bu_sku` tab and leave partner fields blank.
 
-## Editable reconciliation fields (pilot)
+## Editable reconciliation fields
 
 Edit only: weekly **Base Trend Adjustments**, **Adjusted Planning SKU**, **Version Adjustment Start/End Week**, **Channel Shift Proportion**, **Channel Shift Start/End Week**. Everything else (item dimensions, Lifecycle Status, Blended A-Price, baseline totals, rendered weekly columns) is read-only context.
 

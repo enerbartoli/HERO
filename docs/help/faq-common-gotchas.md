@@ -8,7 +8,7 @@ All users. Quick answers to the questions that come up most often.
 
 ## Purpose
 
-Resolve the recurring points of confusion in HERO.
+Resolve the recurring points of confusion in HERO (Hasbro Enrichment & Reconciliation Optimizer).
 
 ## Frequently asked questions
 
@@ -28,7 +28,7 @@ No. BU-SKU mode is a different authoring mode and is treated separately.
 Blank keeps the current rendered BU-SKU adjustment total; `0` sets it to zero for that week; a negative value means the adjustment total should be below zero.
 
 **Does DEMAND_PHASE_SHIFT automatically move demand between weeks?**
-No — it is tracking only in the current pilot-safe logic. Use reconciliation for an actual week move.
+No — it is tracking only. Use reconciliation for an actual week move.
 
 **Does SUPPLY_SHORTAGE_COMP automatically move volume between SKUs?**
 No — it tracks the relationship, but you still capture the compensating demand correctly.
@@ -41,5 +41,5 @@ Treat shaded / actualized weeks as frozen forecast history unless your operating
 - [Timing & system sync](../workflows/timing-system-sync.md)
 - [Validation & error catalogue](validation-error-catalogue.md)
 
-!!! question "Gaps & Open Questions"
-    - Confirm the **frozen-window exception** process for the UK pilot (how a genuine in-window operational change is routed).
+!!! success "No open questions identified"
+    No open questions were identified from the available source material.

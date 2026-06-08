@@ -2,7 +2,7 @@
 
 # HERO User Manual
 
-Welcome to the operational manual for **HERO (Hasbro Enrichment & Reconciliation Optimizer)** — the business-user capture layer used in the UK pilot of the Forecast Enrichment Process.
+Welcome to the operational manual for **HERO (Hasbro Enrichment & Reconciliation Optimizer)** — the business-user capture layer of the Forecast Enrichment Process.
 
 ## How to use this manual
 
@@ -28,5 +28,5 @@ This is a **mechanical guide** to using HERO. It is not a substitute for trainin
 
 HERO is where you **download** the latest workbook, **enter or review** commercial and planning changes, **upload** those changes back, and then **verify** the resolved outcome through reporting and downstream publication to Logility.
 
-!!! question "Gaps & Open Questions"
-    - Confirm the canonical product name and capitalisation of **HERO (Hasbro Enrichment & Reconciliation Optimizer)** for external-facing material.
+!!! success "No open questions identified"
+    No open questions were identified from the available source material.

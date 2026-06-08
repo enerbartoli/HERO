@@ -62,7 +62,7 @@ nav:
       - Marketing / GPL: roles/marketing-gpl.md
   - Getting started:
       - What HERO is: getting-started/what-hero-is.md
-      - Where HERO fits in the cycle: getting-started/hero-in-the-cycle.md
+      - Where HERO fits in the planning flow: getting-started/hero-in-the-cycle.md
       - Roles & permissions: getting-started/roles-permissions.md
   - Tools & templates:
       - HERO portal: tools/hero-portal.md

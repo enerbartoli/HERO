@@ -1,38 +1,37 @@
 <!-- docs/getting-started/roles-permissions.md -->
 
-# Roles & permissions
+# Roles & what each role does in HERO
 
 ## Who should read this page
 
-Anyone who needs to understand who does what in HERO, and which scope they can access.
+Anyone who needs to understand who does what **in the tool**, and which scope they can access.
 
 ## Purpose
 
-Summarise the role behaviours the current build supports, and flag where cluster-specific ownership still needs business confirmation.
+Summarise what each role does inside HERO (Hasbro Enrichment & Reconciliation Optimizer) and how workbook scope and special access work. This is a tool-capability reference, not an org or governance model.
 
-!!! warning "Draft ownership"
-    The current development build clearly supports **workbook scope filtering** and **special BU-SKU mode access**. Some cluster-specific role details below are marked `[DRAFT — confirm with SME]`.
-
-## Role reference
+## What each role does in the tool
 
 | Role | What they do in HERO | Primary path |
 |---|---|---|
-| **Sales / KAM** | Add commercial enrichments, review account-level impact, propose reconciliation changes. | Enrichment authoring + standard reconciliation in their owned slice. |
-| **Marketing / GPL** | Add marketing overlays and challenge final forecast outcomes. | Marketing enrichment path; some clusters also use BU-SKU review inputs. `[DRAFT — confirm with SME]` |
-| **Demand Planning** | Review and reconcile final numbers; use structured functions (version change, channel shift); review BU-SKU outputs. | Standard reconciliation and, by cluster, Level 2.5 / BU-SKU inputs. `[DRAFT — confirm with SME]` |
-| **Brand Captains** | Challenge baseline and disaggregation, especially in BU-SKU / Level 2.5 review. | UK training notes place L2.5 write ownership here. `[DRAFT — confirm with SME]` |
-| **Supply-Chain COE** | Support data quality, baseline / disaggregation issues, operating-model governance. | Usually advisory / review. `[DRAFT — confirm with SME]` |
-| **Supply-Chain Leadership** | Review resolved outputs, governance, publication readiness. | Typically read-only. `[DRAFT — confirm with SME]` |
+| **Sales / Key Account Manager (KAM)** | Author commercial enrichments; review account-level impact; make customer-level (Level 1) reconciliation edits in their scope. | Enrichment authoring + standard reconciliation. Only Sales edits customer-level forecasts. |
+| **Brand Captains** | Author brand-level reconciliation in the **BU-SKU (Business Unit–SKU) / Level 2.5** template; propose baseline adjustments and own the brand story. | BU-SKU / Level 2.5 reconciliation. |
+| **Demand Planning (DP)** | Reconcile final numbers; use structured functions (version change, channel shift); review BU-SKU outputs; facilitate reconciliation. | Standard and BU-level reconciliation templates. |
+| **Marketing / Global Product Lead (GPL)** | Add marketing overlays; challenge final outcomes; propose adjustments at aggregate (BU) level via the marketing/DP reconciliation template. | Marketing overlay + BU-level reconciliation. |
 
-!!! note "Special access"
-    The `ALL_FORECAST_PARTNERS` scope used for BU-SKU mode is restricted to an **explicit allowlist** in the current build.
+!!! note "Level 2.5 / BU-level reconciliation"
+    Brand Captains, Demand Planning, and Marketing all work through the aggregate (Level 2.5 / BU-level) reconciliation templates. Brand Captains author the brand-level number; Demand Planning and Marketing use similar BU-level templates to propose and challenge. Customer-level (Level 1) edits are made only by Sales.
+
+## Scope and special access
+
+- A workbook is downloaded for a chosen scope (Business Unit, Forecast Partner, optional Brand, Fiscal Year).
+- Selecting **All Forecast Partners** at download switches the workbook into BU-SKU mode.
+- The `ALL_FORECAST_PARTNERS` scope is restricted to an **explicit allowlist** in the current build, and is only valid on MARKETING / DEMAND_PLANNING enrichment rows.
 
 ## Related pages
 
 - [Demand Planner guide](../roles/demand-planner.md) · [Sales guide](../roles/sales.md) · [Marketing / GPL guide](../roles/marketing-gpl.md)
 - [BU-SKU / Level 2.5 mode](../tools/bu-sku-level-25-mode.md)
 
-!!! question "Gaps & Open Questions"
-    - Confirm the **cluster-specific permission matrix** by Business Unit, Forecast Partner, and Brand (deferred in v0).
-    - Validate **Level 2.5 write ownership** (Brand Captain vs Demand Planning) for the UK pilot.
-    - Confirm whether Marketing / GPL uses BU-SKU review inputs in the UK.
+!!! success "No open questions identified"
+    No open questions were identified from the available source material.

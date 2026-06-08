@@ -4,7 +4,7 @@
 
 ## Who should read this page
 
-Demand Planning and Brand Captains doing later-stage aggregate review. `[DRAFT — confirm L2.5 ownership]`
+Brand Captains, Demand Planning, and Marketing doing later-stage aggregate review. Brand Captains author the brand-level number; Demand Planning and Marketing use similar BU-level reconciliation templates.
 
 ## Purpose
 
@@ -41,5 +41,5 @@ This is the opposite of standard reconciliation, which says *"apply this exact d
 - [BU-SKU worked examples](../examples/bu-sku-worked-examples.md) — six scenarios showing what moves and what stays fixed.
 - [Forecast Reconciliation Template (FRT)](forecast-reconciliation-template.md)
 
-!!! question "Gaps & Open Questions"
-    - Confirm **Level 2.5 write ownership** (Brand Captain vs Demand Planning) for the UK pilot.
+!!! success "No open questions identified"
+    No open questions were identified from the available source material.

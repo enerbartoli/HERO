@@ -4,36 +4,31 @@
 
 ## Who should read this page
 
-Marketing users and Global Product Leads (GPLs) who add overlays and challenge final forecast outcomes.
+Marketing users and Global Product Leads (GPLs) who add overlays and challenge final outcomes in HERO (Hasbro Enrichment & Reconciliation Optimizer).
 
 ## What you do in HERO
 
 - Add **marketing overlays** that reflect planned media and demand-shaping activity.
-- **Challenge final forecast outcomes** in review, especially where marketing expects lift the baseline does not show.
+- **Challenge final forecast outcomes** in review, and propose adjustments at aggregate (BU) level via the marketing / demand-planning reconciliation template.
 
 !!! note "Where marketing overlays sit"
     Marketing overlays are read in a **separate weekly bucket after sales enrichments**. The order of operations is: baseline → sales enrichments → **MARKETING and DEMAND_PLANNING overlays** → reconciliation adjustments.
 
-## When you interact with HERO in the cycle
-
-During **event capture** (overlays) and the **joint Marketing & Demand Planning reconciliation** session.
-
 ## Tools and views you use
 
-- [Enrichment Capture Template (ECT)](../tools/enrichment-capture-template.md) — MARKETING enrichment type.
-- Some clusters also use **BU-SKU review inputs**. `[DRAFT — confirm with SME]`
+- [Enrichment Capture Template (ECT)](../tools/enrichment-capture-template.md) — `MARKETING` enrichment type.
+- BU-level reconciliation template (aggregate / Level 2.5 review).
 
 ## Common mistakes & watchouts
 
 !!! warning "Watchouts"
-    - **Media lift vs override.** Flag whether a lift is evidence-backed media or a top-down override; route it through the agreed Marketing enrichment path rather than an informal override.
+    - **Media lift vs override.** Flag whether a lift is evidence-backed media or a top-down override; route it through the agreed Marketing enrichment path.
     - The `ALL_FORECAST_PARTNERS` scope is **only valid for MARKETING and DEMAND_PLANNING** rows, and only for authorised users.
 
 ## Related pages
 
 - [Enrichment Capture Template (ECT)](../tools/enrichment-capture-template.md)
-- [Roles & permissions](../getting-started/roles-permissions.md)
+- [Roles & what each role does in HERO](../getting-started/roles-permissions.md)
 
-!!! question "Gaps & Open Questions"
-    - Confirm whether Marketing / GPL authors **BU-SKU review inputs** in the UK pilot.
-    - Confirm the canonical expansion of **GPL** (Global Product Lead) for Hasbro.
+!!! success "No open questions identified"
+    No open questions were identified from the available source material.
