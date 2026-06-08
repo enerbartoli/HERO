@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{#
+  Injects a section hero banner before the page content.
+  hero_bg_url and hero_label are set per-page by hooks.py.
+  Readability rule: banner is purely presentational — body text,
+  tables, and code are always on a plain background below the banner.
+#}
+
+{% block content %}
+{% if hero_bg_url %}
+<div class="hero-banner"
+     style="background-image:url('{{ hero_bg_url }}')"
+     role="img"
+     aria-label="{{ hero_label }} — section banner">
+  <span class="hero-banner__label">{{ hero_label }}</span>
+</div>
+{% endif %}
+{{ super() }}
+{% endblock %}

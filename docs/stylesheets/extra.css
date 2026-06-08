@@ -1,28 +1,141 @@
-/* ── Light mode (scheme: default) ─────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════════
+   HERO User Manual — Hasbro brand stylesheet
+   Palette source: Hasbro Global Brand Guidelines v1 (BRAND_ASSETS.md)
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── Typography: Arial / system sans — no Proxima Nova license ────────── */
+:root {
+  --md-text-font: Arial, "Helvetica Neue", Helvetica, system-ui, sans-serif;
+  --md-code-font: "SFMono-Regular", "Fira Code", "Consolas", monospace;
+}
+
+/* ── Hasbro palette — Light mode (scheme: default) ───────────────────── */
 :root,
 [data-md-color-scheme="default"] {
-  --md-primary-fg-color:        #0B1F3A; /* Hasbro navy */
-  --md-primary-fg-color--light: #16365e;
-  --md-primary-fg-color--dark:  #07142a;
-  --md-accent-fg-color:         #1FB6B6; /* teal */
-  --md-typeset-a-color:         #0E7C7B;
+  /* Primary: Navy for header bar — Hasbro Navy PMS 294 */
+  --md-primary-fg-color:        #003C77;
+  --md-primary-fg-color--light: #005EB8;   /* Hasbro Blue PMS 300  */
+  --md-primary-fg-color--dark:  #002456;
+
+  /* Accent: Cyan */
+  --md-accent-fg-color:         #00AEEF;
+  --md-accent-fg-color--light:  #40c6f4;
+  --md-accent-fg-color--dark:   #0090c5;
+
+  /* Links: Hasbro Blue */
+  --md-typeset-a-color:         #005EB8;
 }
 
-/* ── Dark mode (scheme: slate) ────────────────────────────────────────── */
+/* ── Hasbro palette — Dark mode (scheme: slate) ──────────────────────── */
 [data-md-color-scheme="slate"] {
-  --md-primary-fg-color:        #1FB6B6; /* teal — readable on dark bg */
-  --md-primary-fg-color--light: #3ecece;
-  --md-primary-fg-color--dark:  #148f8f;
-  --md-accent-fg-color:         #FFC72C; /* accent yellow */
-  --md-typeset-a-color:         #3ecece;
+  --md-primary-fg-color:        #005EB8;
+  --md-primary-fg-color--light: #00AEEF;
+  --md-primary-fg-color--dark:  #003C77;
+  --md-accent-fg-color:         #00AEEF;
+  --md-accent-fg-color--light:  #40c6f4;
+  --md-accent-fg-color--dark:   #0090c5;
+  --md-typeset-a-color:         #40c6f4;
 }
 
-/* ── Shared brand rules (both modes) ─────────────────────────────────── */
+/* ── Header: Hasbro signature diagonal gradient ──────────────────────── */
+/*   cyan → Hasbro Blue → Navy with Violet edge                          */
+.md-header {
+  background-image: linear-gradient(
+    135deg,
+    #003C77  0%,
+    #005EB8 52%,
+    #625DA3 100%
+  );
+}
+
+/* Logo sizing in navbar */
+.md-header__button.md-logo {
+  padding: 0.3rem 0.4rem;
+}
+.md-header__button.md-logo img,
+.md-header__button.md-logo svg {
+  height: 2rem;
+  width: auto;
+}
+
+/* ── Tables ──────────────────────────────────────────────────────────── */
 .md-typeset table:not([class]) th {
-  background-color: #0B1F3A;
+  background-color: #003C77;
   color: #ffffff;
 }
+
+/* ── H2 underline: Cyan accent ───────────────────────────────────────── */
 .md-typeset h2 {
-  border-bottom: 2px solid #FFC72C;
+  border-bottom: 2px solid #00AEEF;
   padding-bottom: .2rem;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Hero banners — one per top-level section
+   Images are set via inline style by hooks.py + main.html override.
+   Rule: banners appear ABOVE all body text, tables, and code blocks.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.hero-banner {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  background-size: cover;
+  background-position: right center;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 1.6rem;
+}
+
+/* Dark Navy gradient overlay — left (dark) → right (transparent)
+   Ensures WCAG-AA contrast for white label text regardless of image. */
+.hero-banner::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to right,
+    rgba(0, 60, 119, 0.90)   0%,
+    rgba(0, 60, 119, 0.62)  38%,
+    rgba(0, 60, 119, 0.18)  68%,
+    transparent             100%
+  );
+}
+
+/* Section label — white on dark gradient (contrast > 7:1 vs Navy) */
+.hero-banner__label {
+  position: absolute;
+  bottom: 1.1rem;
+  left: 1.4rem;
+  color: #ffffff;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.13em;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.55);
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .hero-banner,
+  .hero-banner::before {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* ── Admonition accent: use Cyan for "question" type ─────────────────── */
+.md-typeset .admonition.question,
+.md-typeset details.question {
+  border-color: #625DA3;
+}
+.md-typeset .question > .admonition-title,
+.md-typeset .question > summary {
+  background-color: rgba(98, 93, 163, 0.12);
+}
+.md-typeset .question > .admonition-title::before,
+.md-typeset .question > summary::before {
+  background-color: #625DA3;
 }

@@ -1,9 +1,9 @@
 # BUILD_NOTES — HERO User Manual
 
-Last updated during **second-pass stand-up** (content complete, brand/UX polish, repo hygiene).
+Last updated: **third pass** — Hasbro character-brand look & feel applied.
 
-**Do not edit content files based on these notes** — all remediation requires the original
-controlled source documents or SME confirmation.
+**Do not edit content files based on these notes** — all remediation
+requires the original controlled source documents or SME confirmation.
 
 ---
 
@@ -15,99 +15,82 @@ All 24 authored pages have verified nav entries and zero broken internal links.
 
 ---
 
-## 2. Brand assets still needed
+## 2. Brand implementation — what was applied
 
-Neither a logo nor a favicon was provided in the source material.
+| Component | Implementation | File(s) |
+|---|---|---|
+| Hasbro palette (Navy/Blue/Cyan) | CSS variables on `:root` and `[data-md-color-scheme]` | `extra.css` |
+| Signature diagonal gradient header | `background-image: linear-gradient(135deg, #003C77 → #005EB8 → #625DA3)` on `.md-header` | `extra.css` |
+| Logo (16° angle badge) | `theme.logo: assets/img/hasbro-logo.png` | `mkdocs.yml` |
+| Favicon | `theme.favicon: assets/img/favicon.png` | `mkdocs.yml` |
+| Typography | `font: false` — Arial / system sans; no Proxima Nova license | `mkdocs.yml`, `extra.css` |
+| Light/dark toggle | Two palette entries (`default` / `slate`) with toggle icons | `mkdocs.yml` |
+| Hero banners per section | Python hook (`hooks.py`) + Jinja2 override (`docs/overrides/main.html`) | `hooks.py`, `main.html`, `extra.css` |
+| `navigation.instant`, `content.tooltips`, `abbr` | Enabled in features + extensions | `mkdocs.yml` |
+| Open questions aggregation | 24 items across 16 pages verbatim | `docs/reference/open-questions.md` |
 
-| Asset | Expected path | `mkdocs.yml` key | Notes |
-|---|---|---|---|
-| Logo (SVG or PNG) | `docs/assets/logo.svg` | `theme.logo: assets/logo.svg` | Shown in navbar and tab. Recommend white/teal on navy. |
-| Favicon | `docs/assets/favicon.png` | `theme.favicon: assets/favicon.png` | 32 × 32 px minimum. |
+### Section → hero image mapping
 
-To add once assets are available:
-
-```yaml
-theme:
-  logo: assets/logo.svg
-  favicon: assets/favicon.png
-```
+| Section | Image used | Rationale |
+|---|---|---|
+| Home | `hero-transformers.jpg` (Optimus Prime) | Flagship hero — sets HERO identity |
+| Role-based guides | `hero-bumblebee.jpg` (Bumblebee) | Hero / Transformers |
+| Getting started | `hero-dnd.jpg` (D&D dragon) | Heroic / adventure |
+| Tools & templates | `bg-gradient-1.jpg` | Dense content — clean gradient |
+| Workflows | `bg-gradient-2.jpg` | Dense content — clean gradient |
+| Examples | `hero-playdoh.jpg` | Lighter back section |
+| Help & troubleshooting | `hero-peppa.jpg` | Lighter back section |
+| Reference | `hero-monopoly.jpg` | Lighter back section |
 
 ---
 
-## 3. Open-questions aggregation — maintenance note
+## 3. Brand assets still wanted (note for Rene)
+
+These would improve the site but are not available in the current asset set.
+All are sourced from official Hasbro brand material — do not pull from the web.
+
+| Asset | Where to use | Notes |
+|---|---|---|
+| **Proxima Nova web font kit** (Monotype license) | `mkdocs.yml` `theme.font` | Current fallback: Arial/system. Kit URL from Corporate Brand Team. |
+| **Transparent-background character cutouts** (PNG, no bg) | Hero banner foreground layer | Current JPEGs have full backgrounds; cutouts allow more flexible layout. |
+| **Concentric rounded-square SVG pattern** | `.hero-banner` texture overlay at ~5–8% opacity | Echoes the deck template motif. Currently omitted (vector not in repo). |
+| **Diagonal light-streak SVG** | `.hero-banner` texture overlay | Same source as above — deck template assets. |
+| **`banner.jpg` footer strip** (`docs/assets/img/banner.jpg` — 1600×300 franchise diamonds) | Page footer | Template override extension needed; noted for a future pass. |
+| **More Transformers / G.I. Joe / Power Rangers hero art** | Home and lead sections | Drop approved 16:9 images as `docs/assets/img/hero-*.jpg` and the hook picks them up automatically. |
+
+---
+
+## 4. Open questions that need Rene's input (priority order)
+
+| Priority | Pages | Item |
+|---|---|---|
+| 1 | demand-planner, bu-sku-level-25-mode, roles-permissions | Confirm **Level 2.5 write ownership** (Brand Captain vs Demand Planning) |
+| 2 | hero-in-the-cycle, faq-common-gotchas | Confirm **frozen-window exception routing** for the UK pilot |
+| 3 | reference-views-dashboards | **Owner: Edgar** — Power BI docs (AIM Shipment Revenue, POS Glidepath) |
+| 4 | field-by-field-reference | Is `D2C` in scope? Reconciliation model references only `DOM`/`DI` |
+| 5 | timing-system-sync | Confirm Logility export cadence (currently a draft default) |
+
+Full list of 24 items: `docs/reference/open-questions.md`
+
+---
+
+## 5. Open-questions page maintenance
 
 `docs/reference/open-questions.md` was hand-generated from the 24 source pages.
-It contains **24 items across 16 pages**.
-
-To regenerate it when pages are updated, run:
+To regenerate after page edits:
 
 ```bash
 grep -rn '!!! question' docs/ --include="*.md" -A 5
 ```
 
-Or, for a semi-automated approach, add the
-[`mkdocs-git-revision-date-localized`](https://timvink.github.io/mkdocs-git-revision-date-localized-plugin/)
-plugin and maintain this file alongside source pages. A fully automated solution would
-require a small Python script (or a custom MkDocs hook) to scan `docs/` for
-`!!! question` blocks and emit the table — note this in `requirements.txt` if implemented.
-
 ---
 
-## 4. Structural changes made in second pass
+## 6. Repo hygiene notes
 
-| Change | File(s) | Reason |
-|---|---|---|
-| Light/dark palette toggle added | `mkdocs.yml`, `extra.css` | UX polish; dark mode uses teal `#1FB6B6` as primary on slate background |
-| `navigation.instant` enabled | `mkdocs.yml` | SPA-like navigation |
-| `content.tooltips` + `abbr` extension enabled | `mkdocs.yml` | Enables hover tooltips on abbreviations |
-| `requirements.txt` added (pin `mkdocs-material==9.7.6`) | `requirements.txt` | Locks CI and local installs to same version |
-| `deploy.yml` updated to `pip install -r requirements.txt` | `.github/workflows/deploy.yml` | Consistency with requirements.txt pin |
-| `.gitignore` updated to add `.cache/`, `*.pyo`, `Thumbs.db` | `.gitignore` | Repo hygiene |
-| `README.md` updated with pinned install command and Pages URL | `README.md` | Accurate local-preview and deploy instructions |
-| `open-questions.md` added to nav under Reference | `mkdocs.yml`, `docs/reference/open-questions.md` | Consolidated view of all open items |
-
----
-
-## 5. Pages with no open-questions block
-
-These pages carry either `!!! success "No open questions identified"` or no block at all
-(content considered complete at v0). No action needed unless new questions arise from
-SME review.
-
-| Page | Status |
+| File | Purpose |
 |---|---|
-| `getting-started/what-hero-is.md` | No block (complete) |
-| `tools/hero-portal.md` | No block (complete) |
-| `tools/forecast-reconciliation-template.md` | No block (complete) |
-| `workflows/end-to-end-workflow.md` | No block (complete) |
-| `workflows/tab-by-tab-walkthrough.md` | No block (complete) |
-| `help/validation-error-catalogue.md` | `!!! success "No open questions identified"` |
-| `reference/logility-array-mart-mapping.md` | `!!! success "No open questions identified"` |
-| `reference/documentation-governance.md` | `!!! success "No open questions identified"` |
-
----
-
-## 6. Items that require Rene's source-grounded input
-
-These are the open questions from the 24 pages that are most likely to block the
-pilot — grouped by theme for prioritisation:
-
-### Write ownership (recurring across 3 pages)
-- `roles/demand-planner.md`, `tools/bu-sku-level-25-mode.md`, `getting-started/roles-permissions.md`:
-  Confirm whether **Level 2.5 write ownership** sits with Demand Planning or Brand Captains.
-
-### Frozen-window exception process (recurring across 2 pages)
-- `getting-started/hero-in-the-cycle.md`, `help/faq-common-gotchas.md`:
-  Confirm the frozen-period / out-of-cycle exception routing for the UK pilot.
-
-### Dashboard documentation (blocked on owner)
-- `tools/reference-views-dashboards.md`: **Owner: Edgar** — Power BI documentation
-  (AIM Shipment Revenue, POS Glidepath) and role-access matrix still needed.
-
-### Scope (D2C channel)
-- `workflows/field-by-field-reference.md`: Confirm whether `D2C` is in scope for the
-  UK pilot — the reconciliation model currently references only `DOM` / `DI`.
-
-### Logility cadence
-- `workflows/timing-system-sync.md`: Confirm the Logility export cadence for the pilot
-  (currently a draft default).
+| `hooks.py` | MkDocs hook — injects `hero_bg_url` / `hero_label` into page context |
+| `docs/overrides/main.html` | Material template override — renders hero banner before page content |
+| `requirements.txt` | Pins `mkdocs-material==9.7.6` for local + CI install parity |
+| `.github/workflows/deploy.yml` | Uses `pip install -r requirements.txt` |
+| `.gitignore` | Excludes `site/`, `.cache/`, `__pycache__/`, OS cruft |

@@ -1,18 +1,21 @@
 site_name: HERO User Manual
 site_description: Operational manual for HERO (Hasbro Enrichment & Reconciliation Optimizer) — UK pilot
+site_url: https://enerbartoli.github.io/HERO/
 docs_dir: docs
 
 theme:
   name: material
+  custom_dir: docs/overrides
+  logo: assets/img/hasbro-logo.png
+  favicon: assets/img/favicon.png
+  font: false                          # use Arial/system stack; no Proxima Nova license
   palette:
-    # Light mode (default) — Hasbro navy
     - scheme: default
       primary: custom
       accent: custom
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
-    # Dark mode — slate base with Hasbro teal primary
     - scheme: slate
       primary: custom
       accent: custom
@@ -30,6 +33,9 @@ theme:
     - content.tooltips
     - search.highlight
     - search.suggest
+
+hooks:
+  - hooks.py
 
 extra_css:
   - stylesheets/extra.css
