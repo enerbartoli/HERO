@@ -42,8 +42,31 @@ visible pages; use the non-hero franchises (Monopoly, Peppa, Play-Doh) for light
 | `hero-peppa.jpg` | Peppa Pig | non-hero | Back sections |
 | `hero-playdoh.jpg` | Play-Doh | non-hero | Back sections |
 | `bg-gradient-1.jpg`, `bg-gradient-2.jpg` | Character-free gradients | — | Dense pages / overlays |
+| `pattern-frames.svg` | Concentric rounded-square texture (generic, white stroke) | — | Hero overlay ~6% opacity |
+| `light-streaks.svg` | Diagonal light-streak texture (generic, white) | — | Hero overlay, low opacity |
+
+!!! note
+    `pattern-frames.svg` and `light-streaks.svg` are **generic recreations** that evoke the deck look —
+    NOT the official branded pattern artwork (which the brand guide says must not be redrawn without
+    Corporate Brand Team approval). Swap in the official vector if/when provided.
 
 All hero images have **open space on the left** for overlaying a title.
+
+## Brand logos in `docs/assets/img/brands/`
+Transparent (`.webp`) brand marks supplied by Rene — use as small badges / accents (e.g. on section
+heroes or cards), never altered. Hasbro-owned: `transformers-logo`, `gijoe-logo`, `dnd-logo`,
+`magic-the-gathering-logo`, `monopoly-logo`, `playdoh-logo`, `nerf-logo`, `beyblade-x-logo`,
+`furby-logo`, `my-little-pony-logo`. Also `gijoe-banner-mobile.webp` and `gijoe-vehicle-banner.webp`
+(wide G.I. Joe banners).
+
+!!! warning "Partner brands"
+    `marvel-logo.webp` and `star-wars-logo.webp` are **partner brands** (Disney / Lucasfilm IP), not
+    Hasbro-owned. Use only with partner approval; prefer Hasbro-owned marks for primary branding.
+
+## No more art is coming — reuse what exists
+Rene will not supply additional images beyond what is already in `docs/assets/img/` and
+`docs/assets/img/brands/`. **If a page needs an image that isn't here, reuse one of the existing
+heroes/logos** (rotate the hero set) rather than requesting or sourcing new art.
 
 ### Adding more hero art
 Web image **downloads are not available** from this environment (the web tools return page text, not

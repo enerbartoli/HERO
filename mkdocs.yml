@@ -23,8 +23,9 @@ theme:
         icon: material/brightness-4
         name: Switch to light mode
   features:
+    # navigation.sections removed (Prompt 4): chapters are now collapsible
+    # groups with a chevron, not flat gray section labels.
     - navigation.instant
-    - navigation.sections
     - navigation.top
     - navigation.tracking
     - navigation.indexes

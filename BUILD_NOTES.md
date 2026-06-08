@@ -1,6 +1,6 @@
 # BUILD_NOTES — HERO User Manual
 
-Last updated: **third pass** — Hasbro character-brand look & feel applied.
+Last updated: **fourth pass** — navigation UX fix, brand logos, texture overlays (Prompt 4).
 
 **Do not edit content files based on these notes** — all remediation
 requires the original controlled source documents or SME confirmation.
@@ -12,6 +12,36 @@ requires the original controlled source documents or SME confirmation.
 `mkdocs build --strict` — **PASSING, 0 warnings** (25 pages including `open-questions.md`).
 
 All 24 authored pages have verified nav entries and zero broken internal links.
+
+---
+
+## 1b. Prompt 4 changes (navigation + brand logos + textures)
+
+| # | Change | File(s) |
+|---|---|---|
+| 1 | Removed `navigation.sections` → top-level chapters are now **collapsible groups with a chevron** (collapsed until expanded; `navigation.expand` deliberately NOT added) | `mkdocs.yml` |
+| 1 | Chapter toggles enlarged + high-contrast (Hasbro navy/blue, `font-weight:700`), chevron scaled 1.2×; slate-mode override (`#5cc6f5`) for sidebar readability | `extra.css` |
+| 2 | **Brand-logo badge** per section hero — transparent `.webp`, top-left over the dark gradient zone, `object-fit:contain` (never stretched/recolored) | `hooks.py`, `main.html`, `extra.css` |
+| 4 | **Texture overlays** `pattern-frames.svg` + `light-streaks.svg` layered inside `.hero-banner` at 8% opacity, above gradient / below title | `hooks.py`, `main.html`, `extra.css` |
+
+### Section → hero image → brand-logo pairing
+
+| Section | Hero image | Brand logo (accent) |
+|---|---|---|
+| Home | `hero-transformers.jpg` | `transformers-logo.webp` |
+| Role-based guides | `hero-bumblebee.jpg` | `transformers-logo.webp` (Bumblebee = Transformers) |
+| Getting started | `hero-dnd.jpg` | `dnd-logo.webp` |
+| Tools & templates | `bg-gradient-1.jpg` | `nerf-logo.webp` |
+| Workflows | `bg-gradient-2.jpg` | `magic-the-gathering-logo.webp` |
+| Examples | `hero-playdoh.jpg` | `playdoh-logo.webp` |
+| Help & troubleshooting | `hero-peppa.jpg` | `my-little-pony-logo.webp` (no Peppa logo supplied — reused a light Hasbro-owned mark) |
+| Reference | `hero-monopoly.jpg` | `monopoly-logo.webp` |
+
+**Partner brands not used:** `marvel-logo.webp` and `star-wars-logo.webp` are Disney/Lucasfilm IP
+(per `BRAND_ASSETS.md`) and are intentionally left out of primary branding. Also currently unused:
+`gijoe-logo.webp`, `beyblade-x-logo.webp`, `furby-logo.webp`, and the wide G.I. Joe banners
+(`gijoe-banner-mobile.webp`, `gijoe-vehicle-banner.webp`) — available to swap in if Rene wants a
+different section pairing. No new art was requested or sourced; per Prompt 4 the existing set is reused.
 
 ---
 

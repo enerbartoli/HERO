@@ -102,9 +102,40 @@
   );
 }
 
+/* Texture overlays — pattern frames + light streaks (Prompt 4 §4).
+   White SVG textures above the gradient, below the title; ~8% opacity. */
+.hero-banner__texture {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background-repeat: no-repeat, no-repeat;
+  background-position: right center, center;
+  background-size: cover, cover;
+  opacity: 0.08;
+  pointer-events: none;
+}
+
+/* Brand-logo badge — subtle accent over the dark (top-left) gradient zone.
+   Never recolored/stretched: object-fit:contain + width:auto preserve it. */
+.hero-banner__logo {
+  position: absolute;
+  z-index: 2;
+  top: 1rem;
+  left: 1.4rem;
+  height: 34px;
+  width: auto;
+  max-width: 170px;
+  object-fit: contain;
+  opacity: 0.95;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.45));
+  pointer-events: none;
+  user-select: none;
+}
+
 /* Section label — white on dark gradient (contrast > 7:1 vs Navy) */
 .hero-banner__label {
   position: absolute;
+  z-index: 2;
   bottom: 1.1rem;
   left: 1.4rem;
   color: #ffffff;
@@ -120,10 +151,33 @@
 /* Respect prefers-reduced-motion */
 @media (prefers-reduced-motion: reduce) {
   .hero-banner,
-  .hero-banner::before {
+  .hero-banner::before,
+  .hero-banner__texture {
     transition: none !important;
     animation: none !important;
   }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Left navigation — collapsible chapters (Prompt 4 §1)
+   navigation.sections is removed, so each top-level chapter is a nested
+   group with a chevron. Make the toggle larger and higher-contrast.
+   ═══════════════════════════════════════════════════════════════════════ */
+.md-nav__item--nested > .md-nav__link {
+  font-size: .82rem;
+  font-weight: 700;
+  color: var(--md-primary-fg-color);   /* Hasbro navy/blue, not light gray */
+  text-transform: none;
+}
+
+/* Make the expand/collapse chevron clearer */
+.md-nav__icon {
+  transform: scale(1.2);
+}
+
+/* Dark mode: keep chapter titles readable on the slate sidebar */
+[data-md-color-scheme="slate"] .md-nav__item--nested > .md-nav__link {
+  color: #5cc6f5;                       /* brighter cyan for contrast */
 }
 
 /* ── Admonition accent: use Cyan for "question" type ─────────────────── */
