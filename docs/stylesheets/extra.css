@@ -206,3 +206,16 @@
 .md-typeset .question > summary::before {
   background-color: #625DA3;
 }
+
+/* ── Footer copyright — keep the legal notice tidy and centered ──────── */
+/*   Material renders config.copyright inside .md-copyright__highlight.    */
+.md-copyright {
+  width: 100%;
+}
+.md-copyright__highlight {
+  max-width: 64rem;
+  margin: 0 auto;
+  line-height: 1.5;
+  font-size: 0.62rem;
+  text-align: center;
+}

@@ -3,6 +3,17 @@ site_description: Operational manual for HERO (Hasbro Enrichment & Reconciliatio
 site_url: https://enerbartoli.github.io/HERO/
 docs_dir: docs
 
+# Footer copyright (replaces the default "Made with Material for MkDocs")
+copyright: >-
+  © 2026 Hasbro. All rights reserved. All audio, visual and textual content
+  on this site (including all names, characters, images, trademarks and logos)
+  are protected by trademarks, copyrights and other Intellectual Property
+  rights owned by Hasbro or its subsidiaries, licensors, licensees, suppliers
+  and accounts.
+
+extra:
+  generator: false   # remove "Made with Material for MkDocs" footer note
+
 theme:
   name: material
   custom_dir: docs/overrides
