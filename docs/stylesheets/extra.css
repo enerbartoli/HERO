@@ -163,7 +163,19 @@
    navigation.sections is removed, so each top-level chapter is a nested
    group with a chevron. Make the toggle larger and higher-contrast.
    ═══════════════════════════════════════════════════════════════════════ */
-.md-nav__item--nested > .md-nav__link {
+
+/* Site title at the top of the sidebar — largest, boldest entry */
+.md-nav--primary > .md-nav__title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--md-primary-fg-color);
+  line-height: 1.3;
+}
+
+/* Every TOP-LEVEL nav entry shares one style — both collapsible chapters
+   (Role-based guides, Getting started, …) AND single pages like Home,
+   which has no sub-section but should still match the chapter typography. */
+.md-nav--primary > .md-nav__list > .md-nav__item > .md-nav__link {
   font-size: .82rem;
   font-weight: 700;
   color: var(--md-primary-fg-color);   /* Hasbro navy/blue, not light gray */
@@ -175,8 +187,9 @@
   transform: scale(1.2);
 }
 
-/* Dark mode: keep chapter titles readable on the slate sidebar */
-[data-md-color-scheme="slate"] .md-nav__item--nested > .md-nav__link {
+/* Dark mode: keep title + chapters readable on the slate sidebar */
+[data-md-color-scheme="slate"] .md-nav--primary > .md-nav__title,
+[data-md-color-scheme="slate"] .md-nav--primary > .md-nav__list > .md-nav__item > .md-nav__link {
   color: #5cc6f5;                       /* brighter cyan for contrast */
 }
 
