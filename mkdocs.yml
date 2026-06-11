@@ -86,6 +86,7 @@ nav:
       - Tab-by-tab walkthrough: workflows/tab-by-tab-walkthrough.md
       - Timing & system sync: workflows/timing-system-sync.md
       - Field-by-field reference: workflows/field-by-field-reference.md
+      - Forecast range calculation: workflows/forecast-range-calculation.md
   - Examples:
       - Calculation reference: examples/calculation-reference.md
       - BU-SKU worked examples: examples/bu-sku-worked-examples.md
@@ -95,6 +96,6 @@ nav:
       - Glossary: help/glossary.md
   - Reference:
       - Logility array & mart mapping: reference/logility-array-mart-mapping.md
+      - Batch orchestration & updates: reference/batch-orchestration-updates.md
       - Deferred in v0: reference/deferred-in-v0.md
-      - Open questions: reference/open-questions.md
       - Documentation governance: reference/documentation-governance.md

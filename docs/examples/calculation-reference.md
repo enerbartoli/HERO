@@ -66,11 +66,15 @@ One series-week: RESULTANT_FORECAST 100, Promo +20, Marketing +10, TMO +5 → po
 !!! example "Recurring year-over-year temporality missing"
     A seasonal pattern is not reflected because prior history did not capture it cleanly. **Use a Base Trend Adjustment** (not a one-off set) so the model learns it permanently and the correction is not re-entered each cycle. Owner: Sales.
 
+!!! note "Rounding on export"
+    Internally a unit spread can be fractional (e.g. 109.09 units/week). On export, published values are **rounded to the nearest whole integer**, with halves rounding **away from zero**. Published outputs are fully populated (no blank cells).
+
 ## Related pages
 
 - [BU-SKU worked examples](bu-sku-worked-examples.md)
 - [Enrichment Capture Template (ECT)](../tools/enrichment-capture-template.md)
 - [Field-by-field reference](../workflows/field-by-field-reference.md)
+- [Batch orchestration & updates](../reference/batch-orchestration-updates.md)
 
-!!! question "Gaps & Open Questions"
-    - Confirm display/export **rounding** rules for unit-lift spreads (e.g. 109.09 units/week).
+!!! success "No open questions identified"
+    No open questions were identified from the available source material.
