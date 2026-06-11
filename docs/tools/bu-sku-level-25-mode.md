@@ -40,6 +40,7 @@ This is the opposite of standard reconciliation, which says *"apply this exact d
 
 - [BU-SKU worked examples](../examples/bu-sku-worked-examples.md) — six scenarios showing what moves and what stays fixed.
 - [Forecast Reconciliation Template (FRT)](forecast-reconciliation-template.md)
+- [Forecast Calculation Range & Disaggregation](../workflows/forecast-range-calculation.md) — different mechanism: the range decides *which customers* are forecast; Level 2.5 decides *how an adjustment splits* across them.
 
 !!! success "No open questions identified"
     No open questions were identified from the available source material.

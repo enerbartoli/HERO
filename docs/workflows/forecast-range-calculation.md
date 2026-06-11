@@ -1,6 +1,6 @@
 <!-- docs/workflows/forecast-range-calculation.md -->
 
-# Forecast range calculation
+# Forecast Calculation Range & Disaggregation
 
 ## Who should read this page
 
@@ -43,7 +43,7 @@ Commercial teams receive **Excel files with the proposed Start/End dates** for e
 
 ## Scope, validation, and data quality
 
-- **8-digit SKUs** are processed today; **9-digit (wave) SKUs** still need validation for inclusion.
+- Both **8-digit and 9-digit (wave) SKUs** are processed by the range pipeline.
 - SKUs **without supporting P2M data** are **deactivated**, and files are generated to classify the reason for the missing dates.
 - If a computed **End Date falls before the Start Date**, the row is flagged as a data issue for review.
 - Regional teams run **periodic P2M audits** to remove invalid or outdated entries.
@@ -55,8 +55,8 @@ The statistical model output is generated **first** (forecast before range), and
 ## Related pages
 
 - [Forecast Reconciliation Template (FRT)](../tools/forecast-reconciliation-template.md) — the in-template "set an end date to stop forecasting" usage.
-- [BU-SKU / Level 2.5 mode](../tools/bu-sku-level-25-mode.md)
+- [BU-SKU / Level 2.5 mode](../tools/bu-sku-level-25-mode.md) — note the difference: the **range** decides *which customers* receive a forecast; **Level 2.5** decides *how an aggregate adjustment is split* across them.
 - [Batch orchestration & updates](../reference/batch-orchestration-updates.md)
 
-!!! question "Gaps & Open Questions"
-    - Confirm whether **9-digit (wave) SKUs** are in scope for the range pipeline.
+!!! success "No open questions identified"
+    No open questions were identified from the available source material.

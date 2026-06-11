@@ -86,7 +86,7 @@ nav:
       - Tab-by-tab walkthrough: workflows/tab-by-tab-walkthrough.md
       - Timing & system sync: workflows/timing-system-sync.md
       - Field-by-field reference: workflows/field-by-field-reference.md
-      - Forecast range calculation: workflows/forecast-range-calculation.md
+  - Forecast Calculation Range & Disaggregation: workflows/forecast-range-calculation.md
   - Examples:
       - Calculation reference: examples/calculation-reference.md
       - BU-SKU worked examples: examples/bu-sku-worked-examples.md

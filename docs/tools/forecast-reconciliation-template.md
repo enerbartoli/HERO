@@ -39,7 +39,7 @@ Weeks in the actualized period use exact row-level shipment actuals where they e
     A Channel Shift moves demand between `DOM` and `DI`. Make sure any enrichments associated with the moved volume are also moved to the correct channel. Capture a genuine change in total demand separately.
 
 !!! tip "Forecasting range (start / end dates)"
-    To stop forecasting a SKU for a customer, adjust the **forecasting range** by setting an end date — this is distinct from a phase-out enrichment. The forecasting range is derived upstream (from on-shelf dates via P2M) and maintained in Logility, which is the source of truth for it.
+    To stop forecasting a SKU for a customer, adjust the **forecast calculation range** (set an end date) — distinct from a phase-out enrichment. See [Forecast Calculation Range & Disaggregation](../workflows/forecast-range-calculation.md).
 
 ## Related pages
 

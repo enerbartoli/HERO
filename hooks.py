@@ -20,8 +20,9 @@ for primary branding — they are Disney/Lucasfilm IP.
 _SECTION_MAP = [
     ("roles/",           "assets/img/hero-bumblebee.jpg",  "assets/img/brands/transformers-logo.webp",        "Role-based guides"),
     ("getting-started/", "assets/img/hero-dnd.jpg",        "assets/img/brands/dnd-logo.webp",                 "Getting started"),
-    ("tools/",           "assets/img/bg-gradient-1.jpg",   "assets/img/brands/nerf-logo.webp",                "Tools & templates"),
-    ("workflows/",       "assets/img/bg-gradient-2.jpg",   "assets/img/brands/magic-the-gathering-logo.webp", "Workflows"),
+    ("tools/",                              "assets/img/bg-gradient-1.jpg",   "assets/img/brands/nerf-logo.webp",                "Tools & templates"),
+    ("workflows/forecast-range-calculation", "assets/img/bg-gradient-2.jpg",   "assets/img/brands/magic-the-gathering-logo.webp", "Forecast Calculation Range & Disaggregation"),
+    ("workflows/",                           "assets/img/bg-gradient-2.jpg",   "assets/img/brands/magic-the-gathering-logo.webp", "Workflows"),
     ("examples/",        "assets/img/hero-playdoh.jpg",    "assets/img/brands/playdoh-logo.webp",             "Examples"),
     ("help/",            "assets/img/hero-peppa.jpg",      "assets/img/brands/my-little-pony-logo.webp",      "Help & troubleshooting"),
     ("reference/",       "assets/img/hero-monopoly.jpg",   "assets/img/brands/monopoly-logo.webp",            "Reference"),
