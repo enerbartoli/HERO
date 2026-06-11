@@ -21,7 +21,7 @@ _SECTION_MAP = [
     ("roles/",           "assets/img/hero-bumblebee.jpg",  "assets/img/brands/transformers-logo.webp",        "Role-based guides"),
     ("getting-started/", "assets/img/hero-dnd.jpg",        "assets/img/brands/dnd-logo.webp",                 "Getting started"),
     ("tools/",                              "assets/img/bg-gradient-1.jpg",   "assets/img/brands/nerf-logo.webp",                "Tools & templates"),
-    ("workflows/forecast-range-calculation", "assets/img/hero-gijoe.jpg",       "assets/img/brands/magic-the-gathering-logo.webp", "Forecast Calculation Range & Disaggregation"),
+    ("workflows/forecast-range-calculation", "assets/img/hero-gijoe.jpg",       None,                                              "Forecast Calculation Range & Disaggregation"),
     ("workflows/",                           "assets/img/bg-gradient-2.jpg",   "assets/img/brands/magic-the-gathering-logo.webp", "Workflows"),
     ("examples/",        "assets/img/hero-playdoh.jpg",    "assets/img/brands/playdoh-logo.webp",             "Examples"),
     ("help/",            "assets/img/hero-peppa.jpg",      "assets/img/brands/my-little-pony-logo.webp",      "Help & troubleshooting"),
@@ -58,7 +58,7 @@ def on_page_context(context, page, config, nav, **kwargs):
 
     if hero_img:
         context["hero_bg_url"]      = rel_prefix + hero_img
-        context["hero_logo_url"]    = rel_prefix + hero_logo
+        context["hero_logo_url"]    = (rel_prefix + hero_logo) if hero_logo else None
         context["hero_label"]       = hero_lbl
         context["hero_pattern_url"] = rel_prefix + _PATTERN
         context["hero_streaks_url"] = rel_prefix + _STREAKS
