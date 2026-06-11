@@ -10,9 +10,9 @@ Sales and Key Account Manager (KAM) users who author commercial enrichments in H
 
 You capture the real commercial events you know about and make customer-level reconciliation edits in your scope.
 
-- Add **commercial enrichments** — promotions, sets, samples, pre-orders, Trade / pallet adjustments (TMO), phase-outs.
+- Add **commercial enrichments** — promotions, sets, samples, pre-orders, Trade / pallet adjustments (TMO), phase-outs. **Only Sales can modify commercial enrichments.**
 - Review **account-level impact** on the rendered forecast.
-- Make **customer-level (Level 1) reconciliation** edits in your owned slice.
+- Make **customer-level (Level 1) reconciliation** edits in your owned slice. Demand Planning and Marketing work at the aggregate (BU) level, and can author a BU-level adjustment if agreement with Sales is not reached.
 
 ## Tools and views you use
 
