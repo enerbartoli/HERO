@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{#
+  Section hero banner, rendered before page content.
+  Context keys are set per-page by hooks.py.
+
+  Layer order (bottom → top):
+    1. hero background image            (inline style on .hero-banner)
+    2. Navy gradient overlay            (.hero-banner::before)
+    3. pattern + light-streak textures  (.hero-banner__texture, ~8% opacity)
+    4. brand-logo badge + section label (.hero-banner__logo / __label)
+
+  Readability rule: this block is purely presentational. Body text, tables,
+  and code always render on a plain background below the banner.
+#}
+
+{% block content %}
+{% if hero_bg_url %}
+<div class="hero-banner"
+     style="background-image:url('{{ hero_bg_url }}')"
+     role="img"
+     aria-label="{{ hero_label }} — section banner">
+  <span class="hero-banner__texture"
+        style="background-image:url('{{ hero_pattern_url }}'),url('{{ hero_streaks_url }}')"
+        aria-hidden="true"></span>
+  {% if hero_logo_url %}
+  <img class="hero-banner__logo" src="{{ hero_logo_url }}" alt="" aria-hidden="true">
+  {% endif %}
+  <span class="hero-banner__label">{{ hero_label }}</span>
+</div>
+{% endif %}
+{{ super() }}
+{% endblock %}
