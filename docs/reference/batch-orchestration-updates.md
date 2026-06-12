@@ -11,47 +11,48 @@ Anyone tracing how HERO (Hasbro Enrichment & Reconciliation Optimizer) processes
 Explain the batch jobs behind HERO, the export to Logility, and the contingency path — the system mechanics beneath the timing rules.
 
 !!! note "When changes take effect — in brief"
-    A change is captured in HERO's authoring state immediately, but it only reaches Level 1 / the dashboard at the next **fan-out**, and only reaches Logility on the weekly **Friday export**. The full schedule (fan-out 3×/day Tue–Thu UTC; publish Friday EST) lives in [Timing & system sync](../workflows/timing-system-sync.md).
+    A change is captured in HERO authoring state immediately. It reaches Level 1 and the dashboard after the next post-processing / fan-out run, and it reaches Logility only through the weekly Friday export pipeline. Exact cadence is covered in [Timing & system sync](../workflows/timing-system-sync.md). The current operational schedule is day-of-week based in Eastern time: post-processing runs at 8:00am, 12:00pm, and 4:00pm on Wednesday and Thursday; on Friday it runs at 8:00am and again as part of the 12:00pm export pipeline.
 
 ## The batch jobs (what each one does)
 
-- **Post-processing / fan-out** — takes anything authored at Level 2.5, broadcasts it down to the Level 1 partner rows, badges it as a "2.5" change, and feeds the dashboard. (Dashboard differentiation of 2.5 vs Level 1 is a dashboard-layer function, not core HERO diffing.)
-- **Daily regional summarization** — a daily roll-up batch in each region.
-- **Weekly Logility export** — the only step that publishes HERO's changes to Logility.
+- **Post-processing / fan-out** — takes Level 2.5 changes authored in HERO, fans them out to the Level 1 partner rows, and refreshes the dashboard-facing Level 1 view.
+- **Weekly Logility export** — runs as the Friday noon Eastern export pipeline. It materializes the Logility pickup tables and, if the contingency path is used, the 8-file wide CSV set.
 
 !!! warning "Scheduling is by day-of-week only"
     HERO can only run a job "at this time on this day of the week." It does **not** read the 53-week fiscal planning calendar, so batch timing is expressed as weekday schedules, not planning-cycle dates.
 
 ## Export to Logility
 
-The export is **delta-only**: HERO sends a record only for the weeks and items it changed, and gives the **full record** for each changed row — it never overwrites unchanged data with zeros.
+The export is changed-row-only, not full-table. HERO emits rows only for changed weekly keys, but each emitted row is fully populated. Unchanged rows are omitted; emitted rows are hydrated according to the outbound rules rather than left blank or sparse.
 
-The full source → array mapping (UA1–UA6, ADS2, PROMO_LIFT, TMO) lives in **[Logility array & mart mapping](logility-array-mart-mapping.md)**. The export rules specific to this layer are:
+The full source → array mapping (UA1–UA6, ADS2, and PROMO_LIFT, including how TMO maps to UA5) lives in **[Logility array & mart mapping](logility-array-mart-mapping.md)**. The export rules specific to this layer are:
 
-- **Marketing / Demand-Planning adjustments do not flow to UA1** — they influence the consensus path (ADS2 for positive, PROMO_LIFT for negative) only.
-- **Residual non-marketing enrichments → UA1.** Any enrichment that is *not* a reconciliation adjustment, *not* MARKETING or DEMAND_PLANNING, and *not* explicitly mapped to UA2–UA6 (i.e. `PHASE_OUT`, `EXCESS_DEPLETION`, `DEMAND_PHASE_SHIFT`, `SUPPLY_SHORTAGE_COMP`) influences **UA1**; positive contributes to ADS2, negative to PROMO_LIFT. *(Code alignment of these residual types into UA1 is in branch, pending merge to main.)*
-- **UA1 frozen horizon:** UA1 is authored by HERO only in horizon months **5–12**; in months **0–4** the published value carries the current live Logility baseline. UA2–UA6, ADS2, and PROMO_LIFT are allowed across months 0–12.
-- **Output format:** fully populated (no nulls), **rounded to the nearest whole integer, halves rounding away from zero.**
-- **Delta-table granularity:** the export carries the **latest adjustment per item across all periods of the modified array** — not a running history of every adjustment.
+- **Marketing / Demand-Planning adjustments do not flow to UA1** — they influence the consensus path only: positive values contribute to ADS2 and negative values contribute to PROMO_LIFT.
+- **Residual non-marketing enrichments** influence UA1 and also flow to consensus by sign. This includes `PHASE_OUT`, `EXCESS_DEPLETION`, `DEMAND_PHASE_SHIFT`, and `SUPPLY_SHORTAGE_COMP`.
+- **UA1 frozen horizon:** UA1 is authored by HERO only in horizon months **5–12**; in months **0–4** the published value carries the current live Logility UA1 / baseline rather than a HERO-authored overwrite. UA2–UA6, ADS2, and PROMO_LIFT are allowed across months 0–12.
+- **Output format:** emitted outbound values are fully populated, exported as whole integers, and rounded to the nearest whole unit with halves rounded away from zero.
+- **Delta-table granularity:** the processing tables are weekly-grain, append-by-run history tables. Within a run, HERO emits only the final effective outbound row for each changed weekly key; later runs append new rows for the same weekly key.
 
 ## Orchestration chain (weekly)
 
-1. **Job 1 (Hasbro)** — **Fridays at 12:00pm EST**; populates the HERO field-forecast and consensus delta-history tables.
-2. **Job 2 (Hasbro)** — **Fridays at 2:30pm EST**, triggered on Job 1 success; sends a REST call to Logility to extract those tables.
-3. **Job 3 (Logility)** — triggered by the REST call; extracts the data, updates an internal staging table, and emails a completion confirmation.
+**HERO-owned weekly export step**
 
-A **process-lock checker** prevents a new run from overlapping one still in progress.
+- **Job 1 (Hasbro / Databricks)** — Fridays at 12:00pm Eastern; runs the final post-processing step and then materializes the HERO field-forecast and consensus export artifacts.
 
-!!! note "Databricks → Logility transport"
-    **Post-pilot** the transport is **schedule-based** (run on a schedule). **During the pilot** it is **triggered manually via Run Options**.
+**Downstream orchestration (external, not HERO jobs)**
+
+After the HERO export completes, downstream Hasbro / Logility transport and extraction steps pick up those artifacts for processing on the Logility side. These are external orchestration steps, not HERO-internal jobs, and any specific timings or run controls for them are owned in the downstream orchestration spec rather than the HERO repo.
+
+!!! note "Manual runs & transport"
+    Controlled manual runs via Run Options are available for testing, pilot validation, and fallback operation. The recurring HERO publish cadence itself is the scheduled Friday export pipeline; any downstream pickup from Databricks into Logility should be understood as downstream orchestration rather than a separate HERO authoring rule.
 
 ## Contingency CSV (manual fallback)
 
-If direct integration is not ready, HERO can produce a **contingency CSV** set for manual loading into Logility: **8 files** (UA1–UA6 plus a positive-enrichments file → ADS2 and a negative-enrichments file → PROMO_LIFT), one row per Level 1 key, with 78 week columns and no null cells. A row appears only if that file's measure changed (delta at row level), but every included row is fully populated (full at cell level). Clear rules apply (UA1 clears to the live Logility baseline; UA2–UA6, ADS2, PROMO_LIFT clear to 0).
+If direct integration is not ready, HERO can produce a contingency CSV set for manual loading into Logility: **8 files** (UA1–UA6, Positive Enrichments → ADS2, and Negative Enrichments → PROMO_LIFT). Each file is a wide Level 1 file with 3 key columns and ordinal week columns 1–78. A row appears only if that file's measure changed for that Level 1 key, but every included row is fully populated. Clear rules apply: UA1 clears back to the live Logility UA1 / baseline; UA2–UA6, ADS2, and PROMO_LIFT clear to 0.
 
 ## How this connects to the end-to-end process
 
-Baseline generated upstream (Logility / Daybreak) → enrichment capture and reconciliation in HERO (Level 2.5 changes fanned out to Level 1) → dashboard shows the number **before and after** adjustment → executive sign-off → the **weekly Friday export** publishes the deltas into the Logility arrays.
+Baseline generated upstream (Logility / Daybreak) → enrichment capture and reconciliation in HERO (with Level 2.5 changes fanned out to Level 1) → dashboard shows the number **before and after** adjustment → executive sign-off → the weekly Friday export publishes the deltas into the Logility arrays / export surfaces.
 
 ## Related pages
 
