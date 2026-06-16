@@ -19,6 +19,8 @@ Provides visualisations of baseline forecasts, enrichments, consensus forecasts,
 
 ## POS (Point of Sale) Glidepath
 
+[Open in Power BI](https://app.powerbi.com/links/9YKCWlN-jc?ctid=701edd3e-c7a8-4789-b1ce-8a243620d68f&pbi_source=linkShare)
+
 Four dashboard tabs, consumed in Power BI with input via a web enrichment template:
 
 1. Monthly POS View
@@ -27,6 +29,8 @@ Four dashboard tabs, consumed in Power BI with input via a web enrichment templa
 4. Global Overview — Shipment
 
 ## AIM Shipment Revenue Model
+
+[Open in Power BI](https://app.powerbi.com/links/F5YrmkBmfH?ctid=701edd3e-c7a8-4789-b1ce-8a243620d68f&pbi_source=linkShare)
 
 Pages: Cover Sheet, Full-Year Forecast, Cumulative Forecast Chart, Cumulative / Discrete Forecast Table, Brand Cumulative Forecast, plus appendices (Data Sources, Backtest). Source data: SAP HANA table `Z_CV_SUPPLY_CHAIN`. Owner: the AIM team.
 
