@@ -87,9 +87,9 @@
   margin-bottom: 1.6rem;
 }
 
-/* Image-less banner (e.g. Special Considerations): a full navy gradient
-   stands in for the hero photo so the ::before overlay never fades to the
-   page background. Unique among sections — no franchise image, no logo. */
+/* Image-less banner fallback: a full navy gradient stands in for the hero
+   photo so the ::before overlay never fades to the page background.
+   Applied automatically to any section configured without a hero image. */
 .hero-banner--plain {
   background-image: linear-gradient(120deg, #07142a 0%, #0B1F3A 45%, #16365e 100%);
 }
@@ -153,6 +153,34 @@
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.55);
   pointer-events: none;
   user-select: none;
+}
+
+/* Art banner (e.g. Special Considerations) — a self-contained branded
+   illustration shown in full. The artwork already carries the H.E.R.O. TOOL
+   logo + background, so we suppress the navy overlay and texture. Instead of
+   the fixed 200px height (which would crop the logo top/bottom), the banner
+   adopts the artwork's native aspect ratio so the complete H.E.R.O. + TOOL
+   logo is always visible, with no crop, fill, or seam, at every width. */
+.hero-banner--art {
+  height: auto;
+  aspect-ratio: 2172 / 724;
+  background-position: center;
+  background-color: #f3c25b;   /* amber fallback while the image loads */
+}
+.hero-banner--art::before {
+  content: none;               /* no navy gradient over finished artwork */
+}
+
+/* Chapter label rendered as a navy chip so it stays legible on top of any
+   part of the artwork (the right amber field on desktop, the logo on mobile). */
+.hero-banner--art .hero-banner__label {
+  left: auto;
+  right: 1.1rem;
+  bottom: 1.1rem;
+  background: rgba(11, 31, 58, 0.92);
+  padding: 0.34rem 0.72rem;
+  border-radius: 5px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.30);
 }
 
 /* Respect prefers-reduced-motion */
