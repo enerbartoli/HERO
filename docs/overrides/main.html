@@ -16,13 +16,17 @@
 
 {% block content %}
 {% if hero_label %}
-<div class="hero-banner{% if not hero_bg_url %} hero-banner--plain{% endif %}"
+<div class="hero-banner
+            {%- if not hero_bg_url %} hero-banner--plain{% endif %}
+            {%- if hero_variant == 'art' %} hero-banner--art{% endif %}"
      {% if hero_bg_url %}style="background-image:url('{{ hero_bg_url }}')"{% endif %}
      role="img"
      aria-label="{{ hero_label }} — section banner">
+  {% if hero_variant != 'art' %}
   <span class="hero-banner__texture"
         style="background-image:url('{{ hero_pattern_url }}'),url('{{ hero_streaks_url }}')"
         aria-hidden="true"></span>
+  {% endif %}
   {% if hero_logo_url %}
   <img class="hero-banner__logo" src="{{ hero_logo_url }}" alt="" aria-hidden="true">
   {% endif %}
