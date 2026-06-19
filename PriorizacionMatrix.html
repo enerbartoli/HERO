@@ -274,9 +274,9 @@
   <p class="subtitle">3-Axis Bubble Chart · Complexity vs. Benefit vs. User Error Risk</p>
 </header>
 <div class="axis-ref">
-  <span><strong>X →</strong> Complexity / Risk of Implementation (1–4)</span>
-  <span><strong>Y ↑</strong> Benefit / Business Need (1–4)</span>
-  <span><strong>Z ◯</strong> User Error Risk in current model — bubble size (1–4)</span>
+  <span><strong>X →</strong> Complexity / Risk of Implementation (1–4, pasos de 0.5)</span>
+  <span><strong>Y ↑</strong> Benefit / Business Need (1–4, pasos de 0.5)</span>
+  <span><strong>Z ◯</strong> User Error Risk in current model — bubble size (1–4, pasos de 0.5)</span>
 </div>
 
 <div class="container">
@@ -610,7 +610,7 @@ function renderTable() {
       const td = document.createElement("td");
       const sel = makeAxisSelect(row[axis]);
       sel.addEventListener("change", (e) => {
-        row[axis] = parseInt(e.target.value, 10);
+        row[axis] = parseFloat(e.target.value);
         refresh(true);
       });
       td.appendChild(sel);
@@ -643,10 +643,11 @@ function renderTable() {
 function makeAxisSelect(val) {
   const sel = document.createElement("select");
   sel.className = "axis-select";
-  for (let i = 1; i <= 4; i++) {
+  // 0.5 increments from 1 to 4 -> 1, 1.5, 2, 2.5, 3, 3.5, 4
+  for (let i = 1; i <= 4; i += 0.5) {
     const opt = document.createElement("option");
     opt.value = i;
-    opt.textContent = i;
+    opt.textContent = Number.isInteger(i) ? i : i.toFixed(1);
     if (i === val) opt.selected = true;
     sel.appendChild(opt);
   }
