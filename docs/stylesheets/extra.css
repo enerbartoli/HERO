@@ -87,6 +87,13 @@
   margin-bottom: 1.6rem;
 }
 
+/* Image-less banner (e.g. Special Considerations): a full navy gradient
+   stands in for the hero photo so the ::before overlay never fades to the
+   page background. Unique among sections — no franchise image, no logo. */
+.hero-banner--plain {
+  background-image: linear-gradient(120deg, #07142a 0%, #0B1F3A 45%, #16365e 100%);
+}
+
 /* Dark Navy gradient overlay — left (dark) → right (transparent)
    Ensures WCAG-AA contrast for white label text regardless of image. */
 .hero-banner::before {

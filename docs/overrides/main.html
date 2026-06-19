@@ -15,9 +15,9 @@
 #}
 
 {% block content %}
-{% if hero_bg_url %}
-<div class="hero-banner"
-     style="background-image:url('{{ hero_bg_url }}')"
+{% if hero_label %}
+<div class="hero-banner{% if not hero_bg_url %} hero-banner--plain{% endif %}"
+     {% if hero_bg_url %}style="background-image:url('{{ hero_bg_url }}')"{% endif %}
      role="img"
      aria-label="{{ hero_label }} — section banner">
   <span class="hero-banner__texture"

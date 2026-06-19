@@ -99,3 +99,6 @@ nav:
       - Batch orchestration & updates: reference/batch-orchestration-updates.md
       - Deferred in v0: reference/deferred-in-v0.md
       - Documentation governance: reference/documentation-governance.md
+  - Special Considerations During Pilot:
+      - Data Transmission During Contingency: special-considerations/data-transmission-contingency.md
+      - Rules for FCR Adjustment Within Cycle: special-considerations/fcr-adjustment-rules.md

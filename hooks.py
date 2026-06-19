@@ -26,6 +26,9 @@ _SECTION_MAP = [
     ("examples/",        "assets/img/hero-playdoh.jpg",    "assets/img/brands/playdoh-logo.webp",             "Examples"),
     ("help/",            "assets/img/hero-peppa.jpg",      "assets/img/brands/my-little-pony-logo.webp",      "Help & troubleshooting"),
     ("reference/",       "assets/img/hero-monopoly.jpg",   "assets/img/brands/monopoly-logo.webp",            "Reference"),
+    # Pilot-only section: no dedicated hero photo. Renders the default navy
+    # gradient (no franchise image, no logo) — unique among all sections.
+    ("special-considerations/", None,                       None,                                              "Special Considerations During Pilot"),
 ]
 
 _HOME_IMAGE = "assets/img/hero-transformers.jpg"
@@ -56,8 +59,11 @@ def on_page_context(context, page, config, nav, **kwargs):
                 hero_img, hero_logo, hero_lbl = img, logo, lbl
                 break
 
-    if hero_img:
-        context["hero_bg_url"]      = rel_prefix + hero_img
+    # A banner renders whenever a section matched (label is set). The hero
+    # image is optional: sections without one (e.g. Special Considerations)
+    # fall back to the navy gradient defined in extra.css.
+    if hero_lbl:
+        context["hero_bg_url"]      = (rel_prefix + hero_img) if hero_img else None
         context["hero_logo_url"]    = (rel_prefix + hero_logo) if hero_logo else None
         context["hero_label"]       = hero_lbl
         context["hero_pattern_url"] = rel_prefix + _PATTERN
