@@ -7,7 +7,7 @@ Welcome to the operational manual for **HERO (Hasbro Enrichment & Reconciliation
 ## Program tools
 
 <a class="md-button md-button--primary" href="Priorization_Matrix/">Prioritization Matrix</a>
-<a class="md-button" href="https://enerbartoli.github.io/mod1-knowledge-check/" target="_blank" rel="noopener">Module 1 — Knowledge Check ↗</a>
+<a class="md-button" href="https://enerbartoli.github.io/mod1-knowledge-check/" target="_blank" rel="noopener">Knowledge Check ↗</a>
 <a class="md-button" href="https://hasbroinc.sharepoint.com/sites/GlobalPlanningCentralCommandCOE/HERO%20Enrichment/Forms/AllItems.aspx?viewid=8ec78d8e%2D6199%2D4641%2D8bb5%2D108cfbe7bc40&amp;newTargetListUrl=%2Fsites%2FGlobalPlanningCentralCommandCOE%2FHERO%20Enrichment&amp;viewpath=%2Fsites%2FGlobalPlanningCentralCommandCOE%2FHERO%20Enrichment%2FForms%2FAllItems%2Easpx" target="_blank" rel="noopener">Training Recordings ↗</a>
 <a class="md-button" href="https://hasbroinc.sharepoint.com/:f:/r/sites/GenpactStatFCSTAccelerationPrj2/Shared%20Documents/0.%20Baseline%20Management%20Playbook/01.%20Official%20Approved%20Versions_Read%20Only?csf=1&amp;web=1&amp;e=WtdKU6" target="_blank" rel="noopener">Forecasting Playbook ↗</a>
 
