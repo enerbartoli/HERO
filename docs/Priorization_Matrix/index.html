@@ -265,9 +265,82 @@
     .container { padding: 16px; }
     header, .axis-ref { padding-left: 16px; padding-right: 16px; }
   }
+
+  /* ---------- PASSWORD GATE ---------- */
+  #app.locked { display: none; }
+  #authGate {
+    position: fixed;
+    inset: 0;
+    background: var(--navy);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+  }
+  .auth-card {
+    background: var(--white);
+    width: 340px;
+    max-width: 90vw;
+    padding: 28px 26px 24px;
+    border-top: 5px solid var(--yellow);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.35);
+    text-align: center;
+  }
+  .auth-card h2 {
+    margin: 0 0 4px;
+    color: var(--navy);
+    font-size: 19px;
+  }
+  .auth-card p {
+    margin: 0 0 18px;
+    font-size: 12px;
+    color: #5a657a;
+  }
+  .auth-card input {
+    width: 100%;
+    padding: 11px 12px;
+    border: 1px solid #c2cdde;
+    font-family: inherit;
+    font-size: 14px;
+    margin-bottom: 12px;
+  }
+  .auth-card input:focus { outline: 2px solid var(--teal); border-color: var(--teal); }
+  .auth-card button {
+    width: 100%;
+    border: none;
+    cursor: pointer;
+    background: var(--teal);
+    color: var(--white);
+    font-family: inherit;
+    font-weight: bold;
+    font-size: 14px;
+    padding: 11px;
+    letter-spacing: 0.4px;
+  }
+  .auth-card button:hover { background: #008b94; }
+  .auth-error {
+    color: var(--q-red);
+    font-size: 12px;
+    min-height: 16px;
+    margin-top: 10px;
+  }
 </style>
 </head>
 <body>
+
+<!-- ============ PASSWORD GATE ============ -->
+<div id="authGate">
+  <div class="auth-card">
+    <h2>HERO — Acceso restringido</h2>
+    <p>Introduce la contraseña para ver la matriz de priorización.</p>
+    <input type="password" id="authInput" placeholder="Contraseña" autocomplete="off" autofocus />
+    <button id="authBtn">Entrar</button>
+    <div class="auth-error" id="authError"></div>
+  </div>
+</div>
+
+<!-- ============ APP (hidden until authenticated) ============ -->
+<div id="app" class="locked">
 
 <header>
   <h1>HERO Program — Enhancement Prioritization Matrix</h1>
@@ -347,6 +420,8 @@
 <footer>
   HERO Program &nbsp;|&nbsp; Hasbro &nbsp;|&nbsp; UK Pilot 2026 &nbsp;|&nbsp; Forecast Enrichment
 </footer>
+
+</div><!-- /#app -->
 
 <script>
 /* ============================================================
@@ -503,7 +578,9 @@ function buildChartData() {
   }));
 }
 
-const chart = new Chart(ctx, {
+let chart = null;
+function createChart() {
+chart = new Chart(ctx, {
   type: "bubble",
   data: {
     datasets: [{
@@ -566,6 +643,7 @@ const chart = new Chart(ctx, {
   },
   plugins: [quadrantPlugin, bubbleLabelPlugin]
 });
+}
 
 function hexToRgba(hex, alpha) {
   const h = hex.replace("#", "");
@@ -722,10 +800,51 @@ document.getElementById("csvBtn").addEventListener("click", () => {
 });
 
 /* ============================================================
-   Init
+   Init app (called only after successful authentication)
    ============================================================ */
-renderTable();
-renderLegendItems();
+let appStarted = false;
+function initApp() {
+  if (appStarted) return;
+  appStarted = true;
+  document.getElementById("app").classList.remove("locked");
+  createChart();        // chart sized correctly now that #app is visible
+  renderTable();
+  renderLegendItems();
+}
+
+/* ============================================================
+   Password gate
+   --------------------------------------------------------------
+   NOTE: this is client-side obfuscation, NOT real security.
+   Only the SHA-256 hash of the password is stored (never the
+   plaintext), so the password is not visible in the source —
+   but anyone technical can still bypass a static-site gate.
+   ============================================================ */
+const PASS_HASH = "a05de11fe25663fb64efe30e3b0e357e17023a1e28ad2ae2e13953370bd8656c";
+
+async function sha256(text) {
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, "0")).join("");
+}
+
+async function tryLogin() {
+  const input = document.getElementById("authInput");
+  const err = document.getElementById("authError");
+  const hash = await sha256(input.value);
+  if (hash === PASS_HASH) {
+    document.getElementById("authGate").style.display = "none";
+    initApp();
+  } else {
+    err.textContent = "Contraseña incorrecta.";
+    input.value = "";
+    input.focus();
+  }
+}
+
+document.getElementById("authBtn").addEventListener("click", tryLogin);
+document.getElementById("authInput").addEventListener("keydown", (e) => {
+  if (e.key === "Enter") tryLogin();
+});
 </script>
 </body>
 </html>
