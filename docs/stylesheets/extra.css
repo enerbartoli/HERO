@@ -321,3 +321,14 @@
   margin-left: .35rem;
   vertical-align: middle;
 }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Mobile width — reclaim horizontal space on small phones.
+   Material's default content gutters leave noticeable empty margins on
+   narrow screens; tighten them so body text and the tool grid use more
+   of the viewport.
+   ═══════════════════════════════════════════════════════════════════════ */
+@media screen and (max-width: 600px) {
+  .md-content__inner { margin-left: .55rem; margin-right: .55rem; }
+  .tool-grid { gap: .7rem; }
+}
