@@ -151,6 +151,23 @@
   .legend-items li:first-child { border-top: none; }
   .legend-items .empty { color: #9aa3b2; font-style: italic; }
 
+  /* ---------- MOBILE COLOR LEGEND (initials → initiative) ---------- */
+  /* Hidden by default; the chart's label plugin shows it only when the chart
+     is too narrow to draw bubble names (i.e. on phones). */
+  .color-legend {
+    display: none;
+    flex-wrap: wrap;
+    gap: 6px 16px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #e3e9f3;
+    font-size: 11px;
+  }
+  .cl-item { display: flex; align-items: center; gap: 6px; }
+  .cl-item .color-dot { width: 11px; height: 11px; margin: 0; }
+  .cl-ini { font-weight: bold; color: var(--navy); min-width: 26px; }
+  .cl-name { color: #444; }
+
   /* ---------- TABLE ---------- */
   .table-panel {
     margin: 24px 0 0;
@@ -391,6 +408,9 @@
       <div class="chart-wrap">
         <canvas id="bubbleChart"></canvas>
       </div>
+      <!-- Mobile color legend (initials → initiative); shown only when the
+           chart is too narrow to label bubbles with names. -->
+      <div class="color-legend" id="colorLegend"></div>
     </div>
 
     <!-- LEGEND -->
@@ -501,6 +521,18 @@ function zToRadius(z) {
   return 10 + (z - 1) * 6;
 }
 
+/* ---------- Initials for compact (mobile) bubble labels ---------- */
+const INITIAL_STOPWORDS = ["to", "the", "of", "and", "in", "for", "a", "&", "-"];
+function initials(name) {
+  const tokens = (name || "")
+    .split(/\s+/)
+    .map(t => t.replace(/[^A-Za-z0-9]/g, ""))      // drop dots etc. ("F.A.S.T" -> "FAST")
+    .filter(t => t && !INITIAL_STOPWORDS.includes(t.toLowerCase()));
+  let ini = tokens.map(t => t[0]).join("").toUpperCase();
+  if (!ini) ini = (name || "").replace(/[^A-Za-z0-9]/g, "").slice(0, 2).toUpperCase();
+  return ini.slice(0, 3);
+}
+
 /* ============================================================
    Chart.js — quadrant background plugin
    ============================================================ */
@@ -573,28 +605,44 @@ const bubbleLabelPlugin = {
     const { ctx, chartArea } = chart;
     const meta = chart.getDatasetMeta(0);
     if (!meta) return;
-    // On narrow charts (mobile) the name labels collide, so we drop them and
-    // keep only the Z number inside each bubble. The names stay visible in the
-    // Quadrant Guide below and in the hover tooltip.
+    // On narrow charts (mobile) the name labels collide. There we label each
+    // bubble with just its INITIALS and surface a color legend below the chart
+    // to map initials -> initiative. On wider charts we keep the full name
+    // above the bubble and the Z value inside it.
     const showNames = chartArea && chartArea.width >= 460;
+
+    // Toggle the mobile color legend in sync with the labeling mode.
+    const legendEl = document.getElementById("colorLegend");
+    if (legendEl) {
+      const disp = showNames ? "none" : "flex";
+      if (legendEl.style.display !== disp) legendEl.style.display = disp;
+    }
+
     ctx.save();
     meta.data.forEach((el, i) => {
       const raw = chart.data.datasets[0].data[i];
       if (!raw) return;
-      // Z number centered in bubble
-      ctx.font = "bold 12px Arial";
-      ctx.fillStyle = "#ffffff";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText(raw.z, el.x, el.y);
 
       if (showNames) {
+        // Z number centered in bubble
+        ctx.font = "bold 12px Arial";
+        ctx.fillStyle = "#ffffff";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(raw.z, el.x, el.y);
         // Short name label above bubble
         ctx.font = "11px Arial";
         ctx.fillStyle = "#1B2A5E";
         ctx.textBaseline = "bottom";
         const shortName = raw.label.length > 26 ? raw.label.slice(0, 24) + "…" : raw.label;
         ctx.fillText(shortName, el.x, el.y - el.options.radius - 3);
+      } else {
+        // Mobile: only the initials, centered inside the bubble
+        ctx.font = "bold 9px Arial";
+        ctx.fillStyle = "#ffffff";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(initials(raw.label), el.x, el.y);
       }
     });
     ctx.restore();
@@ -792,6 +840,19 @@ function renderLegendItems() {
   });
 }
 
+/* ---------- Mobile color legend: color + initials -> initiative ---------- */
+function renderColorLegend() {
+  const el = document.getElementById("colorLegend");
+  if (!el) return;
+  el.innerHTML = rows.map(r =>
+    `<span class="cl-item">` +
+      `<span class="color-dot" style="background:${r.color}"></span>` +
+      `<span class="cl-ini">${initials(r.name)}</span>` +
+      `<span class="cl-name">${r.name}</span>` +
+    `</span>`
+  ).join("");
+}
+
 /* ============================================================
    Refresh — chart + (optionally) table + legend
    ============================================================ */
@@ -800,6 +861,7 @@ function refresh(rerenderTable) {
   chart.update();
   if (rerenderTable) renderTable();
   renderLegendItems();
+  renderColorLegend();
 }
 
 /* ============================================================
@@ -853,6 +915,7 @@ function initApp() {
   requestAnimationFrame(() => { if (chart) chart.resize(); });
   renderTable();
   renderLegendItems();
+  renderColorLegend();
 }
 
 /* ============================================================
