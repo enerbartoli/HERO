@@ -59,6 +59,8 @@
 
   /* ---------- MAIN LAYOUT ---------- */
   .container {
+    max-width: 1240px;
+    margin: 0 auto;
     padding: 24px 32px;
   }
   .top-row {
@@ -74,13 +76,13 @@
     border: 1px solid #d4ddec;
     padding: 16px;
   }
-  /* Quadrant guide sits BELOW the chart as a 2×2 grid so the square bubble
-     chart stays centered and symmetric as the visual focal point. */
+  /* Quadrant guide sits BELOW the chart, spanning the full container width
+     as a 4-up row, so the square bubble chart stays the centered focal point
+     while the guide and table make full use of the desktop width. */
   .legend-panel {
     width: 100%;
-    max-width: 820px;
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 14px;
   }
   .legend-panel .panel-title { grid-column: 1 / -1; margin-bottom: 0; }
@@ -152,8 +154,7 @@
 
   /* ---------- TABLE ---------- */
   .table-panel {
-    margin: 24px auto 0;
-    max-width: 820px;
+    margin: 24px 0 0;
     background: var(--white);
     border: 1px solid #d4ddec;
     padding: 16px;
@@ -277,6 +278,7 @@
   @media (max-width: 900px) {
     .top-row { flex-direction: column; }
     .chart-panel, .legend-panel { flex: 1 1 auto; width: 100%; }
+    .legend-panel { grid-template-columns: repeat(2, 1fr); }
     .container { padding: 16px; }
     header, .axis-ref { padding-left: 16px; padding-right: 16px; }
   }
