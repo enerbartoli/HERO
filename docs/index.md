@@ -4,6 +4,11 @@
 
 Welcome to the operational manual for **HERO (Hasbro Enrichment & Reconciliation Optimizer)** — the business-user capture layer of the Forecast Enrichment Process.
 
+## Program tools
+
+<a class="md-button md-button--primary" href="Priorization_Matrix/">Prioritization Matrix</a>
+<a class="md-button" href="https://enerbartoli.github.io/mod1-knowledge-check/" target="_blank" rel="noopener">Module 1 — Knowledge Check ↗</a>
+
 ## How to use this manual
 
 This is a **mechanical guide** to using HERO. It is not a substitute for training on the monthly planning process. Use it when you need to know what a field means, what a button does, how a template behaves, what happens after you upload, or how to interpret a validation message.
