@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>HERO Program — Prioritization Matrix</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<style>
+  :root {
+    --navy: #1B2A5E;
+    --teal: #00A3AD;
+    --yellow: #FFD100;
+    --white: #FFFFFF;
+    --bg: #EEF3FA;
+    --q-green: #00A35D;
+    --q-blue: #2471A3;
+    --q-gray: #717D7E;
+    --q-red: #C0392B;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    font-family: Arial, Helvetica, "Segoe UI", sans-serif;
+    color: #1c1c1c;
+  }
+
+  /* ---------- HEADER ---------- */
+  header {
+    background: var(--navy);
+    color: var(--white);
+    padding: 22px 32px 16px;
+    border-bottom: 4px solid var(--yellow);
+  }
+  header h1 {
+    margin: 0;
+    font-size: 24px;
+    letter-spacing: 0.3px;
+  }
+  header .subtitle {
+    margin: 4px 0 0;
+    font-size: 14px;
+    color: #c7d2ec;
+  }
+  .axis-ref {
+    background: var(--teal);
+    color: var(--white);
+    padding: 7px 32px;
+    font-size: 12px;
+    letter-spacing: 0.2px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 22px;
+  }
+  .axis-ref strong { color: var(--yellow); }
+
+  /* ---------- MAIN LAYOUT ---------- */
+  .container {
+    padding: 24px 32px;
+  }
+  .top-row {
+    display: flex;
+    gap: 24px;
+    align-items: stretch;
+  }
+  .chart-panel {
+    flex: 0 0 64%;
+    background: var(--white);
+    border: 1px solid #d4ddec;
+    padding: 16px;
+  }
+  .legend-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .chart-wrap {
+    position: relative;
+    width: 100%;
+    height: 460px;
+  }
+  .panel-title {
+    margin: 0 0 12px;
+    font-size: 15px;
+    color: var(--navy);
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-left: 4px solid var(--teal);
+    padding-left: 8px;
+  }
+
+  /* ---------- LEGEND ---------- */
+  .legend-block {
+    background: var(--white);
+    border: 1px solid #d4ddec;
+    border-left-width: 6px;
+    padding: 10px 12px;
+  }
+  .legend-block.green { border-left-color: var(--q-green); }
+  .legend-block.blue  { border-left-color: var(--q-blue); }
+  .legend-block.gray  { border-left-color: var(--q-gray); }
+  .legend-block.red   { border-left-color: var(--q-red); }
+  .legend-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: bold;
+    font-size: 14px;
+    color: var(--navy);
+  }
+  .chip {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    display: inline-block;
+    flex: 0 0 auto;
+  }
+  .chip.green { background: var(--q-green); }
+  .chip.blue  { background: var(--q-blue); }
+  .chip.gray  { background: var(--q-gray); }
+  .chip.red   { background: var(--q-red); }
+  .legend-desc {
+    margin: 4px 0 6px;
+    font-size: 12px;
+    color: #444;
+    line-height: 1.4;
+  }
+  .legend-items {
+    font-size: 11px;
+    color: var(--navy);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .legend-items li {
+    padding: 2px 0;
+    border-top: 1px dashed #e0e6f0;
+  }
+  .legend-items li:first-child { border-top: none; }
+  .legend-items .empty { color: #9aa3b2; font-style: italic; }
+
+  /* ---------- TABLE ---------- */
+  .table-panel {
+    margin-top: 24px;
+    background: var(--white);
+    border: 1px solid #d4ddec;
+    padding: 16px;
+  }
+  .table-actions {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+  button.btn {
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: bold;
+    padding: 9px 16px;
+    letter-spacing: 0.3px;
+  }
+  .btn-primary { background: var(--teal); color: var(--white); }
+  .btn-primary:hover { background: #008b94; }
+  .btn-secondary { background: var(--navy); color: var(--white); }
+  .btn-secondary:hover { background: #142046; }
+  .btn-accent { background: var(--yellow); color: var(--navy); }
+  .btn-accent:hover { background: #e6bd00; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  thead th {
+    background: var(--navy);
+    color: var(--white);
+    text-align: left;
+    padding: 9px 10px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+  }
+  tbody td {
+    padding: 6px 10px;
+    border-bottom: 1px solid #e3e9f3;
+    vertical-align: middle;
+  }
+  tbody tr:nth-child(even) { background: #f7faff; }
+  .num-cell { width: 30px; color: var(--navy); font-weight: bold; text-align: center; }
+  .color-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 6px;
+    vertical-align: middle;
+    border: 1px solid rgba(0,0,0,0.15);
+  }
+  input.name-input {
+    width: 100%;
+    min-width: 180px;
+    padding: 6px 8px;
+    border: 1px solid #c2cdde;
+    font-family: inherit;
+    font-size: 13px;
+  }
+  select.axis-select {
+    padding: 6px 8px;
+    border: 1px solid #c2cdde;
+    font-family: inherit;
+    font-size: 13px;
+    background: var(--white);
+    cursor: pointer;
+  }
+  .quad-cell {
+    font-weight: bold;
+    font-size: 12px;
+    padding: 5px 9px;
+    border-radius: 3px;
+    white-space: nowrap;
+    display: inline-block;
+    color: var(--white);
+  }
+  .quad-green { background: var(--q-green); }
+  .quad-blue  { background: var(--q-blue); }
+  .quad-gray  { background: var(--q-gray); }
+  .quad-red   { background: var(--q-red); }
+  .del-btn {
+    background: #fff;
+    border: 1px solid var(--q-red);
+    color: var(--q-red);
+    cursor: pointer;
+    width: 28px;
+    height: 28px;
+    font-size: 15px;
+    line-height: 1;
+    border-radius: 3px;
+  }
+  .del-btn:hover { background: var(--q-red); color: #fff; }
+
+  /* ---------- FOOTER ---------- */
+  footer {
+    background: var(--navy);
+    color: #c7d2ec;
+    text-align: center;
+    padding: 14px;
+    font-size: 12px;
+    letter-spacing: 0.4px;
+    margin-top: 24px;
+    border-top: 4px solid var(--yellow);
+  }
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width: 900px) {
+    .top-row { flex-direction: column; }
+    .chart-panel, .legend-panel { flex: 1 1 auto; width: 100%; }
+    .container { padding: 16px; }
+    header, .axis-ref { padding-left: 16px; padding-right: 16px; }
+  }
+
+  /* ---------- PASSWORD GATE ---------- */
+  #app.locked { display: none; }
+  #authGate {
+    position: fixed;
+    inset: 0;
+    background: var(--navy);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+  }
+  .auth-card {
+    background: var(--white);
+    width: 340px;
+    max-width: 90vw;
+    padding: 28px 26px 24px;
+    border-top: 5px solid var(--yellow);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.35);
+    text-align: center;
+  }
+  .auth-card h2 {
+    margin: 0 0 4px;
+    color: var(--navy);
+    font-size: 19px;
+  }
+  .auth-card p {
+    margin: 0 0 18px;
+    font-size: 12px;
+    color: #5a657a;
+  }
+  .auth-card input {
+    width: 100%;
+    padding: 11px 12px;
+    border: 1px solid #c2cdde;
+    font-family: inherit;
+    font-size: 14px;
+    margin-bottom: 12px;
+  }
+  .auth-card input:focus { outline: 2px solid var(--teal); border-color: var(--teal); }
+  .auth-card button {
+    width: 100%;
+    border: none;
+    cursor: pointer;
+    background: var(--teal);
+    color: var(--white);
+    font-family: inherit;
+    font-weight: bold;
+    font-size: 14px;
+    padding: 11px;
+    letter-spacing: 0.4px;
+  }
+  .auth-card button:hover { background: #008b94; }
+  .auth-error {
+    color: var(--q-red);
+    font-size: 12px;
+    min-height: 16px;
+    margin-top: 10px;
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ PASSWORD GATE ============ -->
+<div id="authGate">
+  <div class="auth-card">
+    <h2>HERO — Acceso restringido</h2>
+    <p>Introduce la contraseña para ver la matriz de priorización.</p>
+    <input type="password" id="authInput" placeholder="Contraseña" autocomplete="off" autofocus />
+    <button id="authBtn">Entrar</button>
+    <div class="auth-error" id="authError"></div>
+  </div>
+</div>
+
+<!-- ============ APP (hidden until authenticated) ============ -->
+<div id="app" class="locked">
+
+<header>
+  <h1>HERO Program — Enhancement Prioritization Matrix</h1>
+  <p class="subtitle">3-Axis Bubble Chart · Complexity vs. Benefit vs. User Error Risk</p>
+</header>
+<div class="axis-ref">
+  <span><strong>X →</strong> Complexity / Risk of Implementation (1–4, pasos de 0.5)</span>
+  <span><strong>Y ↑</strong> Benefit / Business Need (1–4, pasos de 0.5)</span>
+  <span><strong>Z ◯</strong> User Error Risk in current model — bubble size (1–4, pasos de 0.5)</span>
+</div>
+
+<div class="container">
+  <div class="top-row">
+    <!-- CHART -->
+    <div class="chart-panel">
+      <p class="panel-title">Prioritization Bubble Chart</p>
+      <div class="chart-wrap">
+        <canvas id="bubbleChart"></canvas>
+      </div>
+    </div>
+
+    <!-- LEGEND -->
+    <div class="legend-panel">
+      <p class="panel-title" style="margin-bottom:0;">Quadrant Guide</p>
+
+      <div class="legend-block green">
+        <div class="legend-head"><span class="chip green"></span> QUICK WINS</div>
+        <p class="legend-desc">Low complexity, high benefit. Prioritize — high return, low effort.</p>
+        <ul class="legend-items" data-quad="Quick Wins"></ul>
+      </div>
+
+      <div class="legend-block blue">
+        <div class="legend-head"><span class="chip blue"></span> STRATEGIC BETS</div>
+        <p class="legend-desc">High complexity, high benefit. Plan carefully — worth the investment.</p>
+        <ul class="legend-items" data-quad="Strategic Bets"></ul>
+      </div>
+
+      <div class="legend-block gray">
+        <div class="legend-head"><span class="chip gray"></span> LOW PRIORITY</div>
+        <p class="legend-desc">Low complexity, low benefit. Defer — limited impact.</p>
+        <ul class="legend-items" data-quad="Low Priority"></ul>
+      </div>
+
+      <div class="legend-block red">
+        <div class="legend-head"><span class="chip red"></span> RECONSIDER</div>
+        <p class="legend-desc">High complexity, low benefit. Avoid unless strategically forced.</p>
+        <ul class="legend-items" data-quad="Reconsider"></ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-panel">
+    <p class="panel-title">Enhancement Inputs</p>
+    <div class="table-actions">
+      <button class="btn btn-primary" id="addBtn">+ Add Enhancement</button>
+      <button class="btn btn-secondary" id="pngBtn">Export PNG</button>
+      <button class="btn btn-accent" id="csvBtn">Export CSV</button>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Enhancement / Feature</th>
+          <th>X — Complexity / Risk</th>
+          <th>Y — Benefit / Need</th>
+          <th>Z — User Error Risk</th>
+          <th>Quadrant</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<footer>
+  HERO Program &nbsp;|&nbsp; Hasbro &nbsp;|&nbsp; UK Pilot 2026 &nbsp;|&nbsp; Forecast Enrichment
+</footer>
+
+</div><!-- /#app -->
+
+<script>
+/* ============================================================
+   HERO Prioritization Matrix — vanilla JS + Chart.js v4
+   ============================================================ */
+
+// Distinct, non-default color palette for bubbles
+const PALETTE = [
+  "#1B2A5E", // navy
+  "#00A3AD", // teal
+  "#E67E22", // orange
+  "#8E44AD", // purple
+  "#16A085", // green-teal
+  "#C0392B", // red
+  "#2980B9", // blue
+  "#D4AC0D", // gold
+  "#7F8C8D", // gray
+  "#E84393", // pink
+];
+
+// Initial dataset
+let rows = [
+  { name: "F.A.S.T to HERO Interface Automation",            x: 2, y: 2, z: 4 },
+  { name: "No Forecast Related Functionality",               x: 3, y: 2, z: 3 },
+  { name: "Users Gating",                                    x: 2, y: 3, z: 3 },
+  { name: "Hierarchical Enrichment Capture & Desaggregation", x: 4, y: 3, z: 2 },
+];
+
+let colorCursor = 0;
+// assign a stable color to each row
+rows.forEach(r => { r.color = PALETTE[colorCursor++ % PALETTE.length]; });
+
+/* ---------- Quadrant logic ---------- */
+function getQuadrant(x, y) {
+  if (x <= 2.5 && y > 2.5)  return { name: "Quick Wins",      cls: "quad-green", key: "green" };
+  if (x > 2.5  && y > 2.5)  return { name: "Strategic Bets",  cls: "quad-blue",  key: "blue"  };
+  if (x <= 2.5 && y <= 2.5) return { name: "Low Priority",    cls: "quad-gray",  key: "gray"  };
+  return { name: "Reconsider", cls: "quad-red", key: "red" };
+}
+
+/* ---------- Bubble radius from Z (1..4) ---------- */
+function zToRadius(z) {
+  // Z=1 -> 10px, Z=4 -> 28px
+  return 10 + (z - 1) * 6;
+}
+
+/* ============================================================
+   Chart.js — quadrant background plugin
+   ============================================================ */
+const quadrantPlugin = {
+  id: "quadrants",
+  beforeDraw(chart) {
+    const { ctx, chartArea, scales } = chart;
+    if (!chartArea || !scales.x || !scales.y) return;
+    const { left, right, top, bottom } = chartArea;
+    const xMid = scales.x.getPixelForValue(2.5);
+    const yMid = scales.y.getPixelForValue(2.5);
+
+    ctx.save();
+
+    // Quadrant fills
+    // Top-left: QUICK WINS (green)
+    ctx.fillStyle = "rgba(0, 163, 93, 0.12)";
+    ctx.fillRect(left, top, xMid - left, yMid - top);
+    // Top-right: STRATEGIC BETS (blue)
+    ctx.fillStyle = "rgba(36, 113, 163, 0.12)";
+    ctx.fillRect(xMid, top, right - xMid, yMid - top);
+    // Bottom-left: LOW PRIORITY (gray)
+    ctx.fillStyle = "rgba(113, 125, 126, 0.10)";
+    ctx.fillRect(left, yMid, xMid - left, bottom - yMid);
+    // Bottom-right: RECONSIDER (red)
+    ctx.fillStyle = "rgba(192, 57, 43, 0.10)";
+    ctx.fillRect(xMid, yMid, right - xMid, bottom - yMid);
+
+    // Watermark labels
+    ctx.font = "italic bold 14px Arial";
+    ctx.textBaseline = "top";
+    const pad = 10;
+
+    ctx.fillStyle = "rgba(0, 163, 93, 0.45)";
+    ctx.textAlign = "left";
+    ctx.fillText("QUICK WINS", left + pad, top + pad);
+
+    ctx.fillStyle = "rgba(36, 113, 163, 0.45)";
+    ctx.textAlign = "right";
+    ctx.fillText("STRATEGIC BETS", right - pad, top + pad);
+
+    ctx.fillStyle = "rgba(113, 125, 126, 0.55)";
+    ctx.textAlign = "left";
+    ctx.textBaseline = "bottom";
+    ctx.fillText("LOW PRIORITY", left + pad, bottom - pad);
+
+    ctx.fillStyle = "rgba(192, 57, 43, 0.50)";
+    ctx.textAlign = "right";
+    ctx.fillText("RECONSIDER", right - pad, bottom - pad);
+
+    // Midpoint divider lines (dashed, thicker than gridlines)
+    ctx.setLineDash([6, 5]);
+    ctx.lineWidth = 1.8;
+    ctx.strokeStyle = "rgba(27, 42, 94, 0.55)";
+    ctx.beginPath();
+    ctx.moveTo(xMid, top);
+    ctx.lineTo(xMid, bottom);
+    ctx.moveTo(left, yMid);
+    ctx.lineTo(right, yMid);
+    ctx.stroke();
+
+    ctx.restore();
+  }
+};
+
+/* ---------- Data label plugin (Z value inside bubble) ---------- */
+const bubbleLabelPlugin = {
+  id: "bubbleLabels",
+  afterDatasetsDraw(chart) {
+    const { ctx } = chart;
+    const meta = chart.getDatasetMeta(0);
+    if (!meta) return;
+    ctx.save();
+    meta.data.forEach((el, i) => {
+      const raw = chart.data.datasets[0].data[i];
+      if (!raw) return;
+      // Z number centered in bubble
+      ctx.font = "bold 12px Arial";
+      ctx.fillStyle = "#ffffff";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(raw.z, el.x, el.y);
+
+      // Short name label above bubble
+      ctx.font = "11px Arial";
+      ctx.fillStyle = "#1B2A5E";
+      ctx.textBaseline = "bottom";
+      const shortName = raw.label.length > 26 ? raw.label.slice(0, 24) + "…" : raw.label;
+      ctx.fillText(shortName, el.x, el.y - el.options.radius - 3);
+    });
+    ctx.restore();
+  }
+};
+
+/* ============================================================
+   Build chart
+   ============================================================ */
+const ctx = document.getElementById("bubbleChart").getContext("2d");
+
+function buildChartData() {
+  return rows.map(r => ({
+    x: r.x,
+    y: r.y,
+    z: r.z,
+    r: zToRadius(r.z),
+    label: r.name,
+    bg: r.color
+  }));
+}
+
+let chart = null;
+function createChart() {
+chart = new Chart(ctx, {
+  type: "bubble",
+  data: {
+    datasets: [{
+      label: "Enhancements",
+      data: buildChartData(),
+      backgroundColor: (c) => {
+        const d = c.raw;
+        return d ? hexToRgba(d.bg, 0.75) : "#1B2A5E";
+      },
+      borderColor: (c) => {
+        const d = c.raw;
+        return d ? d.bg : "#1B2A5E";
+      },
+      borderWidth: 1.5,
+      parsing: false,
+      radius: (c) => (c.raw ? c.raw.r : 10),
+      hoverRadius: (c) => (c.raw ? c.raw.r + 3 : 12),
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    layout: { padding: { top: 8, right: 8 } },
+    scales: {
+      x: {
+        min: 0.5, max: 4.5,
+        title: { display: true, text: "Complexity / Risk of Implementation →", color: "#1B2A5E", font: { weight: "bold", size: 12 } },
+        ticks: { stepSize: 1, color: "#1B2A5E" },
+        grid: { color: "#e1e7f0" }
+      },
+      y: {
+        min: 0.5, max: 4.5,
+        title: { display: true, text: "Benefit / Business Need ↑", color: "#1B2A5E", font: { weight: "bold", size: 12 } },
+        ticks: { stepSize: 1, color: "#1B2A5E" },
+        grid: { color: "#e1e7f0" }
+      }
+    },
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: "#1B2A5E",
+        titleColor: "#FFD100",
+        bodyColor: "#ffffff",
+        padding: 12,
+        callbacks: {
+          title: (items) => items[0].raw.label,
+          label: (item) => {
+            const d = item.raw;
+            const q = getQuadrant(d.x, d.y);
+            return [
+              "Complexity / Risk (X): " + d.x,
+              "Benefit / Need (Y): " + d.y,
+              "User Error Risk (Z): " + d.z,
+              "Quadrant: " + q.name
+            ];
+          }
+        }
+      }
+    }
+  },
+  plugins: [quadrantPlugin, bubbleLabelPlugin]
+});
+}
+
+function hexToRgba(hex, alpha) {
+  const h = hex.replace("#", "");
+  const r = parseInt(h.substring(0, 2), 16);
+  const g = parseInt(h.substring(2, 4), 16);
+  const b = parseInt(h.substring(4, 6), 16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
+/* ============================================================
+   Render table
+   ============================================================ */
+const tableBody = document.getElementById("tableBody");
+
+function renderTable() {
+  tableBody.innerHTML = "";
+  rows.forEach((row, idx) => {
+    const tr = document.createElement("tr");
+
+    // # number + color dot
+    const numTd = document.createElement("td");
+    numTd.className = "num-cell";
+    numTd.innerHTML = `<span class="color-dot" style="background:${row.color}"></span>${idx + 1}`;
+    tr.appendChild(numTd);
+
+    // Name
+    const nameTd = document.createElement("td");
+    const nameInput = document.createElement("input");
+    nameInput.type = "text";
+    nameInput.className = "name-input";
+    nameInput.maxLength = 80;
+    nameInput.value = row.name;
+    nameInput.addEventListener("input", (e) => {
+      row.name = e.target.value;
+      refresh(false); // don't re-render table (keep focus)
+    });
+    nameTd.appendChild(nameInput);
+    tr.appendChild(nameTd);
+
+    // X, Y, Z selects
+    ["x", "y", "z"].forEach(axis => {
+      const td = document.createElement("td");
+      const sel = makeAxisSelect(row[axis]);
+      sel.addEventListener("change", (e) => {
+        row[axis] = parseFloat(e.target.value);
+        refresh(true);
+      });
+      td.appendChild(sel);
+      tr.appendChild(td);
+    });
+
+    // Quadrant
+    const quadTd = document.createElement("td");
+    const q = getQuadrant(row.x, row.y);
+    quadTd.innerHTML = `<span class="quad-cell ${q.cls}">${q.name}</span>`;
+    tr.appendChild(quadTd);
+
+    // Actions
+    const actTd = document.createElement("td");
+    const del = document.createElement("button");
+    del.className = "del-btn";
+    del.title = "Delete enhancement";
+    del.innerHTML = "&times;";
+    del.addEventListener("click", () => {
+      rows.splice(idx, 1);
+      refresh(true);
+    });
+    actTd.appendChild(del);
+    tr.appendChild(actTd);
+
+    tableBody.appendChild(tr);
+  });
+}
+
+function makeAxisSelect(val) {
+  const sel = document.createElement("select");
+  sel.className = "axis-select";
+  // 0.5 increments from 1 to 4 -> 1, 1.5, 2, 2.5, 3, 3.5, 4
+  for (let i = 1; i <= 4; i += 0.5) {
+    const opt = document.createElement("option");
+    opt.value = i;
+    opt.textContent = Number.isInteger(i) ? i : i.toFixed(1);
+    if (i === val) opt.selected = true;
+    sel.appendChild(opt);
+  }
+  return sel;
+}
+
+/* ---------- Legend per-quadrant item lists ---------- */
+function renderLegendItems() {
+  document.querySelectorAll(".legend-items").forEach(ul => {
+    const quadName = ul.getAttribute("data-quad");
+    const items = rows.filter(r => getQuadrant(r.x, r.y).name === quadName);
+    ul.innerHTML = "";
+    if (items.length === 0) {
+      const li = document.createElement("li");
+      li.className = "empty";
+      li.textContent = "— none —";
+      ul.appendChild(li);
+      return;
+    }
+    items.forEach(r => {
+      const li = document.createElement("li");
+      li.innerHTML = `<span class="color-dot" style="background:${r.color};width:9px;height:9px;"></span>${r.name}`;
+      ul.appendChild(li);
+    });
+  });
+}
+
+/* ============================================================
+   Refresh — chart + (optionally) table + legend
+   ============================================================ */
+function refresh(rerenderTable) {
+  chart.data.datasets[0].data = buildChartData();
+  chart.update();
+  if (rerenderTable) renderTable();
+  renderLegendItems();
+}
+
+/* ============================================================
+   Buttons
+   ============================================================ */
+document.getElementById("addBtn").addEventListener("click", () => {
+  rows.push({
+    name: "New Enhancement",
+    x: 2, y: 2, z: 2,
+    color: PALETTE[colorCursor++ % PALETTE.length]
+  });
+  refresh(true);
+});
+
+document.getElementById("pngBtn").addEventListener("click", () => {
+  const a = document.createElement("a");
+  a.href = chart.toBase64Image("image/png", 1);
+  a.download = "HERO_Prioritization_Matrix.png";
+  a.click();
+});
+
+document.getElementById("csvBtn").addEventListener("click", () => {
+  const header = ["#", "Enhancement", "X-Complexity/Risk", "Y-Benefit/Need", "Z-UserErrorRisk", "Quadrant"];
+  const lines = [header.join(",")];
+  rows.forEach((r, i) => {
+    const q = getQuadrant(r.x, r.y);
+    const name = `"${r.name.replace(/"/g, '""')}"`;
+    lines.push([i + 1, name, r.x, r.y, r.z, `"${q.name}"`].join(","));
+  });
+  const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "HERO_Prioritization_Matrix.csv";
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+/* ============================================================
+   Init app (called only after successful authentication)
+   ============================================================ */
+let appStarted = false;
+function initApp() {
+  if (appStarted) return;
+  appStarted = true;
+  document.getElementById("app").classList.remove("locked");
+  createChart();        // chart sized correctly now that #app is visible
+  renderTable();
+  renderLegendItems();
+}
+
+/* ============================================================
+   Password gate
+   --------------------------------------------------------------
+   NOTE: this is client-side obfuscation, NOT real security.
+   Only the SHA-256 hash of the password is stored (never the
+   plaintext), so the password is not visible in the source —
+   but anyone technical can still bypass a static-site gate.
+   ============================================================ */
+const PASS_HASH = "a05de11fe25663fb64efe30e3b0e357e17023a1e28ad2ae2e13953370bd8656c";
+
+async function sha256(text) {
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, "0")).join("");
+}
+
+async function tryLogin() {
+  const input = document.getElementById("authInput");
+  const err = document.getElementById("authError");
+  const hash = await sha256(input.value);
+  if (hash === PASS_HASH) {
+    document.getElementById("authGate").style.display = "none";
+    initApp();
+  } else {
+    err.textContent = "Contraseña incorrecta.";
+    input.value = "";
+    input.focus();
+  }
+}
+
+document.getElementById("authBtn").addEventListener("click", tryLogin);
+document.getElementById("authInput").addEventListener("keydown", (e) => {
+  if (e.key === "Enter") tryLogin();
+});
+</script>
+</body>
+</html>
