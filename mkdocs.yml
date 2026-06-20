@@ -67,6 +67,9 @@ plugins:
 
 nav:
   - Home: index.md
+  - Program tools:
+      - Prioritization Matrix: Priorization_Matrix/index.html
+      - Module 1 — Knowledge Check: https://enerbartoli.github.io/mod1-knowledge-check/
   - Role-based guides:
       - Demand Planner: roles/demand-planner.md
       - Sales: roles/sales.md
