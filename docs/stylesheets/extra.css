@@ -254,3 +254,70 @@
   font-size: 0.62rem;
   text-align: center;
 }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Program tools — launcher card grid (home page)
+   Accent-bar cards in a responsive grid; adapts to light/dark schemes.
+   ═══════════════════════════════════════════════════════════════════════ */
+.tool-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin: 1.2rem 0 2rem;
+}
+@media (max-width: 959px) { .tool-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 599px) { .tool-grid { grid-template-columns: 1fr; } }
+
+.tool-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--md-default-bg-color);
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 8px;
+  overflow: hidden;
+  text-decoration: none !important;
+  color: inherit;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+  transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+}
+.tool-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 26px rgba(0, 60, 119, 0.18);
+  border-color: var(--md-accent-fg-color);
+}
+.tool-card__bar { height: 6px; width: 100%; flex: 0 0 auto; }
+.tool-card__body {
+  padding: 1rem 1.1rem 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: .35rem;
+  flex: 1;
+}
+.tool-card__icon { font-size: 1.9rem; line-height: 1; }
+.tool-card__title {
+  font-weight: 800;
+  font-size: .98rem;
+  color: var(--md-primary-fg-color);
+  display: flex;
+  align-items: center;
+  gap: .3rem;
+}
+.tool-card__ext { font-size: .72rem; opacity: .65; font-weight: 700; }
+.tool-card__desc {
+  font-size: .76rem;
+  line-height: 1.35;
+  color: var(--md-default-fg-color--light);
+}
+.tool-card__soon {
+  display: inline-block;
+  font-size: .6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: #8a6d00;
+  background: rgba(255, 209, 0, 0.22);
+  border-radius: 3px;
+  padding: .08rem .35rem;
+  margin-left: .35rem;
+  vertical-align: middle;
+}
