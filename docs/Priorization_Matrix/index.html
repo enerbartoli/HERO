@@ -63,25 +63,31 @@
   }
   .top-row {
     display: flex;
-    gap: 24px;
-    align-items: stretch;
+    flex-direction: column;
+    align-items: center;
+    gap: 22px;
   }
   .chart-panel {
-    flex: 0 0 64%;
+    width: 100%;
+    max-width: 820px;
     background: var(--white);
     border: 1px solid #d4ddec;
     padding: 16px;
   }
+  /* Quadrant guide sits BELOW the chart as a 2×2 grid so the square bubble
+     chart stays centered and symmetric as the visual focal point. */
   .legend-panel {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+    width: 100%;
+    max-width: 820px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
   }
+  .legend-panel .panel-title { grid-column: 1 / -1; margin-bottom: 0; }
   .chart-wrap {
     position: relative;
     width: 100%;
-    height: 460px;
+    aspect-ratio: 1 / 1;
   }
   .panel-title {
     margin: 0 0 12px;
@@ -146,7 +152,8 @@
 
   /* ---------- TABLE ---------- */
   .table-panel {
-    margin-top: 24px;
+    margin: 24px auto 0;
+    max-width: 820px;
     background: var(--white);
     border: 1px solid #d4ddec;
     padding: 16px;
@@ -184,20 +191,20 @@
   table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 13px;
+    font-size: 12px;
   }
   thead th {
     background: var(--navy);
     color: var(--white);
     text-align: left;
-    padding: 9px 10px;
-    font-size: 12px;
+    padding: 7px 8px;
+    font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 0.3px;
     white-space: nowrap;
   }
   tbody td {
-    padding: 6px 10px;
+    padding: 5px 8px;
     border-bottom: 1px solid #e3e9f3;
     vertical-align: middle;
   }
@@ -214,24 +221,24 @@
   }
   input.name-input {
     width: 100%;
-    min-width: 180px;
-    padding: 6px 8px;
+    min-width: 130px;
+    padding: 5px 7px;
     border: 1px solid #c2cdde;
     font-family: inherit;
-    font-size: 13px;
+    font-size: 12px;
   }
   select.axis-select {
-    padding: 6px 8px;
+    padding: 5px 7px;
     border: 1px solid #c2cdde;
     font-family: inherit;
-    font-size: 13px;
+    font-size: 12px;
     background: var(--white);
     cursor: pointer;
   }
   .quad-cell {
     font-weight: bold;
-    font-size: 12px;
-    padding: 5px 9px;
+    font-size: 11px;
+    padding: 4px 7px;
     border-radius: 3px;
     white-space: nowrap;
     display: inline-block;
@@ -280,7 +287,7 @@
     header { padding: 18px 14px 14px; }
     .axis-ref { padding: 7px 14px; }
     .chart-panel, .table-panel { padding: 12px; }
-    .chart-wrap { height: 340px; }
+    .legend-panel { grid-template-columns: 1fr; }
     input.name-input { min-width: 120px; }
     table { font-size: 12px; }
     thead th { padding: 8px 7px; }
