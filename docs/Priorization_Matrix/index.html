@@ -173,6 +173,14 @@
   .btn-accent { background: var(--yellow); color: var(--navy); }
   .btn-accent:hover { background: #e6bd00; }
 
+  /* Horizontal scroll wrapper so the wide input table never expands the
+     whole page on narrow screens (which otherwise forces the mobile
+     browser to zoom out and waste screen width). */
+  .table-scroll {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
   table {
     width: 100%;
     border-collapse: collapse;
@@ -264,6 +272,19 @@
     .chart-panel, .legend-panel { flex: 1 1 auto; width: 100%; }
     .container { padding: 16px; }
     header, .axis-ref { padding-left: 16px; padding-right: 16px; }
+  }
+  /* Phones: tighten padding to reclaim width and let the table use the
+     space it has before scrolling sideways. */
+  @media (max-width: 600px) {
+    .container { padding: 12px; }
+    header { padding: 18px 14px 14px; }
+    .axis-ref { padding: 7px 14px; }
+    .chart-panel, .table-panel { padding: 12px; }
+    .chart-wrap { height: 340px; }
+    input.name-input { min-width: 120px; }
+    table { font-size: 12px; }
+    thead th { padding: 8px 7px; }
+    tbody td { padding: 6px 7px; }
   }
 
   /* ---------- PASSWORD GATE ---------- */
@@ -400,6 +421,7 @@
       <button class="btn btn-secondary" id="pngBtn">Export PNG</button>
       <button class="btn btn-accent" id="csvBtn">Export CSV</button>
     </div>
+    <div class="table-scroll">
     <table>
       <thead>
         <tr>
@@ -414,6 +436,7 @@
       </thead>
       <tbody id="tableBody"></tbody>
     </table>
+    </div>
   </div>
 </div>
 
