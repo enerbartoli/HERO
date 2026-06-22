@@ -9,9 +9,6 @@
     2. Navy gradient overlay            (.hero-banner::before)
     3. pattern + light-streak textures  (.hero-banner__texture, ~8% opacity)
     4. brand-logo badge + section label (.hero-banner__logo / __label)
-
-  Readability rule: this block is purely presentational. Body text, tables,
-  and code always render on a plain background below the banner.
 #}
 
 {% block content %}
@@ -37,38 +34,59 @@
 {% endblock %}
 
 {#
-  Ask Brave card — injected into the right sidebar (.md-sidebar--secondary)
-  via JavaScript, since Material 9.x does not expose a template block for
-  the secondary sidebar. The card appears below the TOC on every page on
-  desktop (≥ 1220px). The sidebar is forced visible even on pages that have
-  no headings (i.e. empty TOC) by removing the `hidden` attribute after
-  Material's own JS has run.
+  Ask Brave — header button + compact right-sidebar chip.
 
-  rel_prefix is set by hooks.py so image paths resolve correctly from any
-  page depth.
+  Header button: injected into .md-header__inner via JS so it sits between
+  the title and the search icon — visible on every page and every screen size.
+
+  Sidebar chip: injected below the TOC in .md-sidebar--secondary, desktop only
+  (≥ 1220px). No image — just an icon, label and CTA. The sidebar is forced
+  visible on pages with empty TOC (removeAttribute hidden).
+
+  Both injections are re-run after MkDocs instant navigation (DOMContentSwitch).
 #}
 {% block scripts %}
 {{ super() }}
 <script>
 (function () {
-  var LOGO_URL = "{{ rel_prefix }}assets/img/hero-logo-icon.jpg";
-  var GPT_URL  = "https://chatgpt.com/g/g-6a39688f2e0c81918486c4d724888f96-brave-hero-assistant";
+  var GPT_URL = "https://chatgpt.com/g/g-6a39688f2e0c81918486c4d724888f96-brave-hero-assistant";
 
-  function injectCard() {
+  /* ── Header button ── */
+  function injectHeader() {
+    if (document.querySelector(".ask-brave-header-btn")) return;
+    var header = document.querySelector(".md-header__inner");
+    if (!header) return;
+
+    var btn = document.createElement("a");
+    btn.className = "ask-brave-header-btn";
+    btn.href = GPT_URL;
+    btn.target = "_blank";
+    btn.rel = "noopener noreferrer";
+    btn.setAttribute("aria-label", "Ask Brave — HERO Assistant");
+    btn.innerHTML = "💬 <span class='ask-brave-header-btn__text'>Ask Brave</span>";
+
+    /* Insert before the search button (last .md-header__option) */
+    var search = header.querySelector(".md-header__option");
+    if (search) {
+      header.insertBefore(btn, search);
+    } else {
+      header.appendChild(btn);
+    }
+  }
+
+  /* ── Right sidebar chip ── */
+  function injectSidebar() {
     var inner = document.querySelector(".md-sidebar--secondary .md-sidebar__inner");
-    if (!inner || inner.querySelector(".ask-brave-card")) return;
+    if (!inner || inner.querySelector(".ask-brave-chip")) return;
 
-    var card = document.createElement("div");
-    card.className = "ask-brave-card";
-    card.innerHTML =
-      '<img class="ask-brave-card__logo" src="' + LOGO_URL + '" alt="H.E.R.O. Tool" loading="lazy">' +
-      '<p class="ask-brave-card__eyebrow">¿Tienes alguna pregunta?</p>' +
-      '<p class="ask-brave-card__title">💬 Ask Brave</p>' +
-      '<p class="ask-brave-card__sub">HERO Assistant</p>' +
-      '<a class="ask-brave-card__btn" href="' + GPT_URL + '" target="_blank" rel="noopener noreferrer">Abrir asistente ↗</a>';
-    inner.appendChild(card);
+    var chip = document.createElement("div");
+    chip.className = "ask-brave-chip";
+    chip.innerHTML =
+      '<span class="ask-brave-chip__label">💬 Ask Brave</span>' +
+      '<span class="ask-brave-chip__sub">HERO Assistant</span>' +
+      '<a class="ask-brave-chip__btn" href="' + GPT_URL + '" target="_blank" rel="noopener noreferrer">Abrir asistente ↗</a>';
+    inner.appendChild(chip);
 
-    /* Show sidebar even on pages with no TOC headings */
     var sidebar = document.querySelector(".md-sidebar--secondary");
     if (sidebar) {
       sidebar.removeAttribute("hidden");
@@ -76,14 +94,18 @@
     }
   }
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", injectCard);
-  } else {
-    injectCard();
+  function inject() {
+    injectHeader();
+    injectSidebar();
   }
 
-  /* Re-inject after MkDocs instant navigation replaces the DOM */
-  document.addEventListener("DOMContentSwitch", injectCard);
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", inject);
+  } else {
+    inject();
+  }
+
+  document.addEventListener("DOMContentSwitch", inject);
 })();
 </script>
 {% endblock %}
