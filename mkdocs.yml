@@ -67,7 +67,6 @@ plugins:
 
 nav:
   - Home: index.md
-  - "💬 Ask Brave (HERO Assistant)": https://chatgpt.com/g/g-6a39688f2e0c81918486c4d724888f96-brave-hero-assistant
   - Program tools:
       - Prioritization Matrix: Priorization_Matrix/index.html
       - Knowledge Check: https://enerbartoli.github.io/mod1-knowledge-check/
