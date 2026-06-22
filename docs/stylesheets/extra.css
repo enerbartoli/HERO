@@ -194,74 +194,87 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   Ask Brave — header button + compact sidebar chip (no image)
+   Ask Brave — header button + sidebar card with logo
    ═══════════════════════════════════════════════════════════════════════ */
 
-/* ── Header button: sits between the page title and the search icon ── */
+/* ── Header button: inserted after .md-header__title via JS ── */
 .ask-brave-header-btn {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  margin-left: auto;
-  margin-right: 0.5rem;
-  padding: 0.32rem 0.75rem;
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.45);
+  gap: 0.3rem;
+  flex-shrink: 0;           /* never compress below its content width */
+  margin: 0 0.6rem;
+  padding: 0.3rem 0.8rem;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.5);
   border-radius: 20px;
-  color: #ffffff;
-  font-size: 0.75rem;
+  color: #ffffff !important;
+  font-size: 0.74rem;
   font-weight: 700;
   white-space: nowrap;
-  text-decoration: none;
+  text-decoration: none !important;
   line-height: 1;
   transition: background 0.15s ease;
 }
 
 .ask-brave-header-btn:hover {
-  background: rgba(255, 255, 255, 0.28);
-  color: #ffffff;
-  text-decoration: none;
+  background: rgba(255, 255, 255, 0.30);
 }
 
-/* Hide label text on very narrow screens; keep the emoji */
+/* On very narrow screens keep only the emoji */
 @media screen and (max-width: 30em) {
-  .ask-brave-header-btn__text {
-    display: none;
-  }
+  .ask-brave-header-btn__text { display: none; }
 }
 
-/* ── Right sidebar chip: compact, no image ── */
-.ask-brave-chip {
+/* ── Right sidebar card with logo image ── */
+.ask-brave-card {
   margin-top: 1.4rem;
-  padding: 0.85rem 0.9rem 1rem;
-  background: linear-gradient(135deg, #002456 0%, #003C77 55%, #005EB8 100%);
-  border-radius: 8px;
-  border: 1px solid #00AEEF;
+  padding: 0.9rem 0.85rem 1.05rem;
+  background: linear-gradient(150deg, #002456 0%, #003C77 55%, #005EB8 100%);
+  border-radius: 10px;
+  border: 2px solid #00AEEF;
   text-align: center;
-  box-shadow: 0 2px 8px rgba(0, 60, 119, 0.30);
+  box-shadow: 0 3px 10px rgba(0, 60, 119, 0.32);
 }
 
-.ask-brave-chip__label {
+.ask-brave-card__logo {
   display: block;
-  color: #ffffff;
-  font-size: 0.95rem;
-  font-weight: 800;
-  margin-bottom: 0.2rem;
+  width: 100%;
+  max-width: 140px;
+  margin: 0 auto 0.6rem;
+  border-radius: 8px;
+  object-fit: cover;
 }
 
-.ask-brave-chip__sub {
-  display: block;
+.ask-brave-card__eyebrow {
+  margin: 0 0 0.1rem;
   color: #90d4f7;
+  font-size: 0.6rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.ask-brave-card__title {
+  margin: 0 0 0.1rem;
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.ask-brave-card__sub {
+  margin: 0 0 0.75rem;
+  color: #c8e8fb;
   font-size: 0.65rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.09em;
-  margin-bottom: 0.75rem;
 }
 
-.ask-brave-chip__btn {
+.ask-brave-card__btn {
   display: inline-block;
-  padding: 0.38rem 0.9rem;
+  padding: 0.4rem 0.95rem;
   background: #f5b500;
   color: #002456;
   font-size: 0.72rem;
@@ -274,7 +287,7 @@
   transition: background 0.15s ease, transform 0.1s ease;
 }
 
-.ask-brave-chip__btn:hover {
+.ask-brave-card__btn:hover {
   background: #ffc929;
   transform: translateY(-1px);
   color: #002456;
@@ -292,9 +305,9 @@
   }
 }
 
-/* Hide sidebar chip on narrow screens where secondary sidebar collapses */
+/* Hide sidebar card on narrow screens where secondary sidebar collapses */
 @media screen and (max-width: 76.1875em) {
-  .ask-brave-chip {
+  .ask-brave-card {
     display: none;
   }
 }
