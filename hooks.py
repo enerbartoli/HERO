@@ -82,4 +82,7 @@ def on_page_context(context, page, config, nav, **kwargs):
         context["hero_pattern_url"] = None
         context["hero_streaks_url"] = None
 
+    # Always expose rel_prefix so templates can build asset URLs from any depth.
+    context["rel_prefix"] = rel_prefix
+
     return context

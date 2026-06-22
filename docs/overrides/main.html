@@ -35,3 +35,55 @@
 {% endif %}
 {{ super() }}
 {% endblock %}
+
+{#
+  Ask Brave card — injected into the right sidebar (.md-sidebar--secondary)
+  via JavaScript, since Material 9.x does not expose a template block for
+  the secondary sidebar. The card appears below the TOC on every page on
+  desktop (≥ 1220px). The sidebar is forced visible even on pages that have
+  no headings (i.e. empty TOC) by removing the `hidden` attribute after
+  Material's own JS has run.
+
+  rel_prefix is set by hooks.py so image paths resolve correctly from any
+  page depth.
+#}
+{% block scripts %}
+{{ super() }}
+<script>
+(function () {
+  var LOGO_URL = "{{ rel_prefix }}assets/img/hero-logo-icon.jpg";
+  var GPT_URL  = "https://chatgpt.com/g/g-6a39688f2e0c81918486c4d724888f96-brave-hero-assistant";
+
+  function injectCard() {
+    var inner = document.querySelector(".md-sidebar--secondary .md-sidebar__inner");
+    if (!inner || inner.querySelector(".ask-brave-card")) return;
+
+    var card = document.createElement("div");
+    card.className = "ask-brave-card";
+    card.innerHTML =
+      '<img class="ask-brave-card__logo" src="' + LOGO_URL + '" alt="H.E.R.O. Tool" loading="lazy">' +
+      '<p class="ask-brave-card__eyebrow">¿Tienes alguna pregunta?</p>' +
+      '<p class="ask-brave-card__title">💬 Ask Brave</p>' +
+      '<p class="ask-brave-card__sub">HERO Assistant</p>' +
+      '<a class="ask-brave-card__btn" href="' + GPT_URL + '" target="_blank" rel="noopener noreferrer">Abrir asistente ↗</a>';
+    inner.appendChild(card);
+
+    /* Show sidebar even on pages with no TOC headings */
+    var sidebar = document.querySelector(".md-sidebar--secondary");
+    if (sidebar) {
+      sidebar.removeAttribute("hidden");
+      sidebar.style.removeProperty("display");
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", injectCard);
+  } else {
+    injectCard();
+  }
+
+  /* Re-inject after MkDocs instant navigation replaces the DOM */
+  document.addEventListener("DOMContentSwitch", injectCard);
+})();
+</script>
+{% endblock %}

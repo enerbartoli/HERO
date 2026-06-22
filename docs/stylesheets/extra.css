@@ -194,6 +194,95 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
+   Ask Brave card — right sidebar, below the TOC
+   Always rendered via the toc block override in main.html.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.ask-brave-card {
+  margin-top: 1.6rem;
+  padding: 1rem 0.9rem 1.2rem;
+  background: linear-gradient(150deg, #003C77 0%, #005EB8 60%, #0077c8 100%);
+  border-radius: 10px;
+  border: 2px solid #00AEEF;
+  text-align: center;
+  box-shadow: 0 3px 12px rgba(0, 60, 119, 0.35);
+}
+
+.ask-brave-card__logo {
+  display: block;
+  width: 100%;
+  max-width: 160px;
+  margin: 0 auto 0.7rem;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.ask-brave-card__eyebrow {
+  margin: 0 0 0.15rem;
+  color: #90d4f7;
+  font-size: 0.62rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.ask-brave-card__title {
+  margin: 0 0 0.1rem;
+  color: #ffffff;
+  font-size: 1.05rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.ask-brave-card__sub {
+  margin: 0 0 0.85rem;
+  color: #c8e8fb;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+}
+
+.ask-brave-card__btn {
+  display: inline-block;
+  padding: 0.45rem 1rem;
+  background: #f5b500;
+  color: #003C77;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: background 0.15s ease, transform 0.1s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+.ask-brave-card__btn:hover {
+  background: #ffc929;
+  transform: translateY(-1px);
+  color: #002456;
+}
+
+/* Ensure right sidebar renders on pages without TOC headings on desktop */
+@media screen and (min-width: 76.1875em) {
+  .md-sidebar--secondary[hidden] {
+    display: block !important;
+    visibility: visible !important;
+  }
+  .md-sidebar--secondary[hidden] .md-sidebar__scrollwrap {
+    display: block !important;
+  }
+}
+
+/* Hide card on narrow screens where the right sidebar collapses */
+@media screen and (max-width: 76.1875em) {
+  .ask-brave-card {
+    display: none;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
    Left navigation — collapsible chapters (Prompt 4 §1)
    navigation.sections is removed, so each top-level chapter is a nested
    group with a chevron. Make the toggle larger and higher-contrast.
