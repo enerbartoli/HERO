@@ -238,12 +238,13 @@
 }
 
 .ask-brave-card__logo {
-  display: block;
-  width: 100%;
-  max-width: 140px;
-  margin: 0 auto 0.6rem;
+  display: inline-block;
+  width: 140px;
+  height: 140px;
+  margin-bottom: 0.6rem;
   border-radius: 8px;
   object-fit: cover;
+  vertical-align: top;
 }
 
 .ask-brave-card__eyebrow {
