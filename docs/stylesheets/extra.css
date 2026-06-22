@@ -194,74 +194,91 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   Ask Brave card — right sidebar, below the TOC
-   Always rendered via the toc block override in main.html.
+   Ask Brave — header button + compact sidebar chip (no image)
    ═══════════════════════════════════════════════════════════════════════ */
 
-.ask-brave-card {
-  margin-top: 1.6rem;
-  padding: 1rem 0.9rem 1.2rem;
-  background: linear-gradient(150deg, #003C77 0%, #005EB8 60%, #0077c8 100%);
-  border-radius: 10px;
-  border: 2px solid #00AEEF;
-  text-align: center;
-  box-shadow: 0 3px 12px rgba(0, 60, 119, 0.35);
-}
-
-.ask-brave-card__logo {
-  display: block;
-  width: 100%;
-  max-width: 160px;
-  margin: 0 auto 0.7rem;
-  border-radius: 8px;
-  object-fit: cover;
-}
-
-.ask-brave-card__eyebrow {
-  margin: 0 0 0.15rem;
-  color: #90d4f7;
-  font-size: 0.62rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-}
-
-.ask-brave-card__title {
-  margin: 0 0 0.1rem;
+/* ── Header button: sits between the page title and the search icon ── */
+.ask-brave-header-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-left: auto;
+  margin-right: 0.5rem;
+  padding: 0.32rem 0.75rem;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: 20px;
   color: #ffffff;
-  font-size: 1.05rem;
-  font-weight: 800;
-  line-height: 1.2;
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+  text-decoration: none;
+  line-height: 1;
+  transition: background 0.15s ease;
 }
 
-.ask-brave-card__sub {
-  margin: 0 0 0.85rem;
-  color: #c8e8fb;
-  font-size: 0.72rem;
+.ask-brave-header-btn:hover {
+  background: rgba(255, 255, 255, 0.28);
+  color: #ffffff;
+  text-decoration: none;
+}
+
+/* Hide label text on very narrow screens; keep the emoji */
+@media screen and (max-width: 30em) {
+  .ask-brave-header-btn__text {
+    display: none;
+  }
+}
+
+/* ── Right sidebar chip: compact, no image ── */
+.ask-brave-chip {
+  margin-top: 1.4rem;
+  padding: 0.85rem 0.9rem 1rem;
+  background: linear-gradient(135deg, #002456 0%, #003C77 55%, #005EB8 100%);
+  border-radius: 8px;
+  border: 1px solid #00AEEF;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 60, 119, 0.30);
+}
+
+.ask-brave-chip__label {
+  display: block;
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 800;
+  margin-bottom: 0.2rem;
+}
+
+.ask-brave-chip__sub {
+  display: block;
+  color: #90d4f7;
+  font-size: 0.65rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.09em;
+  margin-bottom: 0.75rem;
 }
 
-.ask-brave-card__btn {
+.ask-brave-chip__btn {
   display: inline-block;
-  padding: 0.45rem 1rem;
+  padding: 0.38rem 0.9rem;
   background: #f5b500;
-  color: #003C77;
-  font-size: 0.75rem;
+  color: #002456;
+  font-size: 0.72rem;
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  border-radius: 6px;
+  letter-spacing: 0.07em;
+  border-radius: 5px;
   text-decoration: none;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.22);
   transition: background 0.15s ease, transform 0.1s ease;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
 }
 
-.ask-brave-card__btn:hover {
+.ask-brave-chip__btn:hover {
   background: #ffc929;
   transform: translateY(-1px);
   color: #002456;
+  text-decoration: none;
 }
 
 /* Ensure right sidebar renders on pages without TOC headings on desktop */
@@ -275,9 +292,9 @@
   }
 }
 
-/* Hide card on narrow screens where the right sidebar collapses */
+/* Hide sidebar chip on narrow screens where secondary sidebar collapses */
 @media screen and (max-width: 76.1875em) {
-  .ask-brave-card {
+  .ask-brave-chip {
     display: none;
   }
 }
