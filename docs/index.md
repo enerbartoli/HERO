@@ -4,11 +4,6 @@
 
 Welcome to the operational manual for **HERO (Hasbro Enrichment & Reconciliation Optimizer)** — the business-user capture layer of the Forecast Enrichment Process.
 
-!!! tip "Have a question? Ask Brave"
-    **Brave** is the HERO Assistant — ask it anything about the process or the tool, in plain language (English or Spanish). It answers from this manual and the training material.
-
-    [💬 Ask Brave — the HERO Assistant](https://chatgpt.com/g/g-6a39688f2e0c81918486c4d724888f96-brave-hero-assistant){ .md-button .md-button--primary target=_blank }
-
 ## Program tools
 
 <div class="tool-grid">

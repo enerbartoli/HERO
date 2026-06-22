@@ -36,13 +36,12 @@
 {#
   Ask Brave — header button + right-sidebar card with logo.
 
-  Header: inserted after .md-header__title (more reliable than before
-  .md-header__option) so it sits between the page title and the search icon.
+  Header: injected once after .md-header__title; persists across navigation.
 
-  Sidebar card: logo image + English text + amber CTA, injected below the TOC.
-  Sidebar forced visible on pages with empty TOC.
-
-  Both re-injected after MkDocs instant navigation (DOMContentSwitch).
+  Sidebar card: re-injected on every page via Material's document$ observable
+  (the correct hook for navigation.instant). Falls back to popstate for
+  non-instant environments. The sidebar is forced visible on pages with
+  an empty TOC by removing the hidden attribute.
 #}
 {% block scripts %}
 {{ super() }}
@@ -51,7 +50,7 @@
   var GPT_URL  = "https://chatgpt.com/g/g-6a39688f2e0c81918486c4d724888f96-brave-hero-assistant";
   var LOGO_URL = "{{ rel_prefix }}assets/img/hero-logo-icon.jpg";
 
-  /* ── Header button — inserted right after the page title ── */
+  /* ── Header button — injected once, survives instant navigation ── */
   function injectHeader() {
     if (document.querySelector(".ask-brave-header-btn")) return;
     var title = document.querySelector(".md-header__title");
@@ -62,14 +61,17 @@
     btn.target    = "_blank";
     btn.rel       = "noopener noreferrer";
     btn.setAttribute("aria-label", "Ask Brave — HERO Assistant");
-    btn.innerHTML = "💬 <span class='ask-brave-header-btn__text'>Ask Brave</span>";
+    btn.innerHTML = "💬 <span class='ask-brave-header-btn__text'>Ask Brave</span>";
     title.insertAdjacentElement("afterend", btn);
   }
 
-  /* ── Right sidebar card with logo and English copy ── */
+  /* ── Sidebar card — re-injected on every page change ── */
   function injectSidebar() {
     var inner = document.querySelector(".md-sidebar--secondary .md-sidebar__inner");
-    if (!inner || inner.querySelector(".ask-brave-card")) return;
+    if (!inner) return;
+    /* Remove stale card from previous page before appending fresh one */
+    var old = inner.querySelector(".ask-brave-card");
+    if (old) old.remove();
     var card = document.createElement("div");
     card.className = "ask-brave-card";
     card.innerHTML =
@@ -77,7 +79,7 @@
       '<p class="ask-brave-card__eyebrow">Have a question?</p>' +
       '<p class="ask-brave-card__title">💬 Ask Brave</p>' +
       '<p class="ask-brave-card__sub">HERO Assistant</p>' +
-      '<a class="ask-brave-card__btn" href="' + GPT_URL + '" target="_blank" rel="noopener noreferrer">Open assistant ↗</a>';
+      '<a class="ask-brave-card__btn" href="' + GPT_URL + '" target="_blank" rel="noopener noreferrer">Open assistant ↗</a>';
     inner.appendChild(card);
     var sidebar = document.querySelector(".md-sidebar--secondary");
     if (sidebar) {
@@ -86,14 +88,25 @@
     }
   }
 
-  function inject() { injectHeader(); injectSidebar(); }
-
+  /* Initial load */
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", inject);
+    document.addEventListener("DOMContentLoaded", function () { injectHeader(); injectSidebar(); });
   } else {
-    inject();
+    injectHeader(); injectSidebar();
   }
-  document.addEventListener("DOMContentSwitch", inject);
+
+  /*
+    Hook into Material's instant navigation.
+    document$ is a global RxJS Subject exposed by Material for MkDocs that
+    emits after each page swap — the correct replacement for DOMContentLoaded
+    when navigation.instant is enabled.
+    Fallback: popstate for non-instant environments.
+  */
+  if (typeof document$ !== "undefined") {
+    document$.subscribe(function () { requestAnimationFrame(injectSidebar); });
+  } else {
+    window.addEventListener("popstate", injectSidebar);
+  }
 })();
 </script>
 {% endblock %}
