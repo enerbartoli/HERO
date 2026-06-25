@@ -54,8 +54,11 @@ Define each field, whether it is required / editable, and its allowed values.
 |---|---|---|
 | Baseline | Read-only | Current baseline or shipment actuals in the actualized period. |
 | Sales Enrichment | Read-only | Weekly contribution from sales / event enrichments. |
-| Marketing and Demand Planning | Read-only | Weekly contribution from marketing / DP enrichments. |
-| **Baseline Trend Adjustments** | **Editable** | Numeric delta in units — the main editable weekly area in standard reconciliation. |
+| Marketing and Demand Planning | Read-only | Weekly contribution from marketing / DP enrichments. After upload, Demand Planning / Marketing reconciliation entries are **classified here** (see note). |
+| **Baseline Trend Adjustments** | **Editable** | Numeric delta in units — the **orange** columns; the main editable weekly area in standard and Level 2.5 reconciliation. |
+
+!!! note "Where your adjustment lands after upload"
+    Demand Planning and Marketing **enter** their weekly adjustments in the editable **Baseline Trend Adjustments** (orange) columns. On upload, HERO **classifies** the entry based on **who entered it and when**, and the value then appears under the read-only **Marketing and Demand Planning** weekly columns.
 
 ## Related pages
 

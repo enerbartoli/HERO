@@ -31,6 +31,9 @@ Use reconciliation when the business needs to **directly change the final week-l
     - **Deltas, not absolutes** — reconciliation does not support an absolute overwrite. Enter a plus/minus change.
     - **One structured control per row** — do not combine an Adjusted Planning SKU (version change) and a Channel Shift Proportion on the same row.
 
+!!! tip "Which columns do Demand Planning / Marketing edit? (incl. Level 2.5)"
+    Enter your weekly adjustments in the **Baseline Trend Adjustments** columns — the **orange** ones. That is the editable weekly area on both the standard and the BU-SKU / Level 2.5 reconciliation templates. After you upload, HERO **automatically classifies** the entry and it appears under the **Marketing and Demand Planning** weekly columns — the classification is based on **who entered it and when**. So: you edit in *Baseline Trend Adjustments*, and your change shows up under *Marketing and Demand Planning* after upload. The template's **Instructions** page also covers this.
+
 ## Actualized vs forward weeks
 
 Weeks in the actualized period use exact row-level shipment actuals where they exist, and 0 where no exact actual is available; values are zero-floored so negative net shipment weeks render as 0. **Shaded** cells mark the actualized shipment period (historical cutoff); **unshaded** cells are forward forecast weeks.

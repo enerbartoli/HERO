@@ -36,6 +36,12 @@ No — it tracks the relationship, but you still capture the compensating demand
 **Can I change actualized weeks?**
 Treat shaded / actualized weeks as frozen forecast history unless your operating model explicitly routes an exception through a separate process.
 
+**In the Level 2.5 template, which columns do Demand Planners use for their adjustments?**
+The **Baseline Trend Adjustments** columns — the **orange** ones. That is the editable weekly area.
+
+**Then why does my adjustment show under "Marketing and Demand Planning" after I upload?**
+Because HERO **classifies** your entry on upload based on **who entered it and when**. You always type into *Baseline Trend Adjustments*; the system then files Demand Planning / Marketing reconciliation entries under the *Marketing and Demand Planning* columns. Both are correct — input vs. how it's classified afterward.
+
 ## Related pages
 
 - [Timing & system sync](../workflows/timing-system-sync.md)
