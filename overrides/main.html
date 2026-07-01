@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{#
+  Section hero banner, rendered before page content.
+  Context keys are set per-page by hooks.py.
+
+  Layer order (bottom → top):
+    1. hero background image            (inline style on .hero-banner)
+    2. Navy gradient overlay            (.hero-banner::before)
+    3. pattern + light-streak textures  (.hero-banner__texture, ~8% opacity)
+    4. brand-logo badge + section label (.hero-banner__logo / __label)
+#}
+
+{% block content %}
+{% if hero_label %}
+<div class="hero-banner
+            {%- if not hero_bg_url %} hero-banner--plain{% endif %}
+            {%- if hero_variant == 'art' %} hero-banner--art{% endif %}"
+     {% if hero_bg_url %}style="background-image:url('{{ hero_bg_url }}')"{% endif %}
+     role="img"
+     aria-label="{{ hero_label }} — section banner">
+  {% if hero_variant != 'art' %}
+  <span class="hero-banner__texture"
+        style="background-image:url('{{ hero_pattern_url }}'),url('{{ hero_streaks_url }}')"
+        aria-hidden="true"></span>
+  {% endif %}
+  {% if hero_logo_url %}
+  <img class="hero-banner__logo" src="{{ hero_logo_url }}" alt="" aria-hidden="true">
+  {% endif %}
+  <span class="hero-banner__label">{{ hero_label }}</span>
+</div>
+{% endif %}
+{{ super() }}
+{% endblock %}
+
+{#
+  Ask Brave — header button + right-sidebar card with logo.
+
+  Header: injected once after .md-header__title; persists across navigation.
+
+  Sidebar card: re-injected on every page via Material's document$ observable
+  (the correct hook for navigation.instant). Falls back to popstate for
+  non-instant environments. The sidebar is forced visible on pages with
+  an empty TOC by removing the hidden attribute.
+#}
+{% block scripts %}
+{{ super() }}
+<script>
+(function () {
+  var GPT_URL  = "https://chatgpt.com/g/g-6a39688f2e0c81918486c4d724888f96-brave-hero-assistant";
+  var LOGO_URL = "{{ rel_prefix }}assets/img/hero-logo-icon.jpg";
+
+  /* ── Header button — injected once, survives instant navigation ── */
+  function injectHeader() {
+    if (document.querySelector(".ask-brave-header-btn")) return;
+    var title = document.querySelector(".md-header__title");
+    if (!title) return;
+    var btn = document.createElement("a");
+    btn.className = "ask-brave-header-btn";
+    btn.href      = GPT_URL;
+    btn.target    = "_blank";
+    btn.rel       = "noopener noreferrer";
+    btn.setAttribute("aria-label", "Ask Brave — HERO Assistant");
+    btn.innerHTML = "💬 <span class='ask-brave-header-btn__text'>Ask Brave</span>";
+    title.insertAdjacentElement("afterend", btn);
+  }
+
+  /* ── Sidebar card — re-injected on every page change ── */
+  function injectSidebar() {
+    var inner = document.querySelector(".md-sidebar--secondary .md-sidebar__inner");
+    if (!inner) return;
+    /* Remove stale card from previous page before appending fresh one */
+    var old = inner.querySelector(".ask-brave-card");
+    if (old) old.remove();
+    var card = document.createElement("div");
+    card.className = "ask-brave-card";
+    card.innerHTML =
+      '<img class="ask-brave-card__logo" src="' + LOGO_URL + '" alt="H.E.R.O. Tool" loading="lazy">' +
+      '<p class="ask-brave-card__eyebrow">Have a question?</p>' +
+      '<p class="ask-brave-card__title">💬 Ask Brave</p>' +
+      '<p class="ask-brave-card__sub">HERO Assistant</p>' +
+      '<a class="ask-brave-card__btn" href="' + GPT_URL + '" target="_blank" rel="noopener noreferrer">Open assistant ↗</a>';
+    inner.appendChild(card);
+    var sidebar = document.querySelector(".md-sidebar--secondary");
+    if (sidebar) {
+      sidebar.removeAttribute("hidden");
+      sidebar.style.removeProperty("display");
+    }
+  }
+
+  /* Initial load */
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", function () { injectHeader(); injectSidebar(); });
+  } else {
+    injectHeader(); injectSidebar();
+  }
+
+  /*
+    Hook into Material's instant navigation.
+    document$ is a global RxJS Subject exposed by Material for MkDocs that
+    emits after each page swap — the correct replacement for DOMContentLoaded
+    when navigation.instant is enabled.
+    Fallback: popstate for non-instant environments.
+  */
+  if (typeof document$ !== "undefined") {
+    document$.subscribe(function () { requestAnimationFrame(injectSidebar); });
+  } else {
+    window.addEventListener("popstate", injectSidebar);
+  }
+})();
+</script>
+{% endblock %}
