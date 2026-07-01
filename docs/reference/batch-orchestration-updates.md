@@ -11,7 +11,7 @@ Anyone tracing how HERO (Hasbro Enrichment & Reconciliation Optimizer) processes
 Explain the batch jobs behind HERO, the export to Logility, and the contingency path — the system mechanics beneath the timing rules.
 
 !!! note "When changes take effect — in brief"
-    A change is captured in HERO authoring state immediately. It reaches Level 1 and the dashboard after the next post-processing / fan-out run, and it reaches Logility only through the weekly Friday export pipeline. Exact cadence is covered in [Timing & system sync](../workflows/timing-system-sync.md). The current operational schedule is day-of-week based in Eastern time: post-processing runs at 8:00am, 12:00pm, and 4:00pm on Wednesday and Thursday; on Friday it runs at 8:00am and again as part of the 12:00pm export pipeline.
+    A change is captured in HERO authoring state immediately. It reaches Level 1 and the dashboard after the next post-processing / fan-out run, and it reaches Logility only through the weekly Friday export pipeline. The fan-out runs **multiple times per UK workday** (Mon–Thu at 08:00 / 10:00 / 12:00 / 14:00 / 16:00 / 18:00 and Fri at 08:00 / 10:00 / 12:00 `Europe/London`, plus a Mon–Thu late-night catch-up at 23:00 `America/New_York`). The full schedule is in [Timing & system sync](../workflows/timing-system-sync.md).
 
 ## The batch jobs (what each one does)
 

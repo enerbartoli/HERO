@@ -25,7 +25,13 @@ Explain why a download, an upload, a dashboard refresh, and a Logility publicati
 A Level 2.5 adjustment does not drop to Level 1 the instant you save it. A **post-processing ("fan-out") job** picks it up, distributes it down to the Level 1 partner rows, and refreshes the dashboard-facing Level 1 view.
 
 !!! note "Fan-out schedule"
-    The operational schedule is day-of-week based, in **Eastern time**: post-processing runs at **08:00, 12:00, and 16:00 on Wednesday and Thursday**; on **Friday** it runs at **08:00** and again as part of the **12:00pm export pipeline**. A Level 2.5 change becomes visible at Level 1 / in the dashboard at the **next** of those runs.
+    The fan-out runs on a frequent, day-of-week schedule so Level 2.5 changes reach Level 1 quickly:
+
+    - **Monday–Thursday (UK workday):** 08:00, 10:00, 12:00, 14:00, 16:00 and 18:00 `Europe/London`.
+    - **Friday (UK morning):** 08:00, 10:00 and 12:00 `Europe/London`.
+    - **Monday–Thursday late-night catch-up:** 23:00 `America/New_York` (≈04:00 `Europe/London` next day) — so UK users start the next workday with any late-uploaded changes already fanned out.
+
+    A Level 2.5 change becomes visible at Level 1 / in the dashboard at the **next** scheduled run.
 
 ## Publication to Logility
 
@@ -36,7 +42,7 @@ A Level 2.5 adjustment does not drop to Level 1 the instant you save it. A **pos
 
 !!! tip "Four rules to live by"
     - A workbook download is a **point-in-time** extract of the current state.
-    - A successful upload updates HERO **authoring** state immediately, but the dashboard and Level 1 view only catch up at the **next fan-out** (Wed–Thu, plus the Friday runs).
+    - A successful upload updates HERO **authoring** state immediately, but the dashboard and Level 1 view only catch up at the **next fan-out run** (multiple times per UK workday — see the schedule above).
     - **Re-download** if someone else has touched the same scope — especially before a later-stage reconciliation session.
     - Publication to Logility happens **only through the Friday export pipeline** — not on upload.
 
