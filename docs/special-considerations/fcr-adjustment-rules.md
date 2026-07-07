@@ -69,6 +69,29 @@ Preserve the right level of accountability while keeping the process practical:
 - **Brand-level decisions** affecting total volume or requiring cross-account compensation → validated and coordinated by the Brand Captain.
 - **Preserving a total SKU forecast by redistributing across remaining customers** → Demand Planner, through the traditional Logility forecasting-range process so the disaggregation logic recalculates correctly.
 
+## Persisting an approved decision into future cycles
+
+When reconciliation approves a **standing** change — e.g. *"Tesco's baseline should permanently increase by 10%"* — how it is persisted so Sales sees it next cycle depends on **what the decision really means**:
+
+### Case A — Raise the total forecast (Level 3 / BU total goes up)
+
+If the intent is a genuine **increase in total demand** (not just a re-split), apply a **Base Trend Adjustment**, held for **~4 months on average**. The purpose is to give the statistical (moving-average) model enough time to **learn the product's new potential** in the market and at that customer. After ~4 months the model should pick up the trend naturally and the enrichment is **no longer needed**.
+
+### Case B — Change the share / proportions (Level 3 total stays the same)
+
+If the intent is that **Tesco should hold a larger share** of the SKU (without changing the BU total), it is a **disaggregation** change, handled by the Demand Planner — not by an enrichment:
+
+1. The **KAM** (in markets without a Brand Captain) or the **Brand Captain** (in markets that have one) requests the change from the **Demand Planner**.
+2. The Demand Planner validates the justification and determines the **new Level 2 disaggregation proportions**.
+3. The Demand Planner communicates them to **Genpact**, stating **how long** the **fixed disaggregation** (fixed proportions) should apply.
+4. Typically after **~6 months** the fixed proportions are no longer needed, because the new split has been in place long enough for the moving-average model to capture it.
+
+!!! warning "Fixed proportions have a hard horizon"
+    A fixed-proportion scheme **cannot be maintained beyond the last week of the last open forecasting period**. For example, if the current open forecast reaches 2027, fixed proportions can be reflected **at most through December 2027**; beyond that the **moving-average** model governs.
+
+!!! note "Which mechanism?"
+    Total up → **Base Trend Adjustment (~4 months)**. Share change only → **fixed Level 2 disaggregation via the Demand Planner + Genpact (~6 months, capped at the last open forecast period)**. Both are temporary bridges until the moving-average model learns the new pattern.
+
 ## Related pages
 
 - [Forecast Calculation Range & Disaggregation](../workflows/forecast-range-calculation.md)
