@@ -34,7 +34,7 @@ Use the enrichments workflow when you have a **real-world event or overlay** tie
 | `DEMAND_PLANNING` | Demand-planning overlay | `ALL_FORECAST_PARTNERS` allowed |
 
 !!! note "Status values"
-    `PROPOSED` = planned / working input · `CONFIRMED` = approved active input · `DECLINED` = retained for traceability but not active.
+    `PROPOSED` = planned / working input · `CONFIRMED` = approved active input · `DECLINED` = retained for traceability. **Status is a log field today: it does not change the math.** Setting a row to `DECLINED` does **not** remove its effect — see *Cancelling or removing an enrichment* below.
 
 !!! warning "Tracking-only types"
     `DEMAND_PHASE_SHIFT` and `SUPPLY_SHORTAGE_COMP` are **tracking metadata**. They do **not** automatically move demand between weeks or between SKUs. Use reconciliation for an actual week move.
@@ -44,6 +44,25 @@ Use the enrichments workflow when you have a **real-world event or overlay** tie
 
 !!! tip "Confirmed vs Proposed horizon"
     Use `CONFIRMED` for near-term events inside the supply window; use `PROPOSED` for longer-horizon events that are not yet locked. `EXCESS_DEPLETION` and `PHASE_OUT` are separate types in the tool; "Phase-Out" is the business term for taking an item off normal carry-forward, and excess-inventory depletion is captured the same way.
+
+## Working in the template (Excel, formulas, copying data)
+
+The HERO templates are **ordinary Excel files** — while you prepare your entries you can use anything Excel offers: copy/paste from other files, `VLOOKUP` and other formulas, and so on. Before you **upload** the file to HERO, take these precautions (mostly good practice, not always hard rules):
+
+- **Don't overwrite rows.**
+- **Replace any formulas with their values** before uploading (copy → paste as values). The upload expects static values, not live formulas.
+- **Avoid blank rows** — for efficiency, don't leave empty lines between enrichments.
+- **Insert any new or copied row below the last row that has data.**
+
+## Cancelling or removing an enrichment
+
+!!! warning "Never delete rows"
+    Do **not** delete enrichment rows. Every enrichment must stay traceable through its key (Enrichment ID) — deleting a row breaks that audit trail.
+
+To cancel an enrichment, **set its quantity to zero** — change the *Expected Shipment Lift* (units or percent) to **0**. That removes its effect while keeping the row for traceability.
+
+!!! note "Status ≠ cancel (current behaviour)"
+    Changing the **Status** to `DECLINED` does **not** cancel the enrichment: the status field is currently for logging only and has **no impact** on the calculation, the dashboard, Logility, or the reconciliation template. The only way to remove an enrichment's effect today is to **zero the quantity**.
 
 ## Related pages
 
