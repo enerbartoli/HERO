@@ -1,0 +1,53 @@
+Hi all,
+
+Thank you for the time and the rich discussion today. Below is a recap of what we covered and the alignment we reached. Please reply with any corrections.
+
+**Purpose of the session**
+
+Align Flow Planning, Demand Planning, and Sales support on how we will handle Non-Forecast-Related (NFR) changes to the Field Forecast during the HERO pilot — the edits that today happen for reasons other than forecasting (allocation, ship-match, holding the month, operational visibility, TMO actualization).
+
+**Key alignment reached**
+
+**1. The pilot will follow a phased approach.** No new functionality will be added to HERO v1.0 specifically for NFR. The pilot will focus on commercial enrichments, and the dedicated NFR capability will be designed in a future iteration informed by what we learn during the pilot. There was strong support for this — particularly the point that some of today's NFR volume may decrease once HERO improves baseline phasing and enrichment accuracy.
+
+**2. Commercial enrichments always flow through HERO.** Promos, sets, samples, pre-orders, and TMOs are enrichments and must be captured in HERO — even when they fall inside the 0–4 month horizon. This protects traceability and keeps Field Forecast, ADS2, Promo Lift, and HERO aligned. Channel shifts and base trend adjustments are native HERO functionalities and are also managed in HERO. Version changes are managed through HERO as well so the forecast does not continue projecting on the wrong version.
+
+**3. The frozen window (0–4 months) applies to UA1 only.** Inside the frozen window, HERO will not overwrite UA1. This is the only array with a restricted write horizon. All other enrichment arrays continue to update across the full 0–12 month horizon, and Resultant Forecast also continues updating weekly to capture version changes and channel shifts.
+
+**4. Baseline stability inside the frozen window is preserved by design.** Daybreak will continue to send proposals for months 0–4, but Genpact will not overwrite months 0–4 with those proposals. The only baseline changes visible in the frozen window will come from planner overrides, version changes, or other documented HERO functionalities.
+
+**5. The path for time-sensitive enrichment changes (e.g., DI-to-DOM flips):** When a commercial enrichment needs to move faster than the monthly cycle, the agreed path is:
+
+  - Sales captures the change in HERO (not in Logility)
+
+  - The change is flagged as time-sensitive
+
+  - A structured weekly report from HERO surfaces these changes to Demand Planning
+
+  - Demand Planning executes the change in Logility within an agreed weekly window (e.g., changes in by Thursday, executed by Friday)
+
+This keeps HERO as the single source of truth for enrichments, avoids putting Sales into two systems, and gives Supply the early visibility they need without compromising the consensus.
+
+**6. TMO actualization stays in HERO.** Clearing the child SKU once the pallet has shipped is performed directly in HERO and flows to Logility via the standard weekly batch. These TMO adjustments do not require Demand Planning validation.
+
+**7. Logility-direct Sales Forecast edits during the pilot are limited to non-enrichment NFR cases only over the UA1.** These are cases where the intent is explicitly that the change should NOT flow to supply as a new demand signal — for example, holding-the-month adjustments on UA1. Whoever performs this work today continues to perform it during the pilot.
+
+**Agreed next steps**
+
+  - **Case mapping (owner: Rene, with input from Flow Planning, DP, and Sales support):** lay out each known NFR scenario (allocation support, ship-match, holding the month, DI-to-DOM flip, version changes) and confirm the agreed path for each — HERO, Logility-direct, or HERO + flagged weekly report
+
+  - **Weekly report design (owners: Rene / Becca / Jarred):** define the structure of the weekly report from HERO that surfaces time-sensitive enrichment changes to DP for execution in Logility
+
+  - **Technical deep-dive session (owner: Rene to schedule):** walk through the end-to-end data architecture — how data flows between Daybreak, HERO, Logility, and Supply — to address the open technical questions Tara raised on sync behavior between UA1 edits and the HERO spreadsheet view
+
+  - **Open channel for additional cases:** Rene will open a thread for the group to flag any additional NFR scenarios that surface in day-to-day work so they can be incorporated into the governance before pilot launch
+
+**Open items still to define**
+
+  - Definition of the weekly cut-off (which day is the cut-off for time-sensitive enrichment changes to make it into the same week's Logility update)
+
+  - Confirmation of the formal NFR process owner during the pilot
+
+  - Treatment of the DI / DOM split logic in the U.S. context (broader topic — flagged by Julie and Sarah, to be picked up separately, with the U.K. enrichment-driven model as a reference point)
+
+Thank you again for the engagement. Replies welcome with any adjustments before I close this out.

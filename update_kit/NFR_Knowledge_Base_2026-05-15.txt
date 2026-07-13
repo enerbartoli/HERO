@@ -1,0 +1,268 @@
+# NFR (Non-Forecast-Related Adjustments) — Knowledge Base
+
+**Context:** HERO Tool Pilot · Forecast Enrichment Process
+**Audience:** Demand Planning Transformation team, Flow Planning, Design Team
+**Last updated:** May 2026
+
+---
+
+## 1. What NFR means
+
+**NFR = Non-Forecast-Related Adjustments to the Field Forecast.**
+
+These are edits made to UA1 (Field Forecast) that are **not new demand assumptions**. They are operational and reporting-driven actions, typically made within the lead-time horizon, that today live alongside the standard demand-planning cycle because existing tools don't separate them from real demand changes.
+
+NFR edits must never flow to the Consensus Forecast as demand signal — they distort the demand-planning conversation when mixed in.
+
+---
+
+## 2. Why NFR exists today (workshop-validated reasons)
+
+Three legitimate operational reasons surfaced across the workshops:
+
+### Allocation support
+Near-term phasing adjustments to enable inventory allocation decisions when product is constrained or on allocation. Volume that already exists is redistributed across customers and weeks.
+
+### Ship-match alignment
+End-of-month alignment with confirmed orders. Orders held by logistics for customer must-arrive dates roll into the next month — without rephasing, the forecast number looks wrong even though the demand is real.
+
+> *Workshop quote:* "We had 11.8 million of volume that didn't ship in February just because of must-arrive-by dates for customers that will ship in Week 1 of March. The orders were in. They're just being held by our logistics team to the customer must-arrive-by date. That is going to be an ongoing situation that happens."
+
+### Operational visibility for reporting
+Temporary near-term re-phasing so internal commercial reporting numbers reconcile, especially when forecast accuracy KPIs and finance close calendars don't line up.
+
+### TMO Actualization (special case)
+Clearing the child SKU forecast once the pallet has shipped, to avoid distortion in close-out and excess-inventory reporting.
+
+- Confirmed in workshops by Tara Kelly: the motivation is "because of our own reporting and needing that number to be whole in there"
+- Suzanne McCoy: the child-to-pallet conversion logic "is there for reporting, but not for this specifically"
+- **Driver:** if Flow Planning doesn't actualize the child SKU once the pallet ships, the child SKUs show as excess inventory in close-out calculations even though they sold as part of the pallet
+- **Nature:** purely reporting/financial, NOT a supply driver
+
+---
+
+## 3. The three risks if NFR goes uncontrolled
+
+| Risk | Description |
+|---|---|
+| **Forecast integrity risk** | Demand-planning discussions become distorted by edits that are NOT demand-driven. The team debates a number that includes operational noise. |
+| **Accuracy measurement risk** | Forecast error gets artificially inflated — or masked — by operational edits. We can't separate true demand-signal quality from execution adjustments. |
+| **Process risk** | Ad-hoc edits outside any governance frame undermine the monthly planning cadence and destroy traceability — exactly what HERO is being built to fix. |
+
+---
+
+## 4. The strategic framing: Phased Evolution
+
+The decision is **not** to defer NFR functionality because we ran out of time. It is a deliberate design choice:
+
+- **Protects the pilot timeline** — we don't add scope to v1.0 with a tight launch window. The pilot focuses on commercial enrichments, the highest-value, highest-volume use case.
+- **Lets us prove HERO in real conditions first** — users don't migrate away from a working operational path until HERO has demonstrated robustness in a live environment.
+- **Gives NFR the design attention it needs** — operational adjustments have edge cases that deserve careful design: validations, audit, segregation from Consensus. Pilot months are used to design the next iteration properly, informed by real pilot data.
+
+> *Phasing is not a workaround. It is a deliberate design choice that prioritizes pilot success and long-term solution quality.*
+
+---
+
+## 5. Pilot Behavior — Final Aligned Approach
+
+**The best way to understand the behavior is by clarifying what is expected per array.**
+
+### Time horizon scope
+- **HERO operating horizon:** `horizon_month 0–12`
+- **Out of pilot scope:** `horizon_month 13+`
+
+### Array-level behavior
+
+**UA1 Field Forecast**
+- HERO updates only in `horizon_month 5–12`
+- `horizon_month 0–4` is reserved for operational adjustments (NFR-reserved window)
+- This is the **only** array with a restricted write horizon
+
+**Resultant Forecast**
+- Updates on weekly cycles across the full `0–12` horizon
+- Updates inside `0–4` are needed to capture version changes and channel shifts
+- Daybreak will continue to send its proposal for months 0–4, but **Genpact will not overwrite months 0–4 with the Daybreak proposal**
+- Therefore, the only baseline changes visible inside the frozen window are those originating from:
+  - Planner overrides
+  - Version changes
+  - Other documented HERO functionalities
+
+**All other enrichment arrays** (promos, sets, samples, pre-orders, TMO, channel shift, and other commercial enrichments)
+- Updates flow across the full `0–12` horizon without restriction
+- These updates affect both the Field Forecast (UA2–UA6) side and the corresponding Consensus arrays (ADS2 and Promo Lift)
+
+### Governance, not export controls
+- Stability inside the near-term window is enforced **through governance, not through HERO export restrictions**
+- This deliberate choice preserves flexibility to handle undocumented edge cases
+- A future NFR process can own the UA1 near-term window without overlapping HERO
+
+### Template horizon
+- Templates are designed to operate on **52-week rolling periods**
+- At specific points in the year HERO will need to extend beyond 12 months — for example, in **September**, templates must be extended to cover the remaining 3 months of the current year plus the full following year (a total of 15 months in that cycle)
+
+### Net effect
+- HERO operates across the full `0–12` horizon for nearly all arrays
+- UA1 alone has a restricted write horizon (`5–12`) to leave `0–4` reserved for operational adjustments
+- Field Forecast, ADS2, Promo Lift, and HERO remain 100% aligned on commercial enrichments
+- Process discipline — not system enforcement — is the safeguard against scope creep, keeping the pilot adaptable
+
+---
+
+## 6. Governance Rules
+
+### Allowed change reasons (NFR)
+Named explicitly, NOT codified (decision: no reason codes during the pilot):
+
+- **Allocation support** — near-term phasing for inventory decisions
+- **Ship-match alignment** — EOM matching to confirmed orders
+- **Operational visibility** — temporary rephasing for reporting clarity
+- **TMO actualization** — clearing child SKU once the pallet has shipped, to avoid distortion in close-out and excess-inventory reporting
+
+**Open question for the session:** Are these the only NFR change reasons we need to track during the pilot?
+
+### Not allowed via NFR path
+- Demand-driven changes (must be captured in HERO)
+- Strategic Marketing or DP enrichments (HERO standard flow)
+- Any commercial-driven edit (always HERO)
+
+### Four governance rules
+1. **Time horizon** — NFR edits ONLY in months 0–4 (frozen window for UA1). Anything beyond month 4 goes through the HERO cycle.
+2. **No overwrite on UA1** — HERO does not write to UA1 in `0–4` — Flow Planning's adjustments are preserved cycle to cycle.
+3. **Limited to named change reasons** — edits must correspond to one of the allowed change reasons. Anything else routes through HERO.
+4. **Monthly review** — DP and S&OP leadership review NFR volume, top change reasons, and recurring SKUs once a month.
+
+### Decisions explicitly NOT made (deferred)
+- No reason codes during the pilot
+- No manual audit log requirement
+- No formal approver assigned (open question — to be discussed in session)
+
+---
+
+## 7. Roles during the pilot
+
+| Step | Owner | Cadence |
+|---|---|---|
+| NFR request intake & evaluation | Flow Planning | On-demand |
+| NFR edit execution (frozen window) | Flow Planning | Within months 0–4 only |
+| HERO cycle transmission (months 5–12) | Demand Planning | Each cycle |
+| Monthly NFR review pack | Demand Planning | Monthly |
+| Cut-off enforcement (last week of month) | Flow Planning + Data Team | Every month-end |
+
+**Open question:** Who currently supervises the NFR process today, and who should be the formal approver going forward?
+
+---
+
+## 8. What does NOT change (stays in HERO)
+
+Two cases that go through HERO, NOT via the NFR path:
+
+### TMO version moves to parent code
+Once the parent SKU is extended in Logility, the move from child SKUs to parent code is done in the HERO Forecast Capture Template — not as an NFR edit. The tool zeroes out the old version and applies the same baseline to the new one in a single action.
+*Status: pending validation with the design lead.*
+
+### Commercial enrichments (any horizon)
+Any change driven by commercial reality — confirmed promo, new TMO, channel shift, retail expansion — must be captured in HERO, even if the timing falls inside the frozen window. NFR is for operational/reporting reasons only.
+
+### Adjustments to existing commercial enrichments
+- Made ONLY in HERO by the original commercial owner
+- Only allowed when tied to a real change in commercial negotiation
+- Affect both Sales Forecast and Consensus (ADS2, Promo Lift)
+- Must be communicated to the Demand Planning team
+- **Future state:** routes through S&OE once formalized in the region
+
+### Guiding principle
+**100% alignment between Logility Field Forecast, ADS2, Promo Lift, and HERO on all commercial enrichments.**
+
+---
+
+## 9. Decision Guide — Where each change goes
+
+| Change type | Why it happens | Where | Who |
+|---|---|---|---|
+| Standard promo, set, sample, pre-order | Commercial reality | HERO Capture Template | Sales / KAM |
+| TMO creation & extension | Commercial reality | HERO Capture Template | Sales / KAM |
+| TMO version move (child → parent SKU) | Commercial reality | HERO Capture Template | Sales / DP |
+| Adjustment to an existing commercial enrichment | Real change in commercial negotiation | HERO only — affects Sales + Consensus | Original commercial owner |
+| Channel shift, base trend correction | Commercial reality | HERO Reconciliation Template | Sales / DP |
+| Allocation re-phasing inside lead time | Operational | Logility (NFR path) | Flow Planning |
+| Ship-match adjustment (EOM) | Reporting / operational | Logility (NFR path) | Flow Planning |
+| Customer must-arrive-by date rephasing | Operational | Logility (NFR path) | Flow Planning |
+| TMO actualization (clear child once shipped) | Reporting (close-out / excess) | Logility (NFR path) | Flow Planning / Data |
+
+**Rule of thumb:** If the WHY is commercial, it goes to HERO. If the WHY is operational or reporting, it goes via the NFR path — and only inside the frozen window.
+
+---
+
+## 10. Risks & Guardrails
+
+| Risk | Guardrail |
+|---|---|
+| Adjustments to commercial enrichments leak outside HERO | Adjustments to existing commercial enrichments are made ONLY in HERO by the original commercial owner, only when tied to a real change in negotiation. They affect Sales Forecast and Consensus, and must be communicated to the Demand Planning team. In the future, this routes through S&OE once formalized in the region. |
+| NFR creep — edits made beyond month 4 | Governance-based discipline + monthly review surfaces patterns. Note: this is no longer system-enforced (deliberate choice for flexibility). |
+| Demand-driven edits get mis-classified as NFR to avoid HERO | NFR change reasons are limited to the named list (allocation, ship-match, operational visibility, TMO actualization). Commercial reasons are not on the list. |
+| Sales Forecast and Consensus diverge invisibly | Monthly review compares Sales vs Consensus delta; a separate dashboard tab will show the variance during pilot. |
+| Frozen window definition is wrong for some markets | 0–4 month boundary is the proposed default; markets can flag if the lead time is materially different and we adjust per BU. |
+
+---
+
+## 11. Path Forward
+
+| Phase | What happens |
+|---|---|
+| **NOW** | Lock the governance. Sign off on the rules, ownership, and named change reasons so Flow Planning and DP have a single playbook before the pilot starts. |
+| **PILOT** | Operate the interim model. Flow Planning continues operating inside the frozen window, HERO transmits months 5–12 for UA1 and full 0–12 for all other arrays, monthly review keeps NFR volume and recurring patterns visible. |
+| **NEXT** | Design the permanent NFR capability. Use real pilot data to inform validations, segregation, and audit. Migrate when it's ready, not before. |
+
+---
+
+## 12. Open Questions for the Flow Planning Session
+
+1. Confirm the frozen window boundary — is months 0–4 the right horizon, or different per market / BU?
+2. Confirm the named NFR change reasons — are these the only ones we need to support during the pilot?
+3. Confirm process ownership and oversight — who currently supervises NFR, and who should be the formal approver going forward?
+4. Confirm the monthly review forum — when and where do we review NFR volume, recurring SKUs, root causes?
+5. Confirm cut-off discipline — last week of month, no NFR edits — is this realistic given the close calendar?
+
+---
+
+## 13. Communication Strategy
+
+### Invitation to Flow Planning session (final version)
+Subject: *Alignment session — Non-forecast-related adjustments to the Field Forecast during the HERO pilot*
+
+Tone: working session, not a one-way readout. Does NOT reveal upfront that NFR functionality is deferred — that is discussed in the meeting.
+
+### Design team pre-alignment session
+**Goal:** ensure the design team walks into the Thursday session with Tara Kelly and the broader team aligned and ready to back the proposal.
+
+Pre-alignment covers:
+- Walk-through of the deck end-to-end
+- Open points and concerns surfaced internally
+- Anticipated pushback and response strategy
+- Roles for the Thursday session — who leads which section
+
+### Deck framing principles
+- **DO NOT** open with "HERO v1.0 will not have an NFR module" — defensive framing
+- **DO** open with the problem (why NFR exists) → risks → phased evolution → operating model → governance → summary
+- The proposal summary lives AT THE END, after the audience is predisposed
+- Frame as "phased evolution" with deliberate design intent, not as "missing functionality"
+
+---
+
+## 14. Terminology
+
+| Term | Definition |
+|---|---|
+| **NFR** | Non-Forecast-Related Adjustment to the Field Forecast |
+| **UA1 / Field Forecast** | The forecast array Flow Planning edits today in Logility |
+| **UA2–UA6** | Additional Field Forecast arrays for promos, TMO, channel shift, samples, pre-orders |
+| **ADS2** | Consensus enrichment array (positive enrichments excl. baseline, commercial + non-commercial positives) |
+| **Promo Lift** | Consensus array capturing promo enrichment lift |
+| **Resultant Forecast** | Consensus Forecast — the demand-signal output of the planning process |
+| **Daybreak** | Statistical baseline generator |
+| **Genpact** | Operational team controlling Logility transmission |
+| **Frozen window** | `horizon_month 0–4` — UA1 reserved for operational adjustments |
+| **Open window** | `horizon_month 5–12` — HERO writes UA1 in this range |
+| **HERO** | The forecast enrichment tool being piloted |
+| **S&OE** | Sales & Operations Execution — future-state process for handling operational/near-term adjustments |
+| **TMO** | Themed Multi-pack Offering (pallet-level commercial item bundling individual SKUs) |
