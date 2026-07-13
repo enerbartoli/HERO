@@ -44,6 +44,9 @@ Weeks in the actualized period use exact row-level shipment actuals where they e
 !!! tip "Forecasting range (start / end dates)"
     To stop forecasting a SKU for a customer, adjust the **forecast calculation range** (set an end date) — distinct from a phase-out enrichment. See [Forecast Calculation Range & Disaggregation](../workflows/forecast-range-calculation.md).
 
+!!! warning "Zero the Version Change / Channel Shift pair once the Forecasting Range is fixed"
+    A Version Change or Channel Shift creates an offsetting +/− base-trend-adjustment pair for its week range — it never touches the baseline or forecasting range itself. The durable fix is updating the **Forecasting Range**. Once that range is fixed, the offsetting pair must be **manually zeroed**, or it persists as a delta indefinitely (fixing the range without zeroing the pair leaves you wrong for exactly one cycle, then correct).
+
 ## Related pages
 
 - [Field-by-field reference](../workflows/field-by-field-reference.md)

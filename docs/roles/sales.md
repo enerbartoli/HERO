@@ -14,6 +14,9 @@ You capture the real commercial events you know about and make customer-level re
 - Review **account-level impact** on the rendered forecast.
 - Make **customer-level (Level 1) reconciliation** edits in your owned slice. Demand Planning and Marketing work at the aggregate (BU) level, and can author a BU-level adjustment if agreement with Sales is not reached.
 
+!!! note "KAMs have no access to Level 2.5 templates"
+    Sales / KAM access is scoped to **Level 1, your own customers, only** — there is no KAM access to the Level 2.5 / BU-SKU templates used by Brand Captains, Demand Planning, and Marketing.
+
 ## Tools and views you use
 
 - [Enrichment Capture Template (ECT)](../tools/enrichment-capture-template.md) — your primary tool.

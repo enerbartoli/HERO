@@ -38,6 +38,15 @@ A Level 2.5 adjustment does not drop to Level 1 the instant you save it. A **pos
 !!! warning "Logility is updated only through the Friday export"
     Uploading a workbook does **not** push Logility. HERO publishes to Logility **only through the weekly Friday noon Eastern export pipeline**. Anything authored during the week is held in HERO until that pipeline runs. (Downstream transport from Databricks into Logility is external orchestration — see [Batch orchestration & updates](../reference/batch-orchestration-updates.md).)
 
+## Urgent changes — the three governed paths
+
+!!! warning "The weekly export is not skippable — use one of these three paths instead"
+    HERO exports to Logility only through the weekly Friday export, regardless of urgency. If a change cannot wait for that cadence, it must go through one of these three governed paths, depending on what it is:
+
+    1. **Commercial enrichments** (promos, sets, samples, pre-orders, TMOs) **always** go through HERO — even inside the months 0–4 frozen window. Never enter these directly in Logility.
+    2. **Time-sensitive enrichment changes** (e.g. a DI-to-DOM flip): capture it in HERO and flag it as time-sensitive. A weekly report surfaces it to Demand Planning, who executes it in Logility within the agreed weekly window.
+    3. **Non-forecast-related edits only** (allocation support, ship-match alignment, holding the month, operational visibility): made directly in Logility on UA1, only within months 0–4, by whoever performs this work today — never flowing into consensus. There is no dedicated NFR (Non-Forecast-Related) functionality in HERO v1.0; this is a deliberate, phased choice. See [Deferred in v0](../reference/deferred-in-v0.md).
+
 ## Practical rules
 
 !!! tip "Four rules to live by"

@@ -51,6 +51,16 @@ No. The Status field is currently **log-only** — it does not change the calcul
 **Can I use formulas (e.g. VLOOKUP) or copy data from other files into the template?**
 Yes — the templates are normal Excel files, so use whatever helps while you prepare. Just, **before uploading**: replace formulas with their values (paste as values), don't overwrite rows, avoid blank rows, and add any new/copied rows below the last row with data.
 
+**Does a DP/Marketing adjustment change my sales forecast (UA1)?**
+It depends on the phase. **Target design:** no — Demand Planning / Marketing adjustments flow only into consensus, never into UA1 (the field/sales forecast). **Pilot interim (current):** HERO does not yet have the user-role layer needed to tell who authored a Level 2.5 base-trend adjustment, so for now **all** Level 2.5 base-trend adjustments flow into UA1 regardless of who made them. True in both phases: Marketing Enrichment and Demand Adjustment components never migrate to UA1, and HERO never overwrites UA1 inside the 0–4-month frozen window. (Confirmed by Rene Bartoli, 12 July 2026.)
+
+**I made an urgent change and Logility doesn't show it yet — is HERO broken?**
+No. HERO exports to Logility only once a week (Friday), by design — see [Timing & system sync](../workflows/timing-system-sync.md). If a change genuinely cannot wait, there are three governed paths, depending on what it is:
+
+1. **Commercial enrichments** (promos, sets, samples, pre-orders, TMOs) **always** go through HERO — even inside the months 0–4 frozen window. Never enter these directly in Logility.
+2. **Time-sensitive enrichment changes** (e.g. a DI-to-DOM flip): capture it in HERO and flag it as time-sensitive. A weekly report surfaces it to Demand Planning, who executes it in Logility within the agreed weekly window.
+3. **Non-forecast-related edits only** (allocation support, ship-match alignment, holding the month, operational visibility): made directly in Logility on UA1, only within months 0–4, by whoever performs this work today. These never flow into consensus. There is no dedicated NFR (Non-Forecast-Related) functionality in HERO v1.0 — this is a deliberate, phased choice.
+
 ## Related pages
 
 - [Timing & system sync](../workflows/timing-system-sync.md)
