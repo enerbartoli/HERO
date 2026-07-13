@@ -14,7 +14,7 @@ Map HERO outputs to the Logility sales-forecast arrays and consensus path.
 
 | Array | Holds | Notes |
 |---|---|---|
-| **UA1** | Baseline sales forecast after reconciliation adjustments | Reconciliation deltas, version changes, and channel shifts land here. |
+| **UA1** | Baseline sales forecast after reconciliation adjustments | `UA1 = BASELINE + BASE_TREND + CHANNEL_SHIFT + PHASE_OUT`. Reconciliation deltas, version changes, channel shifts, and `PHASE_OUT` enrichments land here. Marketing / Demand-Planning adjustments never migrate here by target design (see the [pilot-interim note](batch-orchestration-updates.md)). Authored by HERO only in horizon months 5–12; see the [frozen window](../help/glossary.md). |
 | **UA2** | Promotional activity | Promo-type sales adjustments. |
 | **UA3** | Sets / initial stocking | Set-type sales adjustments. |
 | **UA4** | Samples | Sample-type sales adjustments. |

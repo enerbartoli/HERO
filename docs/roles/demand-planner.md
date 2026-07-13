@@ -26,6 +26,8 @@ You reconcile final numbers, use structured functions, and review aggregate outp
 
 !!! warning "Watchouts"
     - **Deltas, not absolutes.** Reconciliation takes a plus/minus change, not a final overwrite.
+    - **Base Trend Adjustments persist across cycles as deltas until manually reversed** — they are not single-cycle. If you meant a one-cycle-only correction, you must zero it out next cycle.
+    - **A Level 2.5 correction cannot surgically target one account.** It disaggregates across **all** forecast partners by baseline proportion — correcting one account's over-forecast at 2.5 also cuts every other account. The designed path for an inflated single account is peer accountability in the commercial reconciliation session, not a unilateral DP fix at 2.5.
     - **Don't mask baseline errors with repeated enrichments.** If the ongoing baseline is wrong, use a Base Trend Adjustment.
     - **Don't combine** a Version Change and a Channel Shift on the same row.
     - **Re-download** before a later-stage reconciliation session — someone may have touched the same scope.

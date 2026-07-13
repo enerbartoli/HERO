@@ -1,0 +1,172 @@
+**Addendum: Non‑Forecast‑Related  
+Adjustments in the Sales Forecast**
+
+Governance + Data Architecture Companion to the Agility / Logility S\&OP Data Architecture
+
+*Owner: Data Team (Sales Forecast Master User) • Admin: Tara Kelly + Flow Planning • Scope: Frozen window (0–4 months)*
+
+*Purpose: protect forecasting integrity by isolating operational / reporting edits that are not demand‑driven. Revision v2 (12 July 2026, R. Bartoli): frozen window corrected from '0–90 days' to months 0–4 (the 90-day figure was an erratum). Note: this addendum describes the designed future state for NFR governance; during the pilots no dedicated NFR functionality is implemented in HERO — non-forecast-related edits are made directly on UA1 within months 0–4 (see NFR Hero Summary, 2026-05-28).*
+
+# 1\. Executive Summary
+
+This addendum introduces a controlled mechanism to apply “Non‑Forecast‑Related Enrichments” (NFR) directly to the Sales Forecast within the frozen window (0–4 months), outside the monthly planning cycle. These edits are required for operational needs (e.g., allocation and ship‑match alignment) and for reporting visibility (e.g., end‑of‑month order matching) but are not considered demand adjustments. Therefore, they must never flow into the Consensus Forecast.
+
+  - Governance: restricts NFR changes to 0–4 months and enforces approval + audit trail.
+
+  - Execution: a dedicated template managed by Data (Sales Forecast master user), Tara Kelly, and Flow Planning.
+
+  - Architecture: NFR is stored as a separate variable in Databricks and applied only to the Sales Forecast (UA1) output; it is excluded from Consensus calculations.
+
+# 2\. Problem Statement
+
+In the current operating reality, the Sales Forecast is sometimes modified for reasons that are outside the forecasting process. These changes can improve downstream execution (inventory allocation, supply prioritization, visibility of the full‑year potential) but they also create three risks:
+
+  - Forecast integrity risk: demand‑planning discussions become distorted by edits that are not demand‑driven.
+
+  - Accuracy measurement risk: forecast error can be artificially inflated (or masked) by operational edits.
+
+  - Process risk: ad‑hoc edits outside governance can undermine the monthly planning cycle and traceability.
+
+# 3\. Guiding Principles
+
+  - The Consensus Forecast remains the single demand‑planning number used for cross‑functional sign‑off and supply planning assumptions.
+
+  - The Sales Forecast may differ from Consensus when (and only when) the delta is explicitly classified as Non‑Forecast‑Related (NFR).
+
+  - NFR adjustments must be time‑boxed to the frozen window (0–4 months) and executed through a controlled template and workflow.
+
+  - All NFR entries must be traceable (who / when / why) and measurable as a distinct component for accuracy and governance reporting.
+
+# 4\. Governance Policy (0–4 Month Frozen Window)
+
+The governance intent is to limit the scope of off‑cycle edits and protect the monthly planning cadence.
+
+## 4.1 Allowed Use Cases (NFR Reasons)
+
+  - Allocation support: adjust near‑term phasing to facilitate inventory allocation decisions.
+
+  - Ship‑match alignment: end‑of‑month alignment to confirmed orders to improve visibility and execution.
+
+  - Operational visibility: temporary re‑phasing for near‑term reporting clarity when required by downstream stakeholders.
+
+## 4.2 Non‑Allowed Use Cases
+
+  - Changes intended to represent new demand assumptions beyond month 4 (must wait for the next monthly cycle).
+
+  - Strategic Marketing or Demand Planning enrichments (handled in the standard enrichment workflow and reflected in Consensus).
+
+  - Any edit that cannot be justified with a standardized reason code and approval trail.
+
+## 4.3 Approval, Ownership, and RACI
+
+| **Step**            | **Primary Owner**       | **Approver(s)**    | **Notes**                                                        |
+| ------------------- | ----------------------- | ------------------ | ---------------------------------------------------------------- |
+| Request intake      | Flow Planning           | Data (Master User) | Request must be within 0–4 months and include reason + evidence. |
+| Template entry      | Data Team (Master User) | Tara Kelly         | Controlled edit rights; standardized validations.                |
+| Data load & publish | Data Team               | Flow Planning      | Update Sales Forecast only; refresh dashboards/audit log.        |
+| Monthly review      | Demand Planning         | S\&OP Leadership   | Monitor volume, frequency, and recurring root causes.            |
+
+## 4.4 Service Level and Cut‑offs
+
+  - Target SLA: same business day for urgent 0–4 week requests; otherwise within 48 hours.
+
+  - Cut‑off: NFR edits must stop the last week of the month (per actuals lock) to avoid retroactive distortions.
+
+# 5\. Dedicated NFR Adjustment Template (Off‑Cycle)
+
+A separate template is required to ensure NFR edits are visible, measurable, and technically segregated from demand‑driven enrichments. The design mirrors the Baseline Reconciliation approach: weekly deltas by SKU with a specific adjustment type (NFR)
+
+## 5.1 Grain and Structure
+
+  - Grain: BU/ Channel / Customer (optional) / SKU / Week.
+
+  - Measure: delta units (+/‑) applied to the Sales Forecast only.
+
+  - Time boundary: only weeks in the next 0–4 months from the current date.
+
+## 5.2 Validations (minimum set)
+
+  - Hard stop if week is outside 0–4 months.
+
+  - Hard stop if SKU/week is duplicated without explicit merge rule (prevents double counting).
+
+  - Delta check vs baseline magnitude (flag if delta exceeds configurable threshold).
+
+  - Mandatory reason + approval completion before load.
+
+# 6\. Data Architecture & Integration
+
+The existing architecture uses Databricks as a staging layer and an SQL S\&OP Hub as the calculation center / Source of Truth. This addendum introduces one new component: NFR_ENRICHMENT, stored and managed separately in data bricks to guarantee it never impacts Consensus.
+
+## 6.1 New Data Objects
+
+  - Databricks ELement: NFR_ENRICHMENT (SKU‑Week deltas + full metadata).
+
+  - SQL Hub column (optional but recommended for reporting): NFR_ENRICHMENT (excluded from Consensus calculations).
+
+## 6.2 Calculation Rules
+
+The intent is to keep the Consensus forecast unchanged while allowing Sales Forecast to include NFR for near‑term execution.
+
+| **Object**                                    | **Rule**                                                                                     |
+| --------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| Sales Forecast (Field Forecast UA1)           | UA1 = Resultan + BASE_TREND + CHANNEL_SHIFT + NFR_ENRICHMENT                              |
+| Consensus Forecast (SQL Hub Consensus_Value) | Consensus_Value = sum(10 standard components originally defined) (NFR_ENRICHMENT excluded) |
+
+## 6.3 Flow Rules (Hard Separation)
+
+  - NFR_ENRICHMENT must be applied only when publishing to the Sales Forecast output (Field Forecast).
+
+  - NFR_ENRICHMENT must never be mapped to Consensus Forecast arrays.
+
+  - An additional Tab will be required within the dashboard to deep dive on the sales forecast (Similar to the consensus summary)
+
+  - In the forecast, reductions generated through the NFR must never exceed the sum of **Baseline + Base_Trend + Channel_Shift**, ensuring that **UA1 is never negative**, even if the item has positive commercial enrichments.
+
+## 6.4 Lifecycle Across Monthly Cycles
+
+NFR entries are persisted in Databricks at week level. When a new monthly baseline is loaded, the pipeline re‑applies all still‑relevant NFR deltas for weeks that remain inside the 0–4 month horizon. Past weeks are automatically retired.
+
+  - Carry‑forward: NFR is additive; it survives baseline replacement until its target week is in the past.
+
+  - Retirement: NFR rows auto‑expire after week close (or when actuals are locked).
+
+  - Reconciliation: if the standard monthly process introduces demand‑driven corrections for the same weeks, NFR must be reviewed to avoid masking.
+
+# 7\. Measurement: Accuracy and Process KPIs
+
+To avoid penalizing forecasting performance for operational edits, NFR must be reported separately.
+
+## 7.1 Recommended Accuracy Views
+
+  - Demand Accuracy (Consensus): compare Consensus Forecast vs actuals (standard KPI).
+
+  - Operational Accuracy (Sales Forecast): compare Sales Forecast vs actuals (for execution learning).
+
+  - NFR‑Adjusted Demand Accuracy: recompute Sales Forecast accuracy excluding NFR to isolate demand signal quality.
+
+## 7.2 Governance KPIs
+
+  - NFR volume (% of total) within 0–4 months by market/BU.
+
+  - Count of NFR requests per week and average turnaround time (SLA adherence).
+
+  - Top reason codes driving NFR (ALLOC vs SHIP_MATCH vs EOM_VIS).
+
+  - Recurring SKUs/customers: flag chronic cases for root‑cause elimination.
+
+# 8\. Implementation Checklist (Minimum Viable)
+
+1.  Define frozen window logic (0–4 months) and calendar definition (week cut‑offs).
+
+2.  Finalize NFR reason codes and required metadata fields.
+
+3.  Build the NFR template (Excel) with validations and protected editing.
+
+4.  Create Databricks NFR_ENRICHMENT table and ingestion pipeline.
+
+5.  Implement publish logic to apply NFR only to Sales Forecast output (Field Forecast UA1).
+
+6.  Update dashboards to show Sales vs Consensus delta and NFR attribution.
+
+7.  Enable audit log + monthly governance review pack.

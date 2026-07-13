@@ -1,0 +1,225 @@
+**HERO UK Pilot: Expected Odd Behaviors and Support Guidance**
+
+Draft for Rene to edit and share with UK pilot users
+
+**Purpose:** This note sets expectations for the first HERO pilot business unit. It focuses on places where the tool may feel slow, inconsistent, or less seamless than users expect, even when the underlying data is still recoverable.
+
+**Audience:** UK HERO pilot users, pilot support leads, and business stakeholders who need a practical explanation of what may look odd during the early rollout.
+
+**Important pilot context**
+
+For the UK pilot, 2026 values are being pre-loaded through HERO bulk upload, and pilot users will mainly be working on 2027 weeks. That reduces the immediate operational risk. In the early pilot period, the bigger risks are rework, cleanup, temporary confusion, and timing mismatches between HERO, the dashboard, and export outputs. It does not remove the need for review before the Friday export cycle.
+
+**What Users Should Expect**
+
+**1. Workbook download and upload may feel uneven during heavier use**
+
+The HERO workbook flow is the main authoring surface for the pilot, so this is the first place where users may notice friction.
+
+> • Workbook downloads and uploads may take longer than expected when several users are active at the same time.
+> 
+> • An upload can fail because of one or more invalid rows, even if most of the workbook is correct.
+> 
+> • When an upload fails validation, HERO returns an annotated workbook with error details rather than partially saving the valid rows.
+> 
+> • This can feel surprising if a user expected the “good” rows to go through anyway, but the current behavior is intentionally all-or-nothing so that partial writes do not create hidden data problems.
+> 
+> • If an annotated workbook is returned, users should assume the upload did not save and should correct the workbook before uploading again.
+
+**2. A successful upload does not always mean the dashboard is already updated**
+
+HERO and the dashboard do not refresh in exactly the same way or at exactly the same time.
+
+> • When a workbook upload succeeds, the authored HERO event data is written first.
+> 
+> • For standard partner-level reconciliation uploads, HERO then makes a best-effort attempt to trigger a separate refresh job for the workbook-parity dashboard surface.
+> 
+> • If that trigger succeeds, the reconciliation dashboard should usually update within about an hour.
+> 
+> • If that trigger does not fire, the upload can still be valid and saved. In that case, the dashboard catches up on the next scheduled rebuild.
+> 
+> • Power BI can lag further, because its own refresh cadence is separate from HERO and Databricks.
+
+This means a user may see one of the following and still be in a recoverable state:
+
+> • the upload succeeded, but the dashboard still shows the older number for a while
+> 
+> • the workbook that was just downloaded does not appear to match a dashboard page immediately afterward
+> 
+> • one dashboard page updates sooner than another, depending on which table or view it reads
+
+During that short window, the upload confirmation and the saved workbook should be treated as more current than the dashboard.
+
+**3. The dashboard is not the same thing as the raw authored HERO state**
+
+Some Power BI surfaces are “current-state” reporting views, while others are intended to mirror the workbook more closely. Because of that, users may sometimes compare two views that are both technically valid but built for different purposes.
+
+> • One report may be optimized for current weekly contributions and attribution.
+> 
+> • Another report may be optimized for workbook parity and historical baseline presentation.
+> 
+> • Those surfaces are not always expected to match cell-for-cell at every moment, especially right after uploads or during refresh windows.
+
+**4. Overlapping user activity can make the “current” answer harder to read**
+
+If several users are uploading changes around the same time, especially against similar items or weeks, it can become temporarily harder to tell which upload is reflected where.
+
+> • The main risk is confusion and cleanup, not silent partial saving.
+> 
+> • Users should avoid unnecessary overlapping uploads against the same scope when possible.
+> 
+> • Support teams should ask for the workbook name, upload time, and user name when reconciling “which change won” questions.
+
+**5. A workbook can be valid but still based on stale context**
+
+A downloaded workbook is only a point-in-time view. If a user holds it for a while and other users change the same scope in the meantime, the workbook can still upload successfully while being out of date relative to the current state.
+
+> • This is most likely when several users are working the same business unit, partner, SKU, or nearby weeks.
+> 
+> • The risk is not just validation failure. The bigger risk is that a user believes they are acting on the latest number when they are not.
+> 
+> • If a workbook has been sitting for a while before upload, users should re-download a fresh copy before making final changes and uploading.
+
+**Export and Logility Expectations**
+
+**6. HERO upload does not mean immediate Logility export**
+
+HERO authoring and Logility export are separate processes.
+
+> • Uploading a workbook into HERO does not immediately push the change into Logility.
+> 
+> • The export is a separate batch process, with the Friday export cycle as the normal publishing path.
+> 
+> • Before the automated downstream path is fully settled, there may also be manual review or contingency-file handling around exports.
+> 
+> • When timing is discussed with UK pilot users, it should be communicated in UK local time. Engineering and operations notes may describe the same event in UTC or U.S. time zones.
+
+**7. Export outputs may not look like a “full file” if users expect every row every time**
+
+The current export behavior is delta-based.
+
+> • Only changed rows or changed keys are expected to appear in the published delta outputs.
+> 
+> • If nothing changed for a row, that row may be absent from the export even though the overall state is still correct.
+> 
+> • This can look incomplete to users who expect every export to restate the entire business unit.
+
+For the contingency CSV path, the current design is an eight-file export set rather than one all-in-one file:
+
+> • \`UA1\` through \`UA6\`
+> 
+> • positive enrichments to the Consensus path
+> 
+> • negative enrichments to the Consensus path
+
+That format is intentional, but it is less seamless than a single downstream automated pipeline.
+
+**8. Clearing a change does not always look like “removing the row”**
+
+Users often expect that removing or clearing a HERO change means the downstream row disappears everywhere. That is not always how the export contract works.
+
+> • For some arrays, a clear means HERO exports an explicit zero rather than omitting the row.
+> 
+> • For the Sales Forecast baseline path in the frozen window, a clear or suppression can mean the published value carries the current live Logility baseline rather than a HERO-authored overwrite.
+> 
+> • Because of that, a user may say “I removed the change, but I still see a value.” In some cases that is expected behavior rather than a failed clear.
+
+**9. Exported numbers are whole units, even when internal calculations briefly produce fractions**
+
+Some internal weekly math can create fractional values when values are split across weeks. Published export outputs do not keep those fractions.
+
+> • Published table outputs and published CSV outputs are rounded to whole units.
+> 
+> • Rounding is to the nearest whole number, with halves rounded away from zero.
+> 
+> • Because of that, users may sometimes see small differences between intermediate math and the final exported file.
+
+**10. Near-term Sales Forecast behavior can differ from Consensus behavior**
+
+One of the less intuitive export rules is the near-term frozen-window behavior around the Sales Forecast baseline path.
+
+> • Some near-term reconciliation-style or version-style changes can still influence the Consensus and Supply path while not automatically rewriting the near-term Sales Forecast baseline path in the same way.
+> 
+> • In the frozen window, a user can therefore see a change reflected in Consensus-facing outputs without seeing the same automatic change in the Sales Forecast.
+> 
+> • In practical terms, a user may believe “my change is in HERO, so it should change everything in Logility immediately,” but that is not always how the current pilot export rules work.
+> 
+> • This is expected pilot behavior, not necessarily a failed upload.
+
+**What Is Lower Risk In This Pilot**
+
+> • Because 2026 values are being seeded up front, the early pilot workload is primarily on 2027 weeks.
+> 
+> • That means early mistakes are more likely to create rework, cleanup, and user confusion than immediate bad supply-chain signals for the current year.
+> 
+> • The main operational risk is still around late-cycle changes, unexpected export content, or users assuming a dashboard lag means data loss when it may only be a timing issue.
+> 
+> • Even so, unexpected edits or export effects on 2026 weeks should be treated as higher-priority cleanup cases, because those values were meant to be pre-seeded rather than actively reworked during the pilot.
+
+**What Users Should Do If Something Looks Wrong**
+
+**If the upload returns an annotated workbook**
+
+> • Assume the upload did not save.
+> 
+> • Review the highlighted rows and messages.
+> 
+> • Correct the workbook and upload again.
+
+**If the upload succeeds but the dashboard still looks old**
+
+> • Wait for the refresh window first.
+> 
+> • If the dashboard still has not caught up after the expected refresh time, raise it as a sync issue rather than immediately assuming the upload failed.
+
+**If the workbook may have been stale when it was uploaded**
+
+> • Check whether another user changed the same scope after the workbook was downloaded.
+> 
+> • Re-download a fresh workbook before deciding whether the saved result is truly wrong.
+> 
+> • If needed, support should compare workbook name, upload time, and user name across the overlapping uploads.
+
+**If the export file or Logility-facing result does not match user expectations**
+
+> • First confirm whether the expectation was based on the current HERO state or on a dashboard view that may still have been lagging.
+> 
+> • Then confirm whether the user expected a full-universe export when the actual output is delta-based.
+> 
+> • Then confirm whether the user expected a cleared row to disappear when the actual export contract was to emit a baseline or explicit zero.
+> 
+> • Then confirm whether the question is about Sales Forecast behavior, Consensus behavior, or both, because those can diverge in the frozen window.
+> 
+> • Then confirm whether the user was looking at whole-unit export values versus fractional intermediate math.
+
+**Suggested Support Language**
+
+Rene can edit this section to match the actual UK support model.
+
+> *• Primary support contact: \[insert name and contact\]*
+> 
+> *• Escalation path for upload issues: \[insert path\]*
+> 
+> *• Escalation path for dashboard/Power BI sync issues: \[insert path\]*
+> 
+> *• Escalation path for export/Logility questions: \[insert path\]*
+
+When reporting an issue, users should provide:
+
+> • business unit
+> 
+> • file name
+> 
+> • upload time
+> 
+> • whether the workbook was freshly downloaded or had been open for a while before upload
+> 
+> • whether the issue concerns 2026 weeks or 2027 weeks
+> 
+> • screen shot of the unexpected result
+> 
+> • description of whether the issue is in the workbook, dashboard, Power BI, or export output
+
+**Bottom Line**
+
+The UK pilot is designed so that early issues are more likely to create rework and cleanup than immediate current-year supply harm. The main things to watch are upload validation failures, stale-workbook confusion, short-lived template-versus-dashboard mismatches, and export outputs that are technically correct but do not yet feel seamless to end users.

@@ -1,0 +1,343 @@
+# Scope
+
+This reference is about the published consumer contract:
+
+  - published Databricks pickup tables
+
+  - published row-per-week CSV export artifacts
+
+It is not a description of every intermediate internal snapshot shape.
+
+Important distinction:
+
+  - internal field-forecast snapshots can suppress UA1 as NULL inside the frozen window
+
+  - published consumer outputs should stay hydrated and populated, including UA1 carry-forward from the live Logility baseline where required
+
+# Published Output Families
+
+## Field Forecast
+
+  - UA1
+
+  - UA2
+
+  - UA3
+
+  - UA4
+
+  - UA5
+
+  - UA6
+
+## Consensus
+
+  - ADS2
+
+  - PROMO_LIFT
+
+# Common Export Rules
+
+## Integer output rule
+
+Published table rows and published CSV rows should export whole-unit values.
+
+Current export rounding rule:
+
+  - round to the nearest whole integer
+
+  - halves round away from zero
+
+Examples:
+
+  - 8.5 -\> 9
+
+  - \-4.5 -\> -5
+
+  - 7.4 -\> 7
+
+## Hydrated rather than sparse
+
+Published outputs are expected to be fully populated with no null-values, and NOT “sparse” where only HERO-changed values for a given BU-SKU-Week row are populated and unchanged values are missing. I.e. we need a “full record” for each row.
+
+That means:
+
+  - if a published row is emitted, the outbound array columns should be populated
+
+  - UA1 **may be carried** from the live Logility baseline when HERO is intentionally not authoring UA1(frozen window)
+
+  - non-UA1 arrays and consensus arrays should export explicit values rather than blanks
+
+# Frozen-Window Rules
+
+## UA1
+
+UA1 is the only field-forecast array with a frozen near-term window.
+
+Current intended rule:
+
+  - UA1 is actively authored by HERO only in horizon_month 5-12
+
+  - UA1 is withheld in horizon_month 0-4
+
+Published behavior:
+
+  - internal field-forecast snapshot logic suppresses UA1 in horizon_month 0-4
+
+  - published outputs should still remain populated for UA1
+
+  - **when UA1 is suppressed because the row is in the frozen window, the published value should carry the current live Logility baseline rather than a HERO-authored overwrite**
+
+  - when a prior HERO reconciliation control is cleared, UA1 should revert to the live Logility baseline rather than zero
+
+  - when a row rolls from the open window into the frozen window, HERO should stop transmitting UA1 changes without emitting a forced clear
+
+## Non-UA1 field arrays
+
+The non-UA1 field-forecast arrays are not subject to the same frozen-window holdout.
+
+Current intended rule:
+
+  - UA2-UA6 are allowed across horizon_month 0-12
+
+## Consensus arrays
+
+Consensus-side arrays are also not subject to the UA1 frozen-window restriction.
+
+Current intended rule:
+
+  - ADS2 and PROMO_LIFT are allowed across horizon_month 0-12
+
+# Reconciliation-Tab Mapping
+
+These are the reconciliation-driven export pathways.
+
+## Baseline trend adjustments
+
+  - Published outbound array: UA1
+
+  - Frozen-window behavior: UA1 authored only in horizon_month 5-12; carry live baseline in 0-4
+
+  - Notes: baseline-style forecast changes
+
+## Version adjustments
+
+  - Published outbound array: UA1
+
+  - Frozen-window behavior: same as baseline trend adjustments
+
+  - Notes: feeds the baseline-style field forecast path
+
+## Channel shifts
+
+  - Published outbound array: UA1
+
+  - Frozen-window behavior: same as baseline trend adjustments
+
+  - Notes: feeds the baseline-style field forecast path
+
+Practical interpretation:
+
+  - **reconciliation-side changes are the core baseline-style drivers of UA1**
+
+  - they do not map to UA2-UA6
+
+  - they **do not directly map to ADS2 or PROMO_LIFT**
+
+# Enrichment-Type Mapping
+
+These are the enrichment-driven export pathways.
+
+## Explicit field-forecast mappings
+
+**RETAIL_PROMOTION**
+
+  - Field Forecast: UA2
+
+  - Consensus: sign-based consensus contribution
+
+  - Notes: promo-specific field mapping
+
+**SET**
+
+  - Field Forecast: UA3
+
+  - Consensus: sign-based consensus contribution
+
+  - Notes: set-specific field mapping
+
+**SAMPLE**
+
+  - Field Forecast: UA4
+
+  - Consensus: sign-based consensus contribution
+
+  - Notes: sample-specific field mapping
+
+**TMO**
+
+  - Field Forecast: UA5
+
+  - Consensus: none
+
+  - Notes: TMO is explicitly excluded from consensus
+
+**PRE_ORDER**
+
+  - Field Forecast: UA6
+
+  - Consensus: sign-based consensus contribution
+
+  - Notes: pre-order-specific field mapping
+
+## Non-sales overlays
+
+**MARKETING**
+
+  - Field Forecast: none
+
+  - Consensus: sign-based consensus contribution
+
+  - Notes: non-sales overlay family
+
+**DEMAND_PLANNING**
+
+  - Field Forecast: none
+
+  - Consensus: sign-based consensus contribution
+
+  - Notes: non-sales overlay family
+
+Interpretation:
+
+  - **MARKETING and DEMAND_PLANNING do not map to a field-forecast UA**
+
+  - they should **influence consensus only**
+
+  - positive values land in ADS2
+
+  - negative values land in PROMO_LIFT
+
+# Residual non-marketing enrichment types
+
+These are enrichment types that are not marketing/demand-planning and do not have a dedicated UA2-UA6 mapping.
+
+**PHASE_OUT**
+
+  - Intended Field Forecast mapping: UA1
+
+  - Current code status: not yet aligned
+
+  - Consensus note: currently still included in consensus by sign
+
+**EXCESS_DEPLETION**
+
+  - Intended Field Forecast mapping: UA1
+
+  - Current code status: not yet aligned
+
+  - Consensus note: currently still included in consensus by sign
+
+**DEMAND_PHASE_SHIFT**
+
+  - Intended Field Forecast mapping: UA1
+
+  - Current code status: not yet aligned
+
+  - Consensus note: currently still included in consensus by sign
+
+**SUPPLY_SHORTAGE_COMP**
+
+  - Intended Field Forecast mapping: UA1
+
+  - Current code status: not yet aligned
+
+  - Consensus note: currently still included in consensus by sign
+
+This reflects the intended rule clarified for the export contract:
+
+  - if an enrichment is:
+    
+      - an enrichment (not a reconciliation adjustment)
+    
+      - not MARKETING
+    
+      - not DEMAND_PLANNING
+    
+      - and not explicitly mapped to UA2-UA6
+    
+      - then it should influence UA1
+
+# Consensus sign behavior
+
+For enrichment types that participate in consensus:
+
+  - positive values contribute to ADS2
+
+  - negative values contribute to PROMO_LIFT
+
+TMO is the main exception:
+
+  - it maps to UA5
+
+  - it is excluded from consensus
+
+# Tracking-Type Note
+
+DEMAND_PHASE_SHIFT and SUPPLY_SHORTAGE_COMP are not a separate math stage in the HERO order-of-operations narrative.
+
+Important distinction:
+
+  - they are tracked separately in HERO conceptually
+
+  - but for export mapping they still need an explicit array rule
+
+  - under the intended contract above, they **belong to the residual non-marketing group and therefore should feed UA1** unless a different mapping is chosen later
+
+# Current Implementation Gap (changes in Branch but not on MAIN)
+
+One mapping gap still remains between the intended contract and the current code:
+
+  - current field-forecast export only maps:
+    
+      - RETAIL_PROMOTION -\> UA2
+    
+      - SET -\> UA3
+    
+      - SAMPLE -\> UA4
+    
+      - TMO -\> UA5
+    
+      - PRE_ORDER -\> UA6
+
+  - residual non-marketing enrichment types are not yet being routed into UA1
+
+Current code behavior for those residual types:
+
+  - they are excluded from field-forecast export
+
+  - they are still included in consensus export because consensus currently includes all enrichments except TMO
+
+So one remaining business/implementation decision must still be locked:
+
+  - once residual enrichment types are routed into UA1, should they:
+    
+      - **remain in consensus as well, or**
+    
+      - **be removed from consensus to avoid double counting**
+
+# Recommended Interpretation For Review
+
+If the intended published contract is the one described above, then the clean consumer-facing rules are:
+
+1.  Reconciliation-side forecast changes drive UA1.
+
+2.  Explicit commercial enrichment mappings drive UA2-UA6.
+
+3.  MARKETING and DEMAND_PLANNING drive consensus only.
+
+4.  Residual non-marketing enrichment types should fall into UA1.
+
+5.  UA1 is the only field array subject to the frozen near-term holdout.
+
+6.  Published outputs should remain populated and integer-valued even when internal snapshots suppress UA1.

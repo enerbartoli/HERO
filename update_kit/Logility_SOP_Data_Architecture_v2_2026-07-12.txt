@@ -1,0 +1,101 @@
+# Logility S\&OP Data Architecture Document: The Forecast Enrichment Lifecycle
+
+## 1\. Objective and Scope
+
+This technical document outlines the data architecture designed to manage the full Sales & Operations Planning (S\&OP) forecast lifecycle. Its purpose is to illustrate the data flow from the initial inputs (Field Forecast and Statistical Forecast) to the final Consensus, utilizing the SQL Database as the calculation center and Source of Truth (SOT) for Commercial Reconciliation. Revision v2 (12 July 2026, R. Bartoli): UA1 formula updated to include PHASE_OUT (canonical name; referred to as MDP_ENRICHMENT in the HERO-Logility Data Transmission Design Topics V1), and a pilot-phase implementation note added to the strict exclusion rule.
+
+## 2\. System Components
+
+The ecosystem consists of the following elements, structured in a linear flow:
+
+| **Component**               | **Role in the Process**                                                                  | **Classification** |
+| --------------------------- | ---------------------------------------------------------------------------------------- | ------------------ |
+| Logility Field Forecast     | Source of the Initial commercial forecast (Enriched Sales Forecast).                     | Source/Destination |
+| Daybreak Forecast           | Source of the statistical base forecast.                                                 | Source             |
+| Databricks Lakehouse        | Staging Layer and Bridge. Executes initial data mapping.                                 | Middleware         |
+| SQL Database (S\&OP Hub)    | Source of Truth. Consolidation of 10 components, user adjustments, and key calculations. | Calculation Core   |
+| Excel Based UI              | User interface for the reconciliation team to apply                                      | Interaction        |
+| Logility Consensus Forecast | Final destination of the approved forecast. Prepares data for Supply Planning.           | Destination        |
+| SAP-IBP                     | Final consumer of the Consensus to trigger supply chain planning processes.              | Destination        |
+
+### 2.1. SQL Database: 
+
+In simplified terms, for better understanding, we can say that regarding the elements that make up the forecast, the SQL database consists of four types of elements, namely:
+
+| **Category**             | **Key Fields (Examples)**                                 | **Source**                                                                                                   | **Purpose**                             |
+| ------------------------ | --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | --------------------------------------- |
+| **Statistical Baseline** | BASELINE,                                                 | Daybreak                                                                                                     | Statistical projections                 |
+| **Sales Enrichment**     | PROMO, TMO, SETS, SAMPLES, PRE_ORDERS                    | Logility Field (Forecast During the first cycle Only, after the SQL database will become the source of true) | initial Sales/Trade activities.         |
+| **User Adjustments**     | BASE_TREND, CHANNEL_SHIFT, MKT_ENRICHMENT, DEMAND_ADJ | Excel Based UI                                                                                               | Adjustments applied by the S\&OP team.  |
+| **Calculation**          | CONSENSUS_VAL                                            | Calculated                                                                                                   | Result of the sum of the 10 components. |
+
+## 3\. Input Flow and Data Mapping
+
+Databricks is used to store the data before loading into the central SQL table.
+
+| **Source**     | **Source Field** | **Destination (SQL Hub)** |
+| -------------- | ---------------- | ------------------------- |
+| Daybreak       | Data             | BASELINE                  |
+| Logility Field | UA2              | PROMO                     |
+| Logility Field | UA3              | SETS                      |
+| Logility Field | UA4              | SAMPLES                   |
+| Logility Field | UA5              | TMO                       |
+| Logility Field | UA6              | PRE_ORDERS               |
+
+## 4\. S\&OP Hub (SQL) - Key Calculations
+
+### 4.1. Consensus Value Calculation
+
+The Consensus Value withing the SQL data base is calculated as the sum of the 10 components (Baseline + 5 Commercial Enrichment + 4 User Adjustments):
+
+Consensus_Value = sum(Component_i) for i = 1 to 10.
+
+### 4.2 Output Flows from the SQL Data Base to de Consensus Forecast Arrays
+
+Adjustments are segregated for the Logility Consensus forecast Arrays as follows:
+
+  - ADS2 (Positive Adjustments): Sum of all individual arrays with a positive value (Σ+) from the SQL data Base with the only exception on the TMO and Baseline.
+
+  - PROMO LIFT (Negative Adjustments): Sum of all individual adjustments with a negative value (Σ−) from the SQL data Base with the only exception on the TMO and Baseline.
+
+  - TMO: No adjustments are needed; the values are received exactly as they are reflected in the TMO field of the SQL database.
+
+  - Resultant Forecast: Values reflected in the Baseline field.
+
+  - ADS3 = RESULTANT FORECAST + PROMO LIFT + ADS2. (Calculated By Logility)
+
+### 4.3 Output Flows from the SQL Data Base to de Field Forecast Arrays
+
+This process ensures that the Field Forecast fields are updated by overwriting them with the reconciled values from the SQL Hub.
+
+**1. Overwriting of Commercial Components (UA2-UA6)**
+
+The final, adjusted values of the business components in the SQL Hub OVERWRITE the UA2 through UA6 fields in the Logility Field Forecast.
+
+| **Source (SQL Hub, Final Value)** | **Destination (L. Field Forecast, Overwritten)** |  |
+| --------------------------------- | ------------------------------------------------ |  |
+| PROMO                             | UA2                                              |  |
+| SETS                              | UA3                                              |  |
+| SAMPLES                           | UA4                                              |  |
+| TMO                               | UA5                                              |  |
+| PRE_ORDERS                       | UA6                                              |  |
+
+**2. Update of the Consolidated Baseline (UA1) (Commercial Vision Adjustment)**
+
+The field UA1 in the Field Forecast is OVERWRITTEN with the consolidated base volume. This field becomes the Adjusted Statistical Baseline, reflecting the trend (BASE_TREND) and channel shift (CHANNEL_SHIFT) corrections deemed necessary by the commercial team during reconciliation, together with PhaseOut-type enrichment adjustments (PHASE_OUT) captured in the enrichment capture template, intended to help map the depletion of available inventory.
+
+UA1 (Field Forecast) = BASELINE (SQL) + BASE_TREND (SQL) + CHANNEL_SHIFT (SQL) + PHASE_OUT (SQL)
+
+**3. Strict Exclusion Rule during implementation**
+
+The MARKETING ENRICHMENT and DEMAND ADJUSTMENTS fields NEVER migrate or affect the Field Forecast fields. This exclusion is critical because:
+
+  - The Sales Forecast is expected to represent only the commercial vision.
+
+  - The excluded adjustments reflect strategic interventions from Marketing and Demand Planning, which must be isolated from the commercial base. Implementation note (pilot phase): until the user-role validation layer is implemented, base-trend adjustments captured at Level 2.5 cannot be differentiated by author role (Demand Planning, Marketing, or commercial), so ALL Level 2.5 base-trend adjustments flow to UA1. The strict exclusion above describes the target design, to be enforced once role attribution is available.
+
+# 5\. Data Architecture Proposes
+
+![A diagram of a computer AI-generated content may be incorrect.](media/image1.png)
+
+The magenta lines refer to information that will flow only in the initial cycle to capture for the first time the data from the initial enrichments that are currently integrated into the field forecast. [Link to chart](https://www.mermaidchart.com/d/d2509749-7026-4f0a-b7c2-2af03e436ad6)

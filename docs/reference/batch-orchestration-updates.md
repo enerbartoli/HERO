@@ -27,9 +27,13 @@ The export is changed-row-only, not full-table. HERO emits rows only for changed
 
 The full source → array mapping (UA1–UA6, ADS2, and PROMO_LIFT, including how TMO maps to UA5) lives in **[Logility array & mart mapping](logility-array-mart-mapping.md)**. The export rules specific to this layer are:
 
-- **Marketing / Demand-Planning adjustments do not flow to UA1** — they influence the consensus path only: positive values contribute to ADS2 and negative values contribute to PROMO_LIFT.
-- **Residual non-marketing enrichments** influence UA1 and also flow to consensus by sign. This includes `PHASE_OUT`, `EXCESS_DEPLETION`, `DEMAND_PHASE_SHIFT`, and `SUPPLY_SHORTAGE_COMP`.
-- **UA1 frozen horizon:** UA1 is authored by HERO only in horizon months **5–12**; in months **0–4** the published value carries the current live Logility UA1 / baseline rather than a HERO-authored overwrite. UA2–UA6, ADS2, and PROMO_LIFT are allowed across months 0–12.
+- **Marketing / Demand-Planning adjustments — target design: do not flow to UA1.** UA1 = BASELINE + BASE_TREND + CHANNEL_SHIFT + PHASE_OUT. By design, Marketing Enrichment and Demand Adjustment components influence the consensus path only: positive values contribute to ADS2 and negative values contribute to PROMO_LIFT.
+
+    !!! warning "Pilot behavior (current)"
+        HERO cannot yet distinguish, on a Level 2.5 base-trend adjustment, whether the author was Demand Planning, Marketing, or Commercial (the user-role validation layer is not built yet). During the pilots, **all Level 2.5 base-trend adjustments flow to UA1 regardless of who made them.** The role-based exclusion above activates only once that layer is implemented. (Confirmed by Rene Bartoli, 12 July 2026.)
+
+- **Residual non-marketing enrichments** influence UA1 and also flow to consensus by sign. This includes `PHASE_OUT` (a component of the UA1 formula above), `EXCESS_DEPLETION`, `DEMAND_PHASE_SHIFT`, and `SUPPLY_SHORTAGE_COMP`.
+- **UA1 frozen horizon:** UA1 is authored by HERO only in horizon months **5–12** (rolling, counted from the current date, every cycle — not a one-off period after go-live); in months **0–4** the published value carries the current live Logility UA1 / baseline rather than a HERO-authored overwrite. UA2–UA6, ADS2, and PROMO_LIFT are allowed across months 0–12.
 - **Output format:** emitted outbound values are fully populated, exported as whole integers, and rounded to the nearest whole unit with halves rounded away from zero.
 - **Delta-table granularity:** the processing tables are weekly-grain, append-by-run history tables. Within a run, HERO emits only the final effective outbound row for each changed weekly key; later runs append new rows for the same weekly key.
 
@@ -53,6 +57,9 @@ If direct integration is not ready, HERO can produce a contingency CSV set for m
 ## How this connects to the end-to-end process
 
 Baseline generated upstream (Logility / Daybreak) → enrichment capture and reconciliation in HERO (with Level 2.5 changes fanned out to Level 1) → dashboard shows the number **before and after** adjustment → executive sign-off → the weekly Friday export publishes the deltas into the Logility arrays / export surfaces.
+
+!!! note "Governance after sign-off is audit-based, not lock-based"
+    No technical lock prevents changes after executive sign-off. The control is the cycle-change filter — every change is visible against the last ADS3 summarization — with escalation to leadership for anything that looks like re-inflating the forecast after sign-off. This is a deliberate design choice made after user pushback during discovery.
 
 ## Related pages
 

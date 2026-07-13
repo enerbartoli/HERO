@@ -1,0 +1,381 @@
+**HASBRO · DEMAND PLANNING · HERO PROGRAMME**
+
+**HERO — Build & Pilot Learnings**
+
+Historical knowledge base of the learnings from building HERO and running the UK pilot — structured as reference/memory to help ground the Brave assistant. **— v4 (12 July 2026): adds sections 13–15 covering the NA planner training of 8–9 July, new FAQ entries, and corrections/status updates to v1; section 16 verifies UA1 behavior and the frozen window against the data-architecture documents (Logility S\&OP Data Architecture, NFR Addendum, NFR Hero Summary, Export Array Mapping Reference). Section 11 FAQ 'deltas or absolute numbers' is superseded by section 14. The open items in section 16 were resolved by Rene Bartoli on 12 July 2026 (v4).**
+
+|            |                                                                                                                                                       |
+| ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Field**  | **Detail**                                                                                                                                            |
+| Document   | HERO — Build & Pilot Learnings (knowledge base for Brave)                                                                                             |
+| Version    | v1 — 2026-07-03                                                                                                                                       |
+| Owner      | Rene Bartoli, Demand Planning                                                                                                                         |
+| Purpose    | Give Brave a durable, retrievable record of what happened and what we learned while building HERO, so it can answer questions with historical context |
+| Scope      | UK pilot, first cycle (29 Jun – 3 Jul 2026) plus the design principles and technical/process learnings behind HERO                                    |
+| How to use | Each section states self-contained facts; the Glossary defines terms; the FAQ gives ready answers. Update as new cycles add learnings.                |
+
+**Contents**
+
+1\. What HERO is and how the data flows
+
+HERO (Hasbro Enrichment and Reconciliation Optimizer) is Hasbro's in-house forecast-enrichment platform. It sits on top of the demand-planning stack and gives commercial teams a structured way to enrich a model-generated statistical baseline.
+
+HERO does not hold the forecast by itself; it reads from Logility, which is the book of record. The end-to-end data path is:
+
+  - Logility (book of record; source of the statistical baseline) → EDW (Enterprise Data Warehouse) → Tidal (job scheduler) → SAP / Databricks tables → HERO → Power BI dashboard and downloadable templates.
+
+  - HERO reads Logility's source-of-record tables, which are up to about a day behind Logility's live state. HERO does not read P2M directly.
+
+  - End-to-end refresh across this chain exceeds 24 hours. A cadence must not assume sub-24h propagation from Logility to HERO.
+
+Key related systems: P2M (marketing's planning source for the full-year baseline number), Daybreak / Genpact (creates and disaggregates the baseline about a week before the cycle), Power BI (the review dashboard), FAST (generates TMO information), Databricks (where HERO's heavy data transformation should live).
+
+2\. The UK pilot at a glance
+
+  - The UK pilot is a two-cycle pilot. One cycle is not enough to test everything; the first cycle is about testing the tool, building team comfort, and finding opportunities — not producing a final, clean 2027 number.
+
+  - First cycle daily sessions: Monday 29 Jun, Tuesday 30 Jun, Wednesday 1 Jul, Thursday 2 Jul, Friday 3 Jul 2026 (UK).
+
+  - Roles: Demand Planning (Murat Can Seren, Rose Cheung, Denise Lee); Commercial / Sales (Stuart Kellerman, Sim Gill, Joe Havenhand-Beal, Lorna McCracken, Martin Rowe, KAMs / brand captains); Development / data (Jarred Bultema, Edgar Huerta, Peter Bond); Programme lead (Rene Bartoli); Genpact / Daybreak (baseline creation and disaggregation).
+
+  - Process levels: Level 1 (L1) = account/forecast-partner level; Level 2.5 = brand-captain level. Adjustments made at 2.5 are disaggregated down to L1.
+
+3\. The core design principle: protect the data
+
+From day one, the guiding principle was to protect the integrity of the initial data: if something goes wrong we can invest days or weeks to fix it, but we never ask the team to redo their work. Throughout the first cycle this held — every enrichment the captains and KAMs entered was captured and safe, and no bug caused rework for them.
+
+A consequence of that protection was deliberate redundancy: multiple tables were created to safeguard the data. The trade-off surfaced later — it became hard to know which table should serve the dashboard. Consolidating to the correct table/view is a planned clean-up.
+
+4\. What happened, week by week
+
+Week 1 — the baseline
+
+  - The biggest challenge was getting the baseline right: its accuracy and keeping it consistent across Logility, the templates and the dashboard, even as numbers changed through the week. This was achieved.
+
+  - Baselines for 2027 came in far lower/further from expectations than anyone predicted — hundreds of SKUs (≈500 vs an expected 80–100). Root causes: not enough time spent on the forecasting-range cleanup and disaggregation before the cycle, plus poor historical data from prior-year supply constraints (the model relies on the data it has).
+
+  - Responsibility split: new-product / MPI (New Product Introduction) numbers are marketing's (fix in P2M, or via DP updating Logility); carry-forward issues go through DP as point of contact (work sits with Genpact/Daybreak); which variant/9-digit to use is range-governance / P2M, not Sales.
+
+Week 2 — the enrichments
+
+  - The challenge shifted to reaching that same consistency for the enrichments (adjustments at the different levels).
+
+  - Account-level (L1) adjustments now match in both the dashboard and the templates.
+
+  - The piece that lets us reconcile adjustments captured at brand-captain level (2.5) was built (Thursday 2 Jul).
+
+  - Prioritisation aid added: three P2M-based template fields — P2M Inherited Priority Proxy, P2M Planned Variant, and P2M Variant Modified (date) — so a user can quickly see whether a variant is in the market's line plan, how it's prioritised, and when it was last updated. These are currently inferred at the 5-digit level; refining their granularity is a planned post-deployment improvement.
+
+5\. Technical learnings and resolutions
+
+Latency and freshness
+
+  - End-to-end latency exceeds 24 hours; HERO refreshes when a user interacts, not on a fixed schedule; the dashboard reflects only the last sync. Do not build the cadence on sub-24h latency; let data settle in Logility ≥ 1 week before a go-live.
+
+  - A last-updated timestamp was added to the dashboard to reduce ambiguity. Note: if a change isn't yet reflected in the template, it won't be in the dashboard either, regardless of the timestamp.
+
+Fan-out and post-processing
+
+  - An upload at Level 2.5 creates a set of instructions that are executed during the fan-out; it is not instantaneous. A green 'upload successful' means the data is ingested and safe, even if not yet visible.
+
+  - Duplicate templates are rejected (validation passes but no data is taken) — templates are one-time use; always use a fresh template.
+
+  - L1 / base-trend adjustments go live in \~20–30 minutes; L2.5 is slower (depends on the fan-out job). The fan-out was \~2h for all views; it was scoped to UK-only (\~30–35 minutes).
+
+  - A structural data 'explosion' is the core scaling challenge: UK 2026 has \~200,000 reconciliation adjustments that fan out to \~10 million weekly rows; 2027 has \~52,000 adjustments. Making that efficient without bugs is the main streamlining task.
+
+Dashboard vs templates vs source — the central consistency issue
+
+  - The dashboard, like Logility, should be fed solely with L1 data — including the L1-level transformation of the adjustments captured at 2.5. Brand-captain (2.5) work appears in the dashboard as an L1 base-trend adjustment spread across forecasting partners, not as raw 2.5.
+
+  - One interim table duplicated values because it held adjustments both at 2.5 and as their L1 breakdown; the dashboard is not fed from it.
+
+  - Evidence that fan-out works but isn't surfaced: an adjustment visible in the reconciliation-events table did not appear in the downloaded 2.5 template; an L1 template showed no fan-out for a SKU while the weekly-values table showed perfect fan-out for that cycle. Conclusion: the data exists; the view feeding the dashboard/templates is the gap.
+
+  - Recommended fix: a disciplined view that pushes the heavy transformation to Databricks (not a Power BI M/DAX workaround, which would eventually overload the dashboard), and fix the data flow into the L1 templates so they show both L1 adjustments and the disaggregated fraction of 2.5. Also consolidate the redundant tables to a single canonical L1-fed view.
+
+Bugs identified and status (first cycle)
+
+|                                                                                                    |                                                             |
+| -------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| **Bug**                                                                                            | **Status**                                                  |
+| Hidden-rows bug (adding the P2M column changed which columns were hidden)                          | Fixed                                                       |
+| Duplicate-values bug in the reconciliation template (a data join not using DOM/DI)                 | Fixed                                                       |
+| Validation error giving bad info (users entering formulas instead of numeric values)               | In progress                                                 |
+| P2M data-access bug (P2M columns not populated — the HERO app lacked access to the database table) | In progress                                                 |
+| 2.5 adjustments not reflected in later 2.5 or L1 template downloads after fan-out                  | Open — fix targeted for Monday; critical for the next cycle |
+| Dashboard not showing enriched values (served by the wrong/heavier table/view)                     | In progress — Databricks view planned for the week off      |
+
+Other operational learnings
+
+  - Separate the UK market from others in the tool: Australia is the tool's default market, and several users uploaded adjustments to Australia by mistake.
+
+  - Bug-fix cadence: aggregate bugs and run one pull request per day rather than fixing them individually.
+
+  - For future rollouts, require users to log into the tool on day 1 — several first-time access requests appeared a week into the pilot; granting access is quick but time-zone differences cause bottlenecks.
+
+  - FAST/TMO data is in Logility; the manual upload into Logility is being automated, with HERO acting as the bridge.
+
+  - Avoid concurrent cross-server refreshes; scope each query to the market being reviewed (a slow refresh was traced to a query pulling every market rather than only the UK, not to server capacity).
+
+6\. Process and forecasting learnings
+
+  - The heaviest workload was the baseline / base-trend adjustment work, not the enrichment itself (enrichment was the more straightforward part). Base-trend adjustment is what Demand Planning normally does (validate/reject baselines); asking Sales to adjust rather than reject is even more time-consuming, and there are many more KAMs than demand planners.
+
+  - Forecasting range must be cleaned before the cycle: a proportion placed on a record outside the forecasting range is treated as 'inhibited' — not zeroed on force-down — and then summed as forecast, which inflates the number. A pre-cycle cleaning pass (week minus 2, at BU level) deactivates irrelevant items.
+
+  - Special item classes must be excluded from proportioning by design: fence / 'fans' items (flagged via UDF-17) and Direct Import (DI). DI numbers are built from scratch by KAMs; DI codes/channels still flow in with blank numbers.
+
+  - Logility is the book of record: once a number is in Logility it overrides P2M. Demand Planning can adjust the Logility forecast directly (faster than fixing P2M) — reflecting a number in any January week is enough for Daybreak to phase it across the year.
+
+  - New-product forecast logic: pre-launch = P2M number; at \~8–16 weeks it transitions to sales micro-data (glide path); after \~a year it becomes a carry forward.
+
+  - Variant / 9-digit selection: for brands with multiple 9-digit codes per 5-digit SKU (common in action figures and games), if the right variant is unknown, use the lowest code and capture the full forecast at the 5-digit level; exact version is a nice-to-have this cycle. Wave-item ownership (range governance vs marketing in P2M) is an open cross-functional item to resolve regionally with the Brand team.
+
+  - Measuring value-add: after actuals materialise ('lap one'), compare actual vs the commercial-adjusted forecast vs the Daybreak baseline. Commercial enrichment (promos, pre-orders) should add positive value; base-trend adjustments are expected to be neutral/negative — where they add value, that's specific feedback for Daybreak to investigate. 2027 accuracy won't be visible until Jan/Feb actuals.
+
+  - Reconcile against an expectation range, not a single absolute number: a partial mid-enrichment total looks low but can be logical (e.g., DI and funds not yet in).
+
+7\. Change-management practices that worked
+
+  - Daily transparent status (including bad news), and framing the effort as 'a technical pilot and a process pilot' and 'not a test of you'.
+
+  - A 'Data Ready' kick-off email as the start signal once numbers were validated; a war-room channel on standby; a rehearsal (dry-run) load to surface errors before the hard deadline.
+
+  - The Brave document-grounded assistant for self-service answers, and a mobile-accessible HERO manual with a pilot-specific section.
+
+  - Repeated message to give the team peace of mind: 'All data is in HERO' — captured and protected.
+
+8\. Team capacity and key-person risk
+
+The development/data team is small relative to the scope; the same few people carried the build, the live fixes, the loads, reconciliation and validation, with several nights into the early hours. One person is building both HERO and a separate internal forecasting system. This is a real key-person and burnout risk that will not scale; resourcing and broader ownership are a precondition for future rollouts.
+
+9\. Key decisions and timeline
+
+  - HERO 'week off': the week of 13–17 July 2026 is dedicated to deploying and testing the definitive fixes (the Databricks dashboard view, template data-flow fix, table consolidation, fan-out streamlining) so the second cycle starts on a more stable footing.
+
+  - Executive sign-off moved to Thursday (from the original schedule); earliest realistic dashboard update was Tuesday; the working session runs Tuesday if Monday validation isn't ready.
+
+  - The USA pilot is the next regional implementation; UK learnings are being captured to make it smoother.
+
+  - A multi-selection capability for downloads (e.g., group games while keeping Monopoly separate) is targeted for the second cycle; catalogue changes are handled carefully to keep a standard catalogue across the organisation.
+
+10\. Glossary
+
+|                                                                   |                                                                                                                                              |
+| ----------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Term**                                                          | **Meaning**                                                                                                                                  |
+| HERO                                                              | Hasbro Enrichment and Reconciliation Optimizer — in-house enrichment platform                                                                |
+| Logility                                                          | Demand planning system; book of record; source of the statistical baseline                                                                   |
+| P2M                                                               | Marketing's planning source for the full-year baseline number                                                                                |
+| Daybreak / Genpact                                                | Creates and disaggregates the baseline \~a week before the cycle                                                                             |
+| EDW                                                               | Enterprise Data Warehouse                                                                                                                    |
+| Tidal                                                             | Job scheduler moving data between systems                                                                                                    |
+| Databricks                                                        | Platform where HERO resides; where heavy data transformation should be done                                                                  |
+| FAST                                                              | Generates TMO information (uploaded into Logility)                                                                                           |
+| L1 / Level 1                                                      | Account / forecast-partner level                                                                                                             |
+| Level 2.5                                                         | Brand-captain level; adjustments here disaggregate down to L1                                                                                |
+| Fan-out                                                           | Post-processing that executes upload instructions and disaggregates 2.5 to L1                                                                |
+| Base-trend adjustment                                             | An adjustment to the baseline trend (vs commercial enrichment like promos/pre-orders)                                                        |
+| Enrichment                                                        | Commercial additions (set promos, pre-orders, launch volumes)                                                                                |
+| Carry forward                                                     | A product \~a year old, forecast from history rather than P2M                                                                                |
+| MPI / NPI                                                         | New Product Introduction (pre-launch, uses P2M)                                                                                              |
+| DI                                                                | Direct Import (built from scratch by KAMs; codes flow in blank)                                                                              |
+| Fence / 'fans' items                                              | Advanced items (flagged via UDF-17) excluded from proportioning                                                                              |
+| KAM                                                               | Key Account Manager (commercial)                                                                                                             |
+| Brand captain                                                     | Owner of a brand's forecast at level 2.5                                                                                                     |
+| TMO                                                               | Referenced item type kept out of HERO but present in Logility                                                                                |
+| PPA                                                               | Priority indicator used to focus effort                                                                                                      |
+| P2M Inherited Priority Proxy / Planned Variant / Variant Modified | Three template fields (inferred at 5-digit level) showing priority, whether a variant is in the market line plan, and its last-modified date |
+
+11\. FAQ (for grounding Brave)
+
+**Q: If I upload a template and don't see my numbers, did I lose my work?**
+
+A: No. If you got the green 'upload successful' message, your data is captured and safe in HERO. Level 2.5 uploads are applied during the fan-out (post-processing), so they take time to appear; L1/base-trend adjustments are usually visible in \~20–30 minutes, and level-2.5 changes take longer. If it isn't visible yet, the fan-out simply hasn't surfaced it — nothing is lost.
+
+**Q: Why don't my adjustments show in the dashboard right away?**
+
+A: HERO refreshes on interaction, not on a fixed schedule, and the dashboard reflects the last sync; end-to-end latency across Logility → EDW → Databricks → HERO exceeds 24 hours. During the first cycle there was also a specific issue where the dashboard was served by the wrong table/view — the data was correct in HERO but not surfaced. The durable fix is a disciplined Databricks view.
+
+**Q: Why can I upload a template only once?**
+
+A: Templates are one-time use by design. If you re-upload the same template, validation passes but the data is rejected as a duplicate. Always download and use a fresh template.
+
+**Q: The baseline number looks far too low — is HERO wrong?**
+
+A: Not necessarily. The full-year baseline originates from marketing (P2M), and HERO does not calculate it. If it's a new product/MPI, the fix is in P2M (or via Demand Planning updating Logility). If it's a carry-forward, raise it with your Demand Planning contact — a low number can reflect prior-year supply constraints in the history. Logility is the book of record, so a change there overrides P2M.
+
+**Q: Which 9-digit variant should I forecast on?**
+
+A: Determining the correct variant is range governance / P2M, not Sales. If it's unknown for this cycle, use the lowest code and capture the full forecast at the 5-digit level so the number is captured; exact version alignment is a nice-to-have for the first cycle.
+
+**Q: Do I need to enter deltas or absolute numbers?**
+
+A: At brand-captain level (2.5) you can enter the total (absolute) you want; commercial teams find absolute numbers easier because they think in volume. Keeping the input method consistent across templates is a design goal.
+
+**Q: Why was the dashboard slow to refresh?**
+
+A: A slow refresh was traced to a query pulling data for every market when only the UK was needed — not to server capacity. Scoping the query to the market brought other-market refreshes under ten minutes. Avoid running concurrent refreshes across servers.
+
+**Q: What is the HERO 'week off' (13–17 July) for?**
+
+A: To deploy and test the definitive fixes that can't safely be done mid-cycle — chiefly moving the dashboard's data transformation onto Databricks, fixing the template data flow, consolidating redundant tables, and streamlining the fan-out — so the second cycle starts on a more stable footing.
+
+12\. Open items to confirm / carry forward
+
+  - Fix the level-2.5 reflection in later template downloads (2.5 and L1 after fan-out) — critical before the next cycle.
+
+  - Consolidate redundant tables to a single canonical L1-fed dashboard view via Databricks.
+
+  - Refine the granularity of the P2M fields (currently inferred at 5-digit level).
+
+  - Resolve Wave-item / variant ownership (range governance vs marketing in P2M) with the regional Brand team.
+
+  - Resource the development/data team and broaden ownership before scaling to the USA pilot.
+
+  - Complete the DI, fans and Amazon FOB verticals so a full BU reconciliation is possible.
+
+13\. NA rollout and planner training learnings (8–9 July 2026)
+
+Rene delivered two training sessions to the North America demand-planning team on 8–9 July 2026 (fundamentals, then a reconciliation-template deep-dive), plus a leadership briefing introducing Brave. These are the canonical teaching points, several of which refine or correct earlier understanding.
+
+Process and governance
+
+• Kickoff signal governance: the COE (Center of Excellence) tells Demand Planning the data is ready; DP sends the kickoff email to commercial. Deliberate: the COE owns the tool, DP owns the process.
+
+• Cadence: Monday the new resultant loads and disaggregates all day; Tuesday morning, after global summarization, the kickoff signal goes out.
+
+• Unit budget array (Daybreak's raw proposal) vs Resultant (the Genpact-validated baseline that feeds the dashboard and Logility) — they can legitimately differ once Genpact corrects Daybreak's output.
+
+• The tool design assumes 100% adoption of the baseline (the only exception being accidental fan-out to wrong items).
+
+• Governance is audit-based, not lock-based: no technical lock prevents changes after sign-off. The control is the cycle-change filter (vs last ADS3 summarization) plus escalation to leadership. This was a deliberate design choice after user pushback during discovery.
+
+• HERO exports to Logility once per week (Friday) regardless of activity; that data reaches supply only at monthly ADS3 summarization.
+
+• The frozen window is a ROLLING lead-time horizon: months 0–4 counted from the current date, every cycle — not a one-off calendar period after go-live. HERO authors UA1 only in horizon months 5–12; months 0–4 are reserved (see section 16). The boundary is 4 months — confirmed by Rene Bartoli on 12 July 2026; the NFR Addendum's '0–90 days' was an erratum, corrected in Addendum v2 (2026-07-12).
+
+• KAMs (commercial) have no access to Level 2.5 templates — Level 1, their own customers, only.
+
+• NA 2026 go-live: the COE pre-calculates a Level 2.5 base-trend adjustment so baseline + enrichments = the already-agreed 2026 consensus (the same 'hold the number' mechanism used in UK). The NA approach for 2027 — hold-the-number vs forecast-live as UK did — is NOT yet decided and is owed back to the team.
+
+Mechanics — applies at every level
+
+• Deltas, never totals. Every adjustment (Level 1 or 2.5) is stored as a delta relative to the baseline, never as an absolute target. Holding an absolute target is infeasible: when the baseline moves next cycle, every delta would need silent re-derivation in Logility. Confirmed after fixing the Level 2.5 bug where the backend still treated input as totals while user messaging said deltas — the root cause of a class of doubled forecasts (see Peppa Pig FAQ) and of understated Logility exports; fixed 8–10 July.
+
+• 52-week live-formula columns were added to the templates so users see the resulting consensus total while entering deltas.
+
+• Level 1 (9-digit SKU × customer) is the database truth; Level 2.5 is a user-interface convenience that HERO auto-disaggregates to Level 1 before anything reaches Logility.
+
+• Level 2.5 adjustments persist across cycles as deltas until manually reversed. They are NOT single-cycle. This corrects earlier guidance the NA team had received.
+
+• A DP correction at Level 2.5 disaggregates across ALL customers by baseline proportion — it cannot surgically target one over-forecasting account (correcting Amazon's over-forecast at 2.5 also cuts Walmart). The intended path is peer accountability in the commercial reconciliation session, not unilateral DP fixes — 'intentional friction by design'.
+
+• UA1–UA6: UA2–UA6 are commercial enrichments (Promo, Sets, Samples, TMO, Pre-orders), always synced HERO↔Logility across the full 0–12 month horizon, editable only by their creator. UA1 (field/sales forecast) is the adjusted commercial baseline: UA1 = BASELINE + BASE_TREND + CHANNEL_SHIFT + PHASE_OUT, where PHASE_OUT = PhaseOut-type adjustments captured in the enrichment capture template to map the depletion of available inventory (PHASE_OUT is the canonical name; the Transmission Design Topics V1 refers to this component as 'MDP_ENRICHMENT'). TARGET design: Marketing Enrichment and Demand Adjustment components never migrate to UA1 — they flow only into consensus. PILOT interim: HERO cannot yet distinguish the author's role on Level 2.5 base-trend adjustments, so during the pilots ALL Level 2.5 BTAs flow to UA1 regardless of who made them; the role-based exclusion activates once the user-role validation layer is implemented. HERO writes UA1 only in horizon months 5–12; inside months 0–4 users resolve non-forecast-related needs by adjusting UA1 directly in Logility (no NFR functionality is built in HERO for now), and any change to an enrichment is always made in HERO.
+
+• Version Change / Channel Shift creates an offsetting +/− base-trend-adjustment pair to move volume between SKU versions or channels (DOM/DI) for a defined week range. It never touches the baseline or forecasting range. Available at Level 1 and 2.5 but discouraged at 2.5. The durable fix is updating the Forecasting Range — after which the pair must be manually zeroed or it persists indefinitely. No UK user has used it yet.
+
+• P2M reference fields: Plan Variant (lifecycle: New/Growth/Mature/Decline/EOL — New and EOL are the hard ones), Variant Modified (date), Inherited Priority Proxy (P1 highest → P4/none; regional, owned by the forecast-governance team, not BU-specific). Reference only — no system logic acts on them; reliable at 5-digit granularity only; known data-quality gaps (an EOL item showing Priority 1).
+
+• TMOs ARE included in 'sales enrichment' totals (they flow via FAST into the enrichment capture template).
+
+• The reconciliation template is an execution interface, not an analysis tool — analysis lives in the dashboard. Anti-scope-creep principle, informed by a prior EU tool that collapsed under its own weight within a week of launch.
+
+• Timing: Level 1 reads/writes are immediate; Level 2.5 changes need the \~90-minute fan-out job before appearing at Level 1 or in the dashboard.
+
+Recurring confusion to reinforce
+
+UA1-vs-consensus and Level 2.5 persistence were re-asked by different people in both sessions (Scott, Stephanie, Arun, Norman). Organic re-explanation is not sticking — the FAQ entries below exist specifically so Brave answers these with worked examples.
+
+14\. New FAQ entries (for grounding Brave) — added in v2
+
+**Q: Do I enter deltas or absolute totals?**
+
+A: Deltas, at every level, always. This supersedes the v1 answer that said Level 2.5 accepts absolute totals. The system cannot hold an absolute target: the baseline moves between cycles, so a stored target would require silently re-deriving every delta in Logility. To see the resulting total while you type, use the live-formula 52-week consensus columns in the template. If you want absolute entry as a UX feature, that request is logged and being scoped — but today, totals entered into adjustment fields create doubled forecasts.
+
+**Q: If Demand Planning or Marketing adjusts at Level 2.5, does the sales/field forecast change?**
+
+A: It depends on the phase. TARGET design: no — DP/marketing adjustments flow only into consensus, never UA1. PILOT interim (current): HERO does not yet have the user-role layer needed to tell who made a Level 2.5 base-trend adjustment, so for now ALL Level 2.5 BTAs flow into UA1 regardless of author. What is true in both phases: the Marketing Enrichment and Demand Adjustment components never migrate to UA1, and HERO never overwrites UA1 inside the 0–4-month frozen window. (Confirmed by Rene Bartoli, 12 July 2026.)
+
+**Q: Are Level 2.5 adjustments reset each cycle?**
+
+A: No. They persist as deltas across cycles, exactly like any other base-trend adjustment, until someone manually reverses them. If you made a one-cycle-only correction, you must zero it out next cycle.
+
+**Q: A customer's enrichment looks inflated — can Demand Planning just cut it?**
+
+A: Not surgically. A correction at Level 2.5 disaggregates across ALL customers by baseline proportion, so cutting one account's excess also cuts everyone else. The designed path is to raise it in the commercial reconciliation session so the account owner corrects their own Level 1 entry — commercial enrichments can only ever be modified by the person who created them.
+
+**Q: What stops someone re-inflating the forecast after sign-off?**
+
+A: Nothing technical — by design. The control is auditing: the cycle-change filter shows every change since the last ADS3 summarization, and abuse is escalated to leadership.
+
+**Q: I made an urgent change and Logility doesn't show it. Is HERO broken?**
+
+A: No. HERO exports to Logility once a week (Friday) by design, and supply consumes it at monthly summarization. If your change truly cannot wait, there are three governed paths depending on what it is. (1) Commercial enrichments (promos, sets, samples, pre-orders, TMOs) ALWAYS go through HERO, even inside the 0–4 month horizon — never enter them directly in Logility. (2) If a commercial enrichment is time-sensitive (e.g., a DI-to-DOM flip), capture it in HERO and flag it as time-sensitive; a weekly report surfaces it to Demand Planning, who executes it in Logility within the agreed weekly window. (3) Only non-enrichment, non-forecast-related edits — allocation support, ship-match alignment, holding the month, operational visibility — are made directly in Logility on UA1, only within months 0–4, by the people who perform this work today. There is no dedicated NFR functionality in HERO for now — this is a deliberate, phased choice. These edits never flow into consensus.
+
+**Q: I need to move volume between product versions or between DOM and DI. How?**
+
+A: Use Version Change / Channel Shift, which creates an offsetting +/− adjustment pair for your week range. Prefer Level 1. Remember: the durable fix is correcting the Forecasting Range — once that is fixed, manually zero the pair, or it persists as a delta forever. If you fix the range without zeroing the pair, you will be wrong for exactly one cycle, then correct.
+
+**Q: My consensus number doubled after my adjustment. Why?**
+
+A: Almost certainly you entered your intended TOTAL into the adjustment (delta) field. The field adds to the baseline, so entering the total doubles it. Enter only the difference vs baseline. (This is what happened with Peppa Pig in July 2026 — corrected by backing out baseline from the recorded adjustment.)
+
+**Q: What do the P2M fields in my template tell me?**
+
+A: Triage aids only: Plan Variant = lifecycle stage; Variant Modified = when marketing last touched it; Inherited Priority Proxy = P1–P4 regional priority. They carry no system logic, are inferred at 5-digit level, and have known data-quality gaps — use them to prioritize your time, not as truth.
+
+**Q: Weeks in my downloaded template/database show blank or null. Is data missing?**
+
+A: No. The database stores changes as deltas; null means 'no change that week', not missing data.
+
+15\. Corrections and status updates to v1 — as of 12 July 2026
+
+• **CORRECTION —** v1 section 11 FAQ 'Do I need to enter deltas or absolute numbers?' is WRONG as written (it said 2.5 accepts absolute totals). Superseded by section 14: deltas everywhere. Absolute entry remains an open UX request from UK commercial, scoped but not implemented.
+
+• **Level 2.5 reflection in templates (v1 open item \#1) —** Root cause found: a template design gap (Level 1 adjustments not visible when reconciling against the 2.5 view) plus a backend delta/total inconsistency. Full template redesign shipped \~10 July; validation in the 13 July exec sign-off review.
+
+• **HERO week off 13-17 July —** Confirmed and scoped: Databricks dashboard view, template data-flow fix, table consolidation, fan-out streamlining, plus the 8-digit/9-digit SKU display fix (HERO must show only 9-digit children when they exist — high-risk change deliberately parked for this week). UK cycle 2 starts Monday 20 July on a frozen baseline; the next cycle is framed as a soft landing, not a pilot.
+
+• **P2M field granularity (v1 open item \#3) —** Still open; refinement pending. An NA volunteer (likely Arun) joins P2M lifecycle UAT \~week of 20 July.
+
+• **Resourcing / key-person risk (v1 open item \#5) —** Unchanged structurally. Jarred took a recovery week after the dashboard push; a repo split (GlidePath vs HERO, \~1 week effort) is planned and will require Logility data-feed remapping.
+
+• **Daybreak accountability —** Genpact/Daybreak are now measured on baseline accuracy rather than adoption %. Daybreak added a dedicated QA specialist and is replacing the ARIMA extension with a statistical-ensemble model showing more realistic long-horizon seasonality. April-June 2026 actuals were re-profiled using 2024 seasonality (2025 distorted by tariffs and the billing outage).
+
+• **NA pilot approach —** US first, then Canada; September cycle; Level 2-only overrides (Level 1 resultant untouched) - a direct application of the UK lesson. EU independently adopted the same approach. Forecast-range template due \~3 weeks before September. Passing the system test is mandatory for NA users.
+
+• **Catalogue / downloads —** Multi-selection downloads still targeted for cycle 2 (v1 section 9). Brand-specific catalogue splits (e.g., separating one sub-brand) were declined pending a governance standard - precedent risk.
+
+16\. UA1 and frozen-window behavior - verified against the data-architecture documents
+
+Added in v3 (12 July 2026). Cross-check of the NA training content (sections 13-14) against: Logility S\&OP Data Architecture (2026-03-10), NFR Addendum, NFR Hero Summary (2026-05-28), NFR Knowledge Base (2026-05-15), HERO-Logility Export Array Mapping Reference, and HERO-Logility Data Transmission Design Topics V1. These documents are the source of truth for the statements below.
+
+UA1 composition and exclusions (confirmed)
+
+• UA1 (Field/Sales Forecast) = BASELINE + BASE_TREND + CHANNEL_SHIFT; within the frozen window an NFR_ENRICHMENT variable may additionally apply to UA1 only. Version adjustments also feed the UA1 path.
+
+• Strict exclusion rule: MARKETING ENRICHMENT and DEMAND ADJUSTMENTS never migrate to any Field Forecast array. The Sales Forecast represents only the commercial vision - this is the architectural basis for the training message 'a DP/marketing override never changes sales's own number'.
+
+• Guardrail: NFR reductions may never exceed BASELINE + BASE_TREND + CHANNEL_SHIFT, so UA1 can never go negative, even when commercial enrichments are positive.
+
+• Consensus side: Consensus = sum of 10 components (Baseline + 5 commercial enrichments + 4 user adjustments). ADS2 = sum of positive adjustments, PROMO LIFT = sum of negatives (both excluding TMO and Baseline); TMO passes through exactly as stored; ADS3 = Resultant + Promo Lift + ADS2, calculated by Logility. NFR is excluded from all consensus arrays.
+
+Frozen-window rules (confirmed)
+
+• UA1 is the ONLY array with a restricted write horizon: HERO authors UA1 in horizon months 5-12 and withholds it in months 0-4 (rolling, from current date). UA2-UA6 and the consensus arrays update across the full 0-12 horizon; the Resultant also updates weekly to capture version changes and channel shifts.
+
+• When a row is in the frozen window, published outputs carry the live Logility baseline for UA1 (not a HERO overwrite, not a blank). When a HERO reconciliation control is cleared, UA1 reverts to the live Logility baseline rather than zero.
+
+• Baseline stability in the window: Daybreak keeps sending proposals for months 0-4, but Genpact does not overwrite months 0-4 with them; changes visible there come only from planner overrides, version changes, or documented HERO functionality.
+
+• UA1 edits inside months 0-4: during the pilots, users resolve non-forecast-related needs (allocation support, ship-match alignment, holding the month, operational visibility, TMO actualization) by adjusting UA1 directly in Logility — performed by whoever does this work today. The formal NFR template and governance described in the Addendum (Data master user + Tara Kelly + Flow Planning, approval + audit trail) is the designed FUTURE state; no NFR functionality is built into HERO v1.0, deliberately. Any change to an enrichment is always made in HERO, never in Logility.
+
+Verification items — RESOLVED by Rene Bartoli, 12 July 2026
+
+• **RESOLVED — PHASE_OUT (legacy name: MDP_ENRICHMENT) —** The component is PHASE_OUT (canonical name, confirmed by Rene Bartoli 12 July 2026): PhaseOut-type adjustments, captured in the enrichment capture template, intended to help map the depletion of available inventory. It is a valid fourth component of UA1; the S\&OP Data Architecture v2 (2026-07-12) now carries it in the UA1 formula, and 'MDP_ENRICHMENT' in the Transmission Design Topics V1 is a legacy name for this same component. PHASE_OUT also flows into consensus like every other enrichment, under the sign-based rule of the S\&OP Data Architecture section 4.2: positive values aggregate into ADS2, negative values into PROMO LIFT (TMO and Baseline are the only exceptions).
+
+• **RESOLVED — role routing (interim vs target) —** During the pilots, and until the user-role validation layer is implemented, it is NOT possible to differentiate Level 2.5 base-trend adjustments by author (Demand Planning vs Marketing vs commercial). Therefore ALL Level 2.5 BTAs currently flow to UA1. Once the role layer exists, the original design will be enforced and DP/marketing BTAs will stop flowing to UA1. IMPORTANT: the NA training sessions of 8–9 July taught the target-design behavior ('a DP override never changes sales's number') — a follow-up clarification to the NA and UK teams is recommended so nobody is surprised by interim behavior.
+
+• **RESOLVED — frozen window = 4 months —** The frozen window is 4 months. The NFR Addendum's '0–90 days' was an erratum — corrected in Addendum v2 (2026-07-12), which also notes that the addendum describes the designed future state for NFR governance. Additionally: no NFR functionality is being implemented for now — users simply resolve non-forecast-related adjustments directly on UA1 within months 0–4, exactly as explained in the training; enrichment changes always go through HERO.
