@@ -43,7 +43,7 @@ Use the enrichments workflow when you have a **real-world event or overlay** tie
     `TMO` rows are sourced from **FAST** and the template is seeded from FAST once a month. Do **not** author or edit TMO directly in the template — that would desynchronise FAST and Logility.
 
 !!! tip "Confirmed vs Proposed horizon"
-    Use `CONFIRMED` for near-term events inside the supply window; use `PROPOSED` for longer-horizon events that are not yet locked. `EXCESS_DEPLETION` and `PHASE_OUT` are separate types in the tool; "Phase-Out" is the business term for taking an item off normal carry-forward, and excess-inventory depletion is captured the same way.
+    Use `CONFIRMED` for near-term events inside the supply window; use `PROPOSED` for longer-horizon events that are not yet locked. `EXCESS_DEPLETION` and `PHASE_OUT` are separate types in the tool; **"Phase-out" is the canonical business term** (`PHASE_OUT` is that same name as it appears in the tool), used for taking an item off normal carry-forward, and excess-inventory depletion is captured the same way.
 
 ## Working in the template (Excel, formulas, copying data)
 
