@@ -25,6 +25,7 @@ Summarise what each role does inside HERO (Hasbro Enrichment & Reconciliation Op
 ## Scope and special access
 
 - A workbook is downloaded for a chosen scope (Business Unit, Forecast Partner, optional Brand, Fiscal Year).
+- As of the **20 July 2026 release**, HERO access controls have been cleaned up: users only see the **Business Units they are authorised to work with** in the BU selection.
 - Selecting **All Forecast Partners** at download switches the workbook into BU-SKU mode.
 - The `ALL_FORECAST_PARTNERS` scope is restricted to an **explicit allowlist** in the current build, and is only valid on MARKETING / DEMAND_PLANNING enrichment rows.
 

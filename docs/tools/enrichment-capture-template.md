@@ -28,22 +28,28 @@ Use the enrichments workflow when you have a **real-world event or overlay** tie
 | `TMO` | Trade / pallet adjustment | Pallet Tag; SPU SKU optional |
 | `PHASE_OUT` | Item should no longer carry a normal baseline | — |
 | `EXCESS_DEPLETION` | Depletion-style adjustment (excess inventory) | — |
-| `DEMAND_PHASE_SHIFT` | Timing-issue tracking badge (tracking only) | — |
+| `DEMAND_PHASE_SHIFT` | Re-phasing demand between weeks (pull-forward / push-out, e.g. deals): author a **positive + negative pair** — a positive row where the demand lands, a negative row where it is taken from | — |
 | `SUPPLY_SHORTAGE_COMP` | Compensating item for a shortage | Shortage Planning SKU |
 | `MARKETING` | Marketing overlay | `ALL_FORECAST_PARTNERS` allowed |
 | `DEMAND_PLANNING` | Demand-planning overlay | `ALL_FORECAST_PARTNERS` allowed |
 
 !!! note "Status values"
-    `PROPOSED` = planned / working input · `CONFIRMED` = approved active input · `DECLINED` = retained for traceability. **Status is a log field today: it does not change the math.** Setting a row to `DECLINED` does **not** remove its effect — see *Cancelling or removing an enrichment* below.
+    `PROPOSED` = planned / working input · `CONFIRMED` = approved active input · `DECLINED` = preserved for visibility in the template and audit trail, but **excluded from calculated downstream outputs**. As of the **20 July 2026 release**, setting a row to `DECLINED` is the recommended way to remove its effect — see *Cancelling or removing an enrichment* below.
 
-!!! warning "Tracking-only types"
-    `DEMAND_PHASE_SHIFT` and `SUPPLY_SHORTAGE_COMP` are **tracking metadata**. They do **not** automatically move demand between weeks or between SKUs. Use reconciliation for an actual week move.
+!!! tip "Re-phasing demand: use DEMAND_PHASE_SHIFT, not SET (ratified, 16 July 2026)"
+    When the business decision is to **move existing demand between weeks** (deals, pull-forwards, ladder buys — and in general demand timing changes that do **not** originate from problems in history), use a `DEMAND_PHASE_SHIFT` **positive + negative pair** instead of `SET`. Reserve `SET` for a **true set build**; if a true set build also pulls existing demand forward, offset it with **negative `SET` rows** on the weeks the demand comes from — the same enrichment type for both legs, consistent with the ladder rule (DPS pair) and the NPI set/baseline case (simplification confirmed 16 July 2026).
+
+!!! note "Boundary with reconciliation"
+    If the phasing issue stems from the **baseline / history** — defects or one-off events in history whose adjustment was not made in time, or that cannot be explained by commercial actions — correct it through **reconciliation** (base trend adjustment), not an enrichment. `DEMAND_PHASE_SHIFT` is for known commercial timing events; reconciliation is for history-driven baseline corrections.
+
+!!! warning "No single-row move; SUPPLY_SHORTAGE_COMP stays tracking-only"
+    A single `DEMAND_PHASE_SHIFT` row does **not** automatically move demand — it takes **two rows** (positive where the demand lands, negative where it comes from). Do **not** confuse it with **Channel Shift** (a reconciliation control): Channel Shift moves demand between channels (`DOM` ↔ `DI`) and creates the offsetting negative **automatically**; `DEMAND_PHASE_SHIFT` moves demand between **weeks** and both legs are authored manually. `SUPPLY_SHORTAGE_COMP` remains **tracking metadata**: it does not move volume between SKUs.
 
 !!! note "TMO comes from FAST"
     `TMO` rows are sourced from **FAST** and the template is seeded from FAST once a month. Do **not** author or edit TMO directly in the template — that would desynchronise FAST and Logility.
 
 !!! tip "Confirmed vs Proposed horizon"
-    Use `CONFIRMED` for near-term events inside the supply window; use `PROPOSED` for longer-horizon events that are not yet locked. `EXCESS_DEPLETION` and `PHASE_OUT` are separate types in the tool; **"Phase-out" is the canonical business term** (`PHASE_OUT` is that same name as it appears in the tool), used for taking an item off normal carry-forward, and excess-inventory depletion is captured the same way.
+    Use `CONFIRMED` for near-term events inside the supply window; use `PROPOSED` for longer-horizon events that are not yet locked. `EXCESS_DEPLETION` and `PHASE_OUT` are separate types in the tool; "Phase-Out" is the business term for taking an item off normal carry-forward, and excess-inventory depletion is captured the same way.
 
 ## Working in the template (Excel, formulas, copying data)
 
@@ -51,7 +57,7 @@ The HERO templates are **ordinary Excel files** — while you prepare your entri
 
 - **Don't overwrite rows.**
 - **Replace any formulas with their values** before uploading (copy → paste as values). The upload expects static values, not live formulas.
-- **Avoid blank rows** — for efficiency, don't leave empty lines between enrichments.
+- **Avoid blank rows** — don't leave empty lines between enrichments. As of the **20 July 2026 release**, upload validation detects mid-sheet blank rows (and blanked headers) and rejects the upload with an explanation, instead of silently dropping the data below them.
 - **Insert any new or copied row below the last row that has data.**
 
 ## Cancelling or removing an enrichment
@@ -59,15 +65,15 @@ The HERO templates are **ordinary Excel files** — while you prepare your entri
 !!! warning "Never delete rows"
     Do **not** delete enrichment rows. Every enrichment must stay traceable through its key (Enrichment ID) — deleting a row breaks that audit trail.
 
-To cancel an enrichment, **set its quantity to zero** — change the *Expected Shipment Lift* (units or percent) to **0**. That removes its effect while keeping the row for traceability.
+As of the **20 July 2026 release**, the recommended way to cancel an enrichment is to set its **Status** to `DECLINED`. A `DECLINED` row is preserved in the template and the audit trail for visibility, but is **excluded from calculated downstream outputs** — its effect is removed from the forecast while the record of the decision remains.
 
-!!! note "Status ≠ cancel (current behaviour)"
-    Changing the **Status** to `DECLINED` does **not** cancel the enrichment: the status field is currently for logging only and has **no impact** on the calculation, the dashboard, Logility, or the reconciliation template. The only way to remove an enrichment's effect today is to **zero the quantity**.
+!!! note "Previous method: zeroing the quantity"
+    Before the 20 July 2026 release, Status was a log-only field and the only way to remove an enrichment's effect was to **zero the quantity** (set *Expected Shipment Lift* to 0). Zeroing still removes the effect, but `DECLINED` is now the preferred method because it removes the effect *and* records the decision explicitly in the audit trail.
 
 ## Related pages
 
 - [Field-by-field reference](../workflows/field-by-field-reference.md)
 - [Tab-by-tab walkthrough](../workflows/tab-by-tab-walkthrough.md)
 
-!!! success "No open questions identified"
-    No open questions were identified from the available source material.
+!!! warning "Gaps & Open Questions"
+    - The 16 July 2026 decision is **formally ratified**; taxonomy and training sources were corrected the same day (Taxonomy Playbook v2, Examples for Enrichment Training v2, Enrichment Training Examples Deck v2, Scenarios & Examples v2, MOD2 deck v4, EU Day1 deck v3). Superseded versions should be retired/archived so only the 2026-07-16 versions circulate.

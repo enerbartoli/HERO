@@ -28,7 +28,7 @@ No. BU-SKU mode is a different authoring mode and is treated separately.
 Blank keeps the current rendered BU-SKU adjustment total; `0` sets it to zero for that week; a negative value means the adjustment total should be below zero.
 
 **Does DEMAND_PHASE_SHIFT automatically move demand between weeks?**
-No — it is tracking only. Use reconciliation for an actual week move.
+Not with a single row. To re-phase demand, author a **positive + negative pair**: a positive `DEMAND_PHASE_SHIFT` row where the demand should land, and a negative row where it is taken from. As of the **16 July 2026 decision (ratified)**, this pair — not `SET` — is the recommended way to re-phase demand; reserve `SET` for true set builds. Use it for deals, pull-forwards and timing changes that do **not** come from problems in history; if the phasing issue stems from baseline/history defects or one-offs not adjusted in time, correct it via **reconciliation** (base trend adjustment) instead.
 
 **Does SUPPLY_SHORTAGE_COMP automatically move volume between SKUs?**
 No — it tracks the relationship, but you still capture the compensating demand correctly.
@@ -43,13 +43,16 @@ The **Baseline Trend Adjustments** columns — the **orange** ones. That is the 
 Because HERO **classifies** your entry on upload based on **who entered it and when**. You always type into *Baseline Trend Adjustments*; the system then files Demand Planning / Marketing reconciliation entries under the *Marketing and Demand Planning* columns. Both are correct — input vs. how it's classified afterward.
 
 **How do I cancel or delete an enrichment I captured?**
-**Never delete the row.** To cancel it, **set its quantity to zero** (change the Expected Shipment Lift units or percent to 0). The row stays for traceability via its Enrichment ID.
+**Never delete the row.** As of the **20 July 2026 release**, set the row's **Status** to `DECLINED` — the row is preserved in the template and audit trail for visibility, but excluded from calculated downstream outputs. Zeroing the quantity still removes the effect, but `DECLINED` is now the recommended method.
 
 **If I set the Status to "Declined", does that cancel the enrichment?**
-No. The Status field is currently **log-only** — it does not change the calculation, the dashboard, Logility, or the reconciliation template. The only way to remove an enrichment's effect today is to **zero the quantity**.
+**Yes — as of the 20 July 2026 release.** A `DECLINED` enrichment is preserved for visibility in the template and audit trail, but **excluded from calculated downstream outputs**. Setting Status to `DECLINED` is now the best way to "zero out" a previous enrichment. (Before this release, Status was log-only and zeroing the quantity was the only method.)
 
 **Can I use formulas (e.g. VLOOKUP) or copy data from other files into the template?**
-Yes — the templates are normal Excel files, so use whatever helps while you prepare. Just, **before uploading**: replace formulas with their values (paste as values), don't overwrite rows, avoid blank rows, and add any new/copied rows below the last row with data.
+Yes — the templates are normal Excel files, so use whatever helps while you prepare. Just, **before uploading**: replace formulas with their values (paste as values), don't overwrite rows, avoid blank rows, and add any new/copied rows below the last row with data. As of the **20 July 2026 release**, upload validation catches blanked headers and mid-sheet blank rows and rejects the upload instead of silently dropping data — see [Validation & error catalogue](validation-error-catalogue.md).
+
+**What happens if I upload the same template twice?**
+As of the **20 July 2026 release**, HERO warns you that the upload looks like a duplicate and lets you **intentionally override** where appropriate, instead of silently blocking the repeat upload. Best practice is unchanged: **download a fresh template before every working session** and avoid stale saved templates. If you see any template/dashboard mismatch, report it immediately.
 
 **Does a DP/Marketing adjustment change my sales forecast (UA1)?**
 It depends on the phase. **Target design:** no — Demand Planning / Marketing adjustments flow only into consensus, never into UA1 (the field/sales forecast). **Pilot interim (current):** HERO does not yet have the user-role layer needed to tell who authored a Level 2.5 base-trend adjustment, so for now **all** Level 2.5 base-trend adjustments flow into UA1 regardless of who made them. True in both phases: Marketing Enrichment and Demand Adjustment components never migrate to UA1, and HERO never overwrites UA1 inside the 0–4-month frozen window. (Confirmed by Rene Bartoli, 12 July 2026.)
