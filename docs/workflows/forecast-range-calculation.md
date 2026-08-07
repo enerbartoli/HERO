@@ -52,6 +52,21 @@ Commercial teams receive **Excel files with the proposed Start/End dates** for e
 
 The statistical model output is generated **first** (forecast before range), and the **range layer is then applied** on top.
 
+## How history cleansing works
+
+Cleansing is how the model is told what really happened, as opposed to what shipped. It is applied in the **Adjusted Demand array**, the editable layer the statistical baseline learns from, and never in raw Actuals.
+
+**The mechanic.** Cleansing runs in the **opposite direction to the enrichment**. When a period closes, cleansed history is actual shipments minus the `SET`. Base trend adjustments are **not** cleansed: they adjust the forward baseline and never enter the cleansing calculation.
+
+That is why a `SET` does two jobs at once. It holds volume in the forecast now, and it is the instruction that removes that same volume from history later. It is also why a pair of offsetting `SET` rows nets to zero in cleansing, which is correct when demand only moved between weeks and nothing new was created, and wrong when the point is to strip a volume out of what the model learns.
+
+**Supply shortage compensation.** When a shortage pushes demand onto a substitute item, `SUPPLY_SHORTAGE_COMP` records the relationship between the item that was unavailable and the item that absorbed the demand. At cleansing, that relationship raises the adjusted demand of the item that was unavailable by the compensating quantity, and reduces the same quantity from the substitute. The model then learns the demand the absent item would have had, and does not carry forward an inflated projection for a substitute that only sold because of the shortage.
+
+Capturing that relationship correctly matters even though nothing moves in the forward forecast: the intent is to use it to **automate** the historical cleansing, so the correction happens without a planner having to reconstruct it by hand.
+
+!!! note "This is the initial logic, and it is expected to change"
+    The rules on this page are the starting point, not a finished design. They will evolve as the programme accumulates enough cycles to evaluate which cleansing treatment actually improves forecast accuracy. Two objectives guide that evolution: cleansing should measurably improve accuracy, and it should be automated far enough that it does not consume planner time. Treat the current rules as the working method and expect them to be refined.
+
 ## Related pages
 
 - [Forecast Reconciliation Template (FRT)](../tools/forecast-reconciliation-template.md) — the in-template "set an end date to stop forecasting" usage.
