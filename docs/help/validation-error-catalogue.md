@@ -28,10 +28,22 @@ List the validation messages HERO can return and how to fix each one.
 | *Row is outside the downloaded template scope.* | The row does not match the BU / Forecast Partner / Brand / mode the workbook was downloaded for. | Download a workbook for the right scope and apply the change there. |
 | *BU-SKU weekly values must be numeric signed adjustment totals.* | A BU-SKU upload had a non-numeric weekly value. | Enter a numeric value, or leave the cell blank to keep the current rendered total. |
 
+## New checks — 20 July 2026 release
+
+The 20 July 2026 release added safer upload handling. Two new classes of template problems are now **caught and rejected with an explanation** instead of silently dropping data:
+
+| Check | Cause | Fix |
+|---|---|---|
+| **Blanked header detected** | A header cell was deleted or overwritten, so HERO can no longer map the columns. | Re-download a fresh template and copy your entries across; never edit header rows. |
+| **Mid-sheet blank row detected** | An empty row sits between data rows; previously the data below it could be silently dropped. | Remove the blank row(s) so data is contiguous, then upload again. |
+
+!!! note "Duplicate uploads: warning + intentional override"
+    Repeated uploads of the same template used to be silently blocked. As of the 20 July 2026 release, HERO **warns** you that the upload appears to be a duplicate and lets you **intentionally override** where appropriate. Only override when you are sure the repeat upload is deliberate — best practice remains to download a fresh template before every working session.
+
+!!! warning "Gaps & Open Questions"
+    - Exact on-screen message text for the blanked-header, mid-sheet-blank-row, and duplicate-upload warnings is not yet documented — confirm wording with the build team after production validation.
+
 ## Related pages
 
 - [End-to-end workflow](../workflows/end-to-end-workflow.md)
 - [Field-by-field reference](../workflows/field-by-field-reference.md)
-
-!!! success "No open questions identified"
-    No open questions were identified from the available source material.

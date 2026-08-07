@@ -34,6 +34,19 @@ Use reconciliation when the business needs to **directly change the final week-l
 !!! tip "Which columns do Demand Planning / Marketing edit? (incl. Level 2.5)"
     Enter your weekly adjustments in the **Baseline Trend Adjustments** columns — the **orange** ones. That is the editable weekly area on both the standard and the BU-SKU / Level 2.5 reconciliation templates. After you upload, HERO **automatically classifies** the entry and it appears under the **Marketing and Demand Planning** weekly columns — the classification is based on **who entered it and when**. So: you edit in *Baseline Trend Adjustments*, and your change shows up under *Marketing and Demand Planning* after upload. The template's **Instructions** page also covers this.
 
+## What changed in the 20 July 2026 release
+
+- **Clearer template layout** — cleaner labels and formatting, and **rounded display values** so the template is easier to read. (Rounding on the weekly display does not change the underlying stored values.)
+- **Clearer calculated forecast totals** — the template now shows calculated totals so you can **see the effect of your entries before you upload**.
+- **Level 1 / Level 2.5 behaviour tightened** — adjustments are handled more consistently between the two levels, and the template better explains **what is coming from each level**.
+- **Stale or invalid planning SKUs are removed** from reconciliation templates, so you no longer see rows you cannot act on.
+- **Fresh templates only** — always download a fresh template before working; avoid stale saved templates, and report any template/dashboard mismatch immediately.
+
+!!! warning "Gaps & Open Questions"
+    - Exact new column labels and the placement/format of the calculated forecast totals are not yet documented — confirm against the released template and add screenshots.
+    - Confirm the precise rounding rule used for display values (and that stored values remain unrounded).
+    - Confirm what "tightened" Level 1 / Level 2.5 handling changes in practice for users, if anything beyond clearer labelling.
+
 ## Actualized vs forward weeks
 
 Weeks in the actualized period use exact row-level shipment actuals where they exist, and 0 where no exact actual is available; values are zero-floored so negative net shipment weeks render as 0. **Shaded** cells mark the actualized shipment period (historical cutoff); **unshaded** cells are forward forecast weeks.
@@ -52,6 +65,3 @@ Weeks in the actualized period use exact row-level shipment actuals where they e
 - [Field-by-field reference](../workflows/field-by-field-reference.md)
 - [Calculation reference](../examples/calculation-reference.md)
 - [BU-SKU / Level 2.5 mode](bu-sku-level-25-mode.md)
-
-!!! success "No open questions identified"
-    No open questions were identified from the available source material.
