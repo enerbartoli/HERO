@@ -1,0 +1,23 @@
+name: CI
+
+on:
+  push:
+    branches-ignore: [gh-pages]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - run: pip install -r requirements.txt
+      - name: Build the site (strict)
+        run: mkdocs build --strict
+      - name: Consolidated manual is up to date with docs/
+        run: python3 tools/generate_manual_full.py --check
