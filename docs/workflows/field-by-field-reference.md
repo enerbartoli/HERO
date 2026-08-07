@@ -19,7 +19,7 @@ Define each field, whether it is required / editable, and its allowed values.
 | Forecast Partner Customer Number | Required | Auto-populated | From the selected Forecast Partner. |
 | Planning SKU | Required | Dynamic dropdown in scope | The planning item code. |
 | SKU Description | Read-only | Auto-populated | Confirm the item. |
-| Shortage Planning SKU | Required for `SUPPLY_SHORTAGE_COMP` | Text | Tracking only; does not move demand. |
+| Shortage Planning SKU | Required for `SUPPLY_SHORTAGE_COMP` | Text | Tracking only in the forecast; drives the history cleansing. |
 | Enrichment Type | Required | See [ECT types](../tools/enrichment-capture-template.md) | Determines bucket and downstream treatment. |
 | Status | Required | `PROPOSED` / `CONFIRMED` / `DECLINED` | As of the 20 July 2026 release, `DECLINED` rows are preserved in the template / audit trail but **excluded from calculated downstream outputs** — the recommended way to cancel an enrichment. |
 | Shipment Impact Start Date | Required | `YYYY-MM-DD` | Defines which fiscal weeks receive the enrichment. |

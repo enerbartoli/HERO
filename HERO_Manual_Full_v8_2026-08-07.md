@@ -491,7 +491,7 @@ If the phasing issue stems from the **baseline / history** — defects or one-of
 
 **Warning — No single-row move; SUPPLY_SHORTAGE_COMP stays tracking-only**
 
-A single `DEMAND_PHASE_SHIFT` row does **not** automatically move demand — it takes **two rows** (positive where the demand lands, negative where it comes from). Do **not** confuse it with **Channel Shift** (a reconciliation control): Channel Shift moves demand between channels (`DOM` ↔ `DI`) and creates the offsetting negative **automatically**; `DEMAND_PHASE_SHIFT` moves demand between **weeks** and both legs are authored manually. `SUPPLY_SHORTAGE_COMP` remains **tracking metadata**: it does not move volume between SKUs.
+A single `DEMAND_PHASE_SHIFT` row does **not** automatically move demand — it takes **two rows** (positive where the demand lands, negative where it comes from). Do **not** confuse it with **Channel Shift** (a reconciliation control): Channel Shift moves demand between channels (`DOM` ↔ `DI`) and creates the offsetting negative **automatically**; `DEMAND_PHASE_SHIFT` moves demand between **weeks** and both legs are authored manually. `SUPPLY_SHORTAGE_COMP` remains **tracking metadata**: it does not move volume between SKUs. Tracking-only refers to the forward forecast. The relationship it records is used at history cleansing, where it raises the adjusted demand of the item that was unavailable and reduces the same quantity from the substitute. See [How history cleansing works](../workflows/forecast-range-calculation.md#how-history-cleansing-works).
 
 **Note — TMO comes from FAST**
 
@@ -918,7 +918,7 @@ Define each field, whether it is required / editable, and its allowed values.
 | Forecast Partner Customer Number | Required | Auto-populated | From the selected Forecast Partner. |
 | Planning SKU | Required | Dynamic dropdown in scope | The planning item code. |
 | SKU Description | Read-only | Auto-populated | Confirm the item. |
-| Shortage Planning SKU | Required for `SUPPLY_SHORTAGE_COMP` | Text | Tracking only; does not move demand. |
+| Shortage Planning SKU | Required for `SUPPLY_SHORTAGE_COMP` | Text | Tracking only in the forecast; drives the history cleansing. |
 | Enrichment Type | Required | See [ECT types](../tools/enrichment-capture-template.md) | Determines bucket and downstream treatment. |
 | Status | Required | `PROPOSED` / `CONFIRMED` / `DECLINED` | As of the 20 July 2026 release, `DECLINED` rows are preserved in the template / audit trail but **excluded from calculated downstream outputs** — the recommended way to cancel an enrichment. |
 | Shipment Impact Start Date | Required | `YYYY-MM-DD` | Defines which fiscal weeks receive the enrichment. |
@@ -1027,6 +1027,22 @@ By default a SKU can extend to **all** forecast partners, which spreads demand t
 ## How it relates to the baseline
 
 The statistical model output is generated **first** (forecast before range), and the **range layer is then applied** on top.
+
+## How history cleansing works
+
+Cleansing is how the model is told what really happened, as opposed to what shipped. It is applied in the **Adjusted Demand array**, the editable layer the statistical baseline learns from, and never in raw Actuals.
+
+**The mechanic.** Cleansing runs in the **opposite direction to the enrichment**. When a period closes, cleansed history is actual shipments minus the `SET`. Base trend adjustments are **not** cleansed: they adjust the forward baseline and never enter the cleansing calculation.
+
+That is why a `SET` does two jobs at once. It holds volume in the forecast now, and it is the instruction that removes that same volume from history later. It is also why a pair of offsetting `SET` rows nets to zero in cleansing, which is correct when demand only moved between weeks and nothing new was created, and wrong when the point is to strip a volume out of what the model learns.
+
+**Supply shortage compensation.** When a shortage pushes demand onto a substitute item, `SUPPLY_SHORTAGE_COMP` records the relationship between the item that was unavailable and the item that absorbed the demand. At cleansing, that relationship raises the adjusted demand of the item that was unavailable by the compensating quantity, and reduces the same quantity from the substitute. The model then learns the demand the absent item would have had, and does not carry forward an inflated projection for a substitute that only sold because of the shortage.
+
+Capturing that relationship correctly matters even though nothing moves in the forward forecast: the intent is to use it to **automate** the historical cleansing, so the correction happens without a planner having to reconstruct it by hand.
+
+**Note — This is the initial logic, and it is expected to change**
+
+The rules on this page are the starting point, not a finished design. They will evolve as the programme accumulates enough cycles to evaluate which cleansing treatment actually improves forecast accuracy. Two objectives guide that evolution: cleansing should measurably improve accuracy, and it should be automated far enough that it does not consume planner time. Treat the current rules as the working method and expect them to be refined.
 
 ## Related pages
 
@@ -1387,7 +1403,7 @@ Blank keeps the current rendered BU-SKU adjustment total; `0` sets it to zero fo
 Not with a single row. To re-phase demand, author a **positive + negative pair**: a positive `DEMAND_PHASE_SHIFT` row where the demand should land, and a negative row where it is taken from. As of the **16 July 2026 decision (ratified)**, this pair — not `SET` — is the recommended way to re-phase demand; reserve `SET` for true set builds. Use it for deals, pull-forwards and timing changes that do **not** come from problems in history; if the phasing issue stems from baseline/history defects or one-offs not adjusted in time, correct it via **reconciliation** (base trend adjustment) instead.
 
 **Does SUPPLY_SHORTAGE_COMP automatically move volume between SKUs?**
-No — it tracks the relationship, but you still capture the compensating demand correctly.
+No — it tracks the relationship, but you still capture the compensating demand correctly. Tracking-only refers to the forward forecast: nothing moves between SKUs there. The relationship it records is used at **history cleansing**, where it raises the adjusted demand of the item that was unavailable and reduces the same quantity from the substitute. See [How history cleansing works](../workflows/forecast-range-calculation.md#how-history-cleansing-works).
 
 **Can I change actualized weeks?**
 Treat shaded / actualized weeks as frozen forecast history unless your operating model explicitly routes an exception through a separate process.
@@ -1473,6 +1489,7 @@ Single reference for HERO terms and acronyms.
 | **Level 2.5 (L2.5)** | BU-SKU reconciliation mode used when all forecast partners are selected. |
 | **SKU hierarchy levels** | Nodes in the item hierarchy: L5 Brand/BU · L4 Global SKU/BU · L3 Parent SKU/BU/Channel · L2 Planning SKU/Customer · L1 Planning SKU/Customer/Channel. "Level 3" is a hierarchy node (e.g. Parent SKU / BU / Channel), **not** a review stage; the later-stage review stage is Level 2.5 / BU-SKU. |
 | **Base Trend Adjustment** | A direct week-level delta against the displayed baseline forecast. Persists across cycles until manually reversed — it is not a single-cycle entry. At Level 2.5 it disaggregates across **all** forecast partners by baseline proportion; it cannot be targeted at one account. |
+| **Cleansing** | Correction of the **Adjusted Demand array** so the statistical baseline learns real demand rather than what shipped. It runs in the opposite direction to the enrichment — when a period closes, cleansed history is actual shipments minus the `SET` — and never touches raw Actuals. See [How history cleansing works](../workflows/forecast-range-calculation.md#how-history-cleansing-works). |
 | **Frozen window** | The rolling lead-time horizon — months 0–4 counted from the current date, every cycle, not a one-off period after go-live — inside which HERO withholds UA1 authoring and the published value carries the live Logility UA1 / baseline instead. HERO authors UA1 in horizon months 5–21. |
 | **Version Change** | A net-zero move of demand from one planning SKU to another over selected weeks. |
 | **Channel Shift** | A move of some or all demand between `DOM` and `DI` over selected weeks. |
@@ -1728,7 +1745,7 @@ Where a fact, owner, threshold, date, or policy is not fully defined, it is flag
 - Structural / build fixes (links, formatting, navigation) are safe to make directly.
 - Material that looks missing or contradictory belongs in the page's Gaps block for SME review, not invented.
 
-The **repository is the source of truth** for manual content. Changes arrive as instructions rather than as packaged archives, and the process owner's local folder is a **one-way generated mirror** of the repository — refreshed from it by a script, never edited in place and never shipped back as a master. This retires the earlier packaged-archive round-trip, which was itself a place where the repository and the local copy could quietly drift apart.
+The **repository is the source of truth** for manual content. Changes arrive as instructions rather than as inbound packaged archives. The process owner's local folder is a **one-way, read-only copy** of the repository — delivered as a generated snapshot (a zip drop produced on each merge to `main`), copied in by hand, never edited in place and never shipped back as a master. This retires the earlier two-way packaged-archive round-trip, which was itself a place where the repository and the local copy could quietly drift apart.
 
 ## Revision log
 
@@ -1737,7 +1754,8 @@ The **repository is the source of truth** for manual content. Changes arrive as 
 1. **NPI channel fill corrected — supersedes the NPI extension in item 1 of the 2026-07-16 entry below.** The clause claiming the `+SET/−SET` simplification covered the NPI set/baseline case is removed; it over-extended the 16 July simplification to a case it does not cover. When the Daybreak New Product Introduction launch baseline already embeds the channel fill, the case uses a **negative base trend adjustment in F1** plus a **positive `SET` of equal magnitude in F1**, not a `SET` pair. Sourced from `HERO_Canonical_Facts_OnePager_v5_2026-08-07` fact 45 and `HERO_Build_Learnings_KnowledgeBase_for_Brave_v11_2026-08-07` section 24. Updated `tools/enrichment-capture-template.md`.
 2. **Authoring levels by role stated explicitly.** Key Account Managers author at Level 1; Brand Captains, Demand Planning and Marketing at Level 2.5; the Resultant is never modified in either case. Clarifies the phrase "Level 2-only overrides, Level 1 resultant untouched" — it means the Level 1 Resultant is not overwritten, not that Level 1 authoring stops. Updated `getting-started/roles-permissions.md`.
 3. **New page: which items have a statistical baseline.** States the rule that a market agrees which segments are forecast statistically, and that segments outside it are captured in full as base trend at Level 1. Includes the United Kingdom and United States differences for Direct Import and FAN, and the United States FAN go-live hold. New `getting-started/statistical-baseline-scope.md`.
-4. **The repository is now the source of truth for manual content.** The packaged-archive round-trip is retired; changes arrive as instructions and the process owner's local folder is a one-way generated mirror. Recorded under *Editing and contributions*.
+4. **The repository is now the source of truth for manual content.** The packaged-archive round-trip is retired; changes arrive as instructions and the process owner's local folder is a one-way, read-only copy delivered as a generated snapshot. Recorded under *Editing and contributions*.
+5. **History cleansing documented.** New *How history cleansing works* section in `workflows/forecast-range-calculation.md`: cleansing corrects the Adjusted Demand array so the baseline learns real demand, and runs in the opposite direction to the enrichment — cleansed history is actual shipments minus the `SET`, while base trend adjustments are not cleansed. `SUPPLY_SHORTAGE_COMP` raises the unavailable item's adjusted demand and reduces the substitute's at cleansing. Reconciled the "tracking-only" wording in `tools/enrichment-capture-template.md`, `help/faq-common-gotchas.md` and `workflows/field-by-field-reference.md` so it refers to the forward forecast while the recorded relationship drives cleansing (the existing rule is unchanged, only completed). New `Cleansing` glossary entry in `help/glossary.md`. The cleansing logic is published explicitly as a starting point expected to be refined as cycles accumulate. Sourced from `HERO_Canonical_Facts_OnePager` v6 facts 79–81 and `HERO_Build_Learnings_KnowledgeBase_for_Brave` v12 section 25.
 
 **2026-08-06** — Aligned the manual with the HERO/Logility data flow ratified by Rene Bartoli (process owner) on 6 August 2026 during the Module 7 build, sourced from `HERO_Canonical_Facts_OnePager_v4_2026-08-06` and `HERO_Build_Learnings_KnowledgeBase_for_Brave_v10_2026-08-06`:
 
@@ -1765,7 +1783,7 @@ The **repository is the source of truth** for manual content. Changes arrive as 
 **2026-07-12** — Aligned the manual with facts confirmed by Rene Bartoli (process owner) on 12 July 2026, sourced from `HERO_Build_Learnings_KnowledgeBase_for_Brave_v4_2026-07-12` (sections 13–16) and the corrected S&OP Data Architecture v2 / NFR Addendum v2:
 
 1. **UA1 routing — interim vs target design.** *(Superseded by item 1 of the 2026-08-06 entry above — routing is by template, not by role.)* The claim "Marketing / Demand-Planning adjustments do not flow to UA1" is the *target* design. Reframed with a pilot-interim admonition: during the pilots, all Level 2.5 base-trend adjustments flow to UA1 regardless of author, because the user-role validation layer is not yet built. Updated `reference/batch-orchestration-updates.md` and `help/faq-common-gotchas.md`.
-2. **Phase-out nomenclature.** Confirmed canonical name **Phase-out** (written as `PHASE_OUT` in the tool/enrichment-type field), the fourth component of the UA1 formula; `MDP_ENRICHMENT` documented as a legacy synonym only, never current terminology. Updated `help/glossary.md` and `reference/logility-array-mart-mapping.md`.
+2. **Phase-out nomenclature.** Confirmed canonical name **Phase-out** (written as `PHASE_OUT` in the tool/enrichment-type field), the fourth component of the UA1 formula; `MDP_ENRICHMENT` documented as a legacy synonym only, never current terminology. Updated `help/glossary.md` and `reference/logility-array-mart-mapping.md`. *(The four-term formula here is expanded by item 4 of the 2026-08-06 entry above — same fact, fuller detail; the Phase-out nomenclature is unchanged.)*
 3. **Frozen window wording.** Confirmed 4 months, rolling (months 0–4 from the current date, every cycle) — not a one-off post-go-live period, and not "0–90 days" (an erratum in the prior NFR Addendum). Added an explicit glossary entry.
 4. **Urgent changes — three governed paths.** Documented the three paths for changes that can't wait for the weekly Friday export: commercial enrichments always through HERO; time-sensitive enrichment changes via HERO + weekly report; non-forecast-related edits directly on UA1 in Logility, months 0–4 only. Updated `help/faq-common-gotchas.md`, `workflows/timing-system-sync.md`, and `reference/deferred-in-v0.md`.
 5. **NA-training clarifications.** Confirmed and documented: Level 2.5 adjustments persist as deltas until manually reversed; a Level 2.5 correction disaggregates across all customers by baseline proportion and cannot target one account; Version Change / Channel Shift pairs must be manually zeroed once the Forecasting Range is fixed; KAMs have no access to Level 2.5 templates; governance after sign-off is audit-based (cycle-change filter), not lock-based. Updated `roles/demand-planner.md`, `roles/sales.md`, `tools/forecast-reconciliation-template.md`, and `reference/batch-orchestration-updates.md`.

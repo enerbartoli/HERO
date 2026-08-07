@@ -31,7 +31,7 @@ Blank keeps the current rendered BU-SKU adjustment total; `0` sets it to zero fo
 Not with a single row. To re-phase demand, author a **positive + negative pair**: a positive `DEMAND_PHASE_SHIFT` row where the demand should land, and a negative row where it is taken from. As of the **16 July 2026 decision (ratified)**, this pair — not `SET` — is the recommended way to re-phase demand; reserve `SET` for true set builds. Use it for deals, pull-forwards and timing changes that do **not** come from problems in history; if the phasing issue stems from baseline/history defects or one-offs not adjusted in time, correct it via **reconciliation** (base trend adjustment) instead.
 
 **Does SUPPLY_SHORTAGE_COMP automatically move volume between SKUs?**
-No — it tracks the relationship, but you still capture the compensating demand correctly.
+No — it tracks the relationship, but you still capture the compensating demand correctly. Tracking-only refers to the forward forecast: nothing moves between SKUs there. The relationship it records is used at **history cleansing**, where it raises the adjusted demand of the item that was unavailable and reduces the same quantity from the substitute. See [How history cleansing works](../workflows/forecast-range-calculation.md#how-history-cleansing-works).
 
 **Can I change actualized weeks?**
 Treat shaded / actualized weeks as frozen forecast history unless your operating model explicitly routes an exception through a separate process.
