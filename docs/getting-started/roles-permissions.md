@@ -29,6 +29,15 @@ Summarise what each role does inside HERO (Hasbro Enrichment & Reconciliation Op
 - Selecting **All Forecast Partners** at download switches the workbook into BU-SKU mode.
 - The `ALL_FORECAST_PARTNERS` scope is restricted to an **explicit allowlist** in the current build, and is only valid on MARKETING / DEMAND_PLANNING enrichment rows.
 
+## What each role authors, and what nobody overwrites
+
+Key Account Managers author at **Level 1**. Brand Captains, Demand Planning and Marketing author at **Level 2.5**.
+
+In both cases the statistical **Resultant is never modified**. HERO does not overwrite it. HERO influences the published number by layering enrichments and base trend adjustments on top of it, and the Resultant itself travels into HERO read-only.
+
+!!! note "\"Level 2-only overrides, Level 1 resultant untouched\""
+    This phrasing describes the North America and Europe approach and it is easy to misread. It means the Level 1 **Resultant** is not overwritten. It does **not** mean Level 1 authoring stops: Key Account Managers continue to capture enrichments and base trend adjustments at Level 1. *(Confirmed by Rene Bartoli, 7 August 2026.)*
+
 ## How access is actually granted
 
 The roles above describe what people **do** in the tool. The permissions underneath them are simpler than the role list suggests.
