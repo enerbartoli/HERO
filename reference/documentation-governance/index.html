@@ -1,0 +1,2222 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Operational manual for HERO (Hasbro Enrichment & Reconciliation Optimizer) — UK pilot">
+      
+      
+      
+        <link rel="canonical" href="https://enerbartoli.github.io/HERO/reference/documentation-governance/">
+      
+      
+        <link rel="prev" href="../deferred-in-v0/">
+      
+      
+        <link rel="next" href="../../special-considerations/data-transmission-contingency/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/img/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Documentation governance - HERO User Manual</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#documentation-governance" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="HERO User Manual" class="md-header__button md-logo" aria-label="HERO User Manual" data-md-component="logo">
+      
+  <img src="../../assets/img/hasbro-logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            HERO User Manual
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Documentation governance
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="HERO User Manual" class="md-nav__button md-logo" aria-label="HERO User Manual" data-md-component="logo">
+      
+  <img src="../../assets/img/hasbro-logo.png" alt="logo">
+
+    </a>
+    HERO User Manual
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../Priorization_Matrix/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Program tools
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Program tools
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://enerbartoli.github.io/mod1-knowledge-check/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Knowledge Check
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://hasbroinc.sharepoint.com/sites/GlobalPlanningCentralCommandCOE/HERO%20Enrichment/Forms/AllItems.aspx?viewid=8ec78d8e%2D6199%2D4641%2D8bb5%2D108cfbe7bc40&newTargetListUrl=%2Fsites%2FGlobalPlanningCentralCommandCOE%2FHERO%20Enrichment&viewpath=%2Fsites%2FGlobalPlanningCentralCommandCOE%2FHERO%20Enrichment%2FForms%2FAllItems%2Easpx" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Training Recordings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://hasbroinc.sharepoint.com/:f:/r/sites/GenpactStatFCSTAccelerationPrj2/Shared%20Documents/0.%20Baseline%20Management%20Playbook/01.%20Official%20Approved%20Versions_Read%20Only?csf=1&web=1&e=WtdKU6" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Forecasting Playbook
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://glidepath-hero-145364974494823.3.azure.databricksapps.com" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HERO Tool
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://app.powerbi.com/groups/b970509d-d2fa-4899-b8aa-2212083aecf2/reports/e7d2a59a-27c8-434c-8b97-08b5ddd9f2ba/e26a15167349ce5185cc?experience=power-bi" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HERO Dashboard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Role-based guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Role-based guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../roles/demand-planner/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Demand Planner
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../roles/sales/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sales
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../roles/marketing-gpl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Marketing / GPL
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/what-hero-is/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What HERO is
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/hero-in-the-cycle/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Where HERO fits in the planning flow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/roles-permissions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Roles & permissions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/statistical-baseline-scope/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Which items have a statistical baseline
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tools & templates
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Tools & templates
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tools/hero-portal/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HERO portal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tools/enrichment-capture-template/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Enrichment Capture Template (ECT)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tools/forecast-reconciliation-template/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Forecast Reconciliation Template (FRT)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tools/bu-sku-level-25-mode/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BU-SKU / Level 2.5 mode
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tools/reference-views-dashboards/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference views & dashboards
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workflows
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Workflows
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workflows/end-to-end-workflow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    End-to-end workflow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workflows/tab-by-tab-walkthrough/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tab-by-tab walkthrough
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workflows/timing-system-sync/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Timing & system sync
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workflows/field-by-field-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Field-by-field reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workflows/forecast-range-calculation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Forecast Calculation Range & Disaggregation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Examples
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Examples
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../examples/calculation-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Calculation reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../examples/bu-sku-worked-examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BU-SKU worked examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Help & troubleshooting
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Help & troubleshooting
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../help/validation-error-catalogue/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Validation & error catalogue
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../help/faq-common-gotchas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ & common gotchas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../help/glossary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Glossary
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../logility-array-mart-mapping/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Logility array & mart mapping
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../batch-orchestration-updates/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Batch orchestration & updates
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deferred-in-v0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deferred in v0
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Documentation governance
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Documentation governance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#who-should-read-this-page" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Who should read this page
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#purpose" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Purpose
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#source-of-truth" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Source of truth
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#handling-uncertainty" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Handling uncertainty
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#maintenance-conventions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Maintenance conventions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#editing-and-contributions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Editing and contributions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#revision-log" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Revision log
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
+        
+          
+          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Special Considerations During Pilot
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Special Considerations During Pilot
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../special-considerations/data-transmission-contingency/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data Transmission During Contingency
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../special-considerations/fcr-adjustment-rules/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Rules for FCR Adjustment Within Cycle
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#who-should-read-this-page" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Who should read this page
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#purpose" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Purpose
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#source-of-truth" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Source of truth
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#handling-uncertainty" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Handling uncertainty
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#maintenance-conventions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Maintenance conventions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#editing-and-contributions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Editing and contributions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#revision-log" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Revision log
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+
+<div class="hero-banner"
+     style="background-image:url('../../assets/img/hero-monopoly.jpg')"
+     role="img"
+     aria-label="Reference — section banner">
+  
+  <span class="hero-banner__texture"
+        style="background-image:url('../../assets/img/pattern-frames.svg'),url('../../assets/img/light-streaks.svg')"
+        aria-hidden="true"></span>
+  
+  
+  <img class="hero-banner__logo" src="../../assets/img/brands/monopoly-logo.webp" alt="" aria-hidden="true">
+  
+  <span class="hero-banner__label">Reference</span>
+</div>
+
+
+                  
+
+
+
+<!-- docs/reference/documentation-governance.md -->
+
+<h1 id="documentation-governance">Documentation governance<a class="headerlink" href="#documentation-governance" title="Permanent link">&para;</a></h1>
+<h2 id="who-should-read-this-page">Who should read this page<a class="headerlink" href="#who-should-read-this-page" title="Permanent link">&para;</a></h2>
+<p>Anyone maintaining or contributing to this manual.</p>
+<h2 id="purpose">Purpose<a class="headerlink" href="#purpose" title="Permanent link">&para;</a></h2>
+<p>State how this documentation is sourced, versioned, and kept honest about uncertainty.</p>
+<h2 id="source-of-truth">Source of truth<a class="headerlink" href="#source-of-truth" title="Permanent link">&para;</a></h2>
+<p>This manual is consolidated from controlled source documents — primarily the <strong>HERO User Manual (v0)</strong> and the <strong>BU-SKU Reconciliation Behavior Explainer</strong>, with practical examples drawn from the <strong>Module 2</strong> enablement material. Do not add HERO functionality that is not supported by those sources.</p>
+<h2 id="handling-uncertainty">Handling uncertainty<a class="headerlink" href="#handling-uncertainty" title="Permanent link">&para;</a></h2>
+<div class="admonition warning">
+<p class="admonition-title">Never hide gaps</p>
+<p>Where a fact, owner, threshold, date, or policy is not fully defined, it is flagged inline as <code>[DRAFT — confirm with SME]</code> and surfaced in the page's <strong>Gaps &amp; Open Questions</strong> block. These are review items, not settled decisions.</p>
+</div>
+<h2 id="maintenance-conventions">Maintenance conventions<a class="headerlink" href="#maintenance-conventions" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>One page, one topic.</strong> Keep pages scannable; link rather than repeat.</li>
+<li><strong>Acronyms expand on first use per page</strong>, even if expanded elsewhere.</li>
+<li><strong>Admonitions</strong> carry notes, tips, warnings, examples, and open questions — keep the same set across pages.</li>
+<li>When the source documents change, update the affected page and clear or revise its Gaps block.</li>
+</ul>
+<h2 id="editing-and-contributions">Editing and contributions<a class="headerlink" href="#editing-and-contributions" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Content edits should be grounded in the source documents — not authored freehand.</li>
+<li>Structural / build fixes (links, formatting, navigation) are safe to make directly.</li>
+<li>Material that looks missing or contradictory belongs in the page's Gaps block for SME review, not invented.</li>
+</ul>
+<p>The <strong>repository is the source of truth</strong> for manual content. Changes arrive as instructions rather than as inbound packaged archives. The process owner's local folder is a <strong>one-way, read-only copy</strong> of the repository — delivered as a generated snapshot (a zip drop produced on each merge to <code>main</code>), copied in by hand, never edited in place and never shipped back as a master. This retires the earlier two-way packaged-archive round-trip, which was itself a place where the repository and the local copy could quietly drift apart.</p>
+<h2 id="revision-log">Revision log<a class="headerlink" href="#revision-log" title="Permanent link">&para;</a></h2>
+<p><strong>2026-08-07</strong> — Confirmed by Rene Bartoli (process owner) on 7 August 2026:</p>
+<ol>
+<li><strong>NPI channel fill corrected — supersedes the NPI extension in item 1 of the 2026-07-16 entry below.</strong> The clause claiming the <code>+SET/−SET</code> simplification covered the NPI set/baseline case is removed; it over-extended the 16 July simplification to a case it does not cover. When the Daybreak New Product Introduction launch baseline already embeds the channel fill, the case uses a <strong>negative base trend adjustment in F1</strong> plus a <strong>positive <code>SET</code> of equal magnitude in F1</strong>, not a <code>SET</code> pair. Sourced from <code>HERO_Canonical_Facts_OnePager_v5_2026-08-07</code> fact 45 and <code>HERO_Build_Learnings_KnowledgeBase_for_Brave_v11_2026-08-07</code> section 24. Updated <code>tools/enrichment-capture-template.md</code>.</li>
+<li><strong>Authoring levels by role stated explicitly.</strong> Key Account Managers author at Level 1; Brand Captains, Demand Planning and Marketing at Level 2.5; the Resultant is never modified in either case. Clarifies the phrase "Level 2-only overrides, Level 1 resultant untouched" — it means the Level 1 Resultant is not overwritten, not that Level 1 authoring stops. Updated <code>getting-started/roles-permissions.md</code>.</li>
+<li><strong>New page: which items have a statistical baseline.</strong> States the rule that a market agrees which segments are forecast statistically, and that segments outside it are captured in full as base trend at Level 1. Includes the United Kingdom and United States differences for Direct Import and FAN, and the United States FAN go-live hold. New <code>getting-started/statistical-baseline-scope.md</code>.</li>
+<li><strong>The repository is now the source of truth for manual content.</strong> The packaged-archive round-trip is retired; changes arrive as instructions and the process owner's local folder is a one-way, read-only copy delivered as a generated snapshot. Recorded under <em>Editing and contributions</em>.</li>
+<li><strong>History cleansing documented.</strong> New <em>How history cleansing works</em> section in <code>workflows/forecast-range-calculation.md</code>: cleansing corrects the Adjusted Demand array so the baseline learns real demand, and runs in the opposite direction to the enrichment — cleansed history is actual shipments minus the <code>SET</code>, while base trend adjustments are not cleansed. <code>SUPPLY_SHORTAGE_COMP</code> raises the unavailable item's adjusted demand and reduces the substitute's at cleansing. Reconciled the "tracking-only" wording in <code>tools/enrichment-capture-template.md</code>, <code>help/faq-common-gotchas.md</code> and <code>workflows/field-by-field-reference.md</code> so it refers to the forward forecast while the recorded relationship drives cleansing (the existing rule is unchanged, only completed). New <code>Cleansing</code> glossary entry in <code>help/glossary.md</code>. The cleansing logic is published explicitly as a starting point expected to be refined as cycles accumulate. Sourced from <code>HERO_Canonical_Facts_OnePager</code> v6 facts 79–81 and <code>HERO_Build_Learnings_KnowledgeBase_for_Brave</code> v12 section 25.</li>
+</ol>
+<p><strong>2026-08-06</strong> — Aligned the manual with the HERO/Logility data flow ratified by Rene Bartoli (process owner) on 6 August 2026 during the Module 7 build, sourced from <code>HERO_Canonical_Facts_OnePager_v4_2026-08-06</code> and <code>HERO_Build_Learnings_KnowledgeBase_for_Brave_v10_2026-08-06</code>:</p>
+<ol>
+<li><strong>Routing is by template, not by role — supersedes item 1 of the 2026-07-12 entry below.</strong> The interim / target-design split is retired. Level 1 <code>MARKETING</code> and <code>DEMAND_PLANNING</code> enrichments captured in the enrichment capture template do not reach UA1; adjustments made in the forecast reconciliation template do, whoever makes them. Updated <code>reference/batch-orchestration-updates.md</code>, <code>reference/logility-array-mart-mapping.md</code>, <code>help/faq-common-gotchas.md</code>.</li>
+<li><strong>Direction of travel documented.</strong> The flow is one-way apart from the Resultant: HERO reads only <code>RESULTANT_FORECAST</code> and never reads UA1–UA6, ADS2, PROMO_LIFT or ADS3, so a direct Logility edit is invisible to HERO. New section in <code>reference/batch-orchestration-updates.md</code>, summary table in <code>reference/logility-array-mart-mapping.md</code>, new glossary entry, four new FAQs.</li>
+<li><strong>Horizons corrected.</strong> UA1 is authored across months <strong>5–21</strong> (was 5–12). UA2–UA6, ADS2 and PROMO_LIFT are HERO-managed across months <strong>0–21</strong> (was 0–12). Updated <code>reference/batch-orchestration-updates.md</code>, <code>reference/logility-array-mart-mapping.md</code>, <code>help/glossary.md</code>.</li>
+<li><strong>UA1 composition stated in full.</strong> Baseline, Level 1 and Level 2.5 base-trend adjustments, version adjustments, channel shift, plus <code>PHASE_OUT</code>, <code>EXCESS_DEPLETION</code>, <code>DEMAND_PHASE_SHIFT</code> and <code>SUPPLY_SHORTAGE_COMP</code>. The shorter four-term formula was the same fact at lower detail; the glossary now links to the composition instead of repeating a partial formula. Phase-out nomenclature from item 2 of the 2026-07-12 entry is unchanged.</li>
+<li><strong>Zero floor located.</strong> The floor lives in Logility and works at Level 1; inside HERO only UA1 restricts negatives. Added to <code>reference/batch-orchestration-updates.md</code>, <code>reference/logility-array-mart-mapping.md</code>, <code>help/glossary.md</code>, <code>help/faq-common-gotchas.md</code>.</li>
+<li><strong>TMO clarified.</strong> TMO passes through exactly as stored, lives in UA5, and never sums into ADS3 the way the other arrays do. A TMO change in HERO still updates UA5 through the field-forecast export. Updated <code>reference/logility-array-mart-mapping.md</code>.</li>
+<li><strong>Export change detection, channel moves and template scope.</strong> The export only answers whether a value changed in HERO since the last export; channel moves update both the DOM and DI combinations; templates are scope-locked at download time. Updated <code>reference/batch-orchestration-updates.md</code> and <code>help/faq-common-gotchas.md</code>.</li>
+<li><strong>Scheduled jobs and dashboard cadence.</strong> HERO does run scheduled jobs; the dashboard refresh cadence is 90 minutes for now, target one hour, and the "15 minutes" figure quoted in a training session referred to something else. New sections in <code>workflows/timing-system-sync.md</code>.</li>
+<li><strong>Access model.</strong> Platform-managed regional groups, no role granularity, exactly two levels (planner for Level 2.5, regular user for Level 1), and a ticket lead time to plan around. New section in <code>getting-started/roles-permissions.md</code>.</li>
+</ol>
+<p><strong>2026-07-16</strong> — <em>Backfilled on 7 August 2026 from <code>CLAUDE_CODE_PROMPT_8.md</code>. The changes below were written into the manual pages on 16 July 2026 — the ratified DEMAND_PHASE_SHIFT-vs-SET decision together with the 20 July 2026 HERO release — but were never recorded in this revision log; this entry restores the record. It documents edits already present in the pages and changes no content.</em> Sourced from <code>CLAUDE_CODE_PROMPT_8.md</code> and the <code>HERO_Manual_Site_for_code_2026-07-16_v6</code> site source:</p>
+<ol>
+<li><strong>DEMAND_PHASE_SHIFT replaces SET for re-phasing demand — ratified 16 July 2026.</strong> Re-phasing existing demand between weeks (pull-forwards, push-outs, deals) is captured with a <code>DEMAND_PHASE_SHIFT</code> <strong>positive + negative pair</strong>, not <code>SET</code>. <code>SET</code> is reserved for a true set build; a set build that also pulls existing demand forward pairs a positive <code>SET</code> with <strong>negative <code>SET</code> rows</strong> on the source weeks — the same enrichment type on both legs. A single <code>DEMAND_PHASE_SHIFT</code> row still moves nothing on its own. <strong>Boundary rule:</strong> timing changes that do <strong>not</strong> originate in history go through <code>DEMAND_PHASE_SHIFT</code>; phasing issues stemming from baseline/history defects or one-offs not adjusted in time go through <strong>reconciliation</strong> (base trend adjustment). <strong>Disambiguation:</strong> the automated offsetting zero-out belongs to <strong>Channel Shift</strong> (<code>DOM</code> ↔ <code>DI</code>, a reconciliation control), which creates its negative automatically; <code>DEMAND_PHASE_SHIFT</code> moves demand between weeks with both legs authored manually. Updated <code>tools/enrichment-capture-template.md</code> (types table, tip, boundary note, warning, and Gaps block replacing its success block) and <code>help/faq-common-gotchas.md</code>. <em>(The extension of this <code>+SET/−SET</code> simplification to the NPI set/baseline case — where the launch baseline already carries the fill — is superseded by item 1 of the 2026-08-07 entry above; that case uses a negative base trend adjustment plus a positive <code>SET</code>, not a <code>SET</code> pair.)</em></li>
+<li><strong>DECLINED now cancels an enrichment — behaviour flip.</strong> Previously Status was a log-only field and the only way to remove an enrichment's effect was to zero the quantity. As of the <strong>20 July 2026 release</strong> a <code>DECLINED</code> row is preserved in the template and audit trail but <strong>excluded from calculated downstream outputs</strong>, and setting Status to <code>DECLINED</code> is the recommended way to cancel an enrichment (zeroing the quantity still works). Updated <code>tools/enrichment-capture-template.md</code> (Status note and <em>Cancelling or removing an enrichment</em>), <code>help/faq-common-gotchas.md</code> (two Q&amp;As flipped, one now answering "Yes"), and <code>workflows/field-by-field-reference.md</code> (Status row).</li>
+<li><strong>Upload validation catches blanked headers and mid-sheet blank rows.</strong> As of the 20 July 2026 release these are rejected with an explanation instead of silently dropping the data below them. New "New checks — 20 July 2026 release" section in <code>help/validation-error-catalogue.md</code>; blank-row guidance updated in <code>tools/enrichment-capture-template.md</code> and <code>help/faq-common-gotchas.md</code>.</li>
+<li><strong>Duplicate uploads warn instead of block.</strong> Repeated uploads of the same template now raise a warning and allow an intentional override, where they were previously blocked silently. Updated <code>help/validation-error-catalogue.md</code> and <code>help/faq-common-gotchas.md</code>.</li>
+<li><strong>Reconciliation template improvements.</strong> Clearer labels and formatting, rounded display values, visible calculated forecast totals, clearer Level 1 vs Level 2.5 attribution, and removal of stale/invalid planning SKUs. New "What changed in the 20 July 2026 release" section in <code>tools/forecast-reconciliation-template.md</code>.</li>
+<li><strong>Rounding note broadened to template display.</strong> Reconciliation templates now show rounded display values for readability while the stored values remain unrounded; export rounding (nearest integer, halves away from zero) is unchanged. Updated <code>examples/calculation-reference.md</code>.</li>
+<li><strong>Access controls by Business Unit.</strong> Users see only the Business Units they are authorised for in the BU selection. Updated <code>getting-started/roles-permissions.md</code> and <code>workflows/field-by-field-reference.md</code>, with a "partially superseded" note on the permission-matrix bullet in <code>reference/deferred-in-v0.md</code>.</li>
+<li><strong>Post-processing reliability, BU scoping and runtime visibility.</strong> The post-processing / fan-out step was improved for reliability as usage grows, with better business-unit scoping and more runtime visibility into runs. Updated <code>reference/batch-orchestration-updates.md</code>.</li>
+</ol>
+<p><strong>2026-07-12</strong> — Aligned the manual with facts confirmed by Rene Bartoli (process owner) on 12 July 2026, sourced from <code>HERO_Build_Learnings_KnowledgeBase_for_Brave_v4_2026-07-12</code> (sections 13–16) and the corrected S&amp;OP Data Architecture v2 / NFR Addendum v2:</p>
+<ol>
+<li><strong>UA1 routing — interim vs target design.</strong> <em>(Superseded by item 1 of the 2026-08-06 entry above — routing is by template, not by role.)</em> The claim "Marketing / Demand-Planning adjustments do not flow to UA1" is the <em>target</em> design. Reframed with a pilot-interim admonition: during the pilots, all Level 2.5 base-trend adjustments flow to UA1 regardless of author, because the user-role validation layer is not yet built. Updated <code>reference/batch-orchestration-updates.md</code> and <code>help/faq-common-gotchas.md</code>.</li>
+<li><strong>Phase-out nomenclature.</strong> Confirmed canonical name <strong>Phase-out</strong> (written as <code>PHASE_OUT</code> in the tool/enrichment-type field), the fourth component of the UA1 formula; <code>MDP_ENRICHMENT</code> documented as a legacy synonym only, never current terminology. Updated <code>help/glossary.md</code> and <code>reference/logility-array-mart-mapping.md</code>. <em>(The four-term formula here is expanded by item 4 of the 2026-08-06 entry above — same fact, fuller detail; the Phase-out nomenclature is unchanged.)</em></li>
+<li><strong>Frozen window wording.</strong> Confirmed 4 months, rolling (months 0–4 from the current date, every cycle) — not a one-off post-go-live period, and not "0–90 days" (an erratum in the prior NFR Addendum). Added an explicit glossary entry.</li>
+<li><strong>Urgent changes — three governed paths.</strong> Documented the three paths for changes that can't wait for the weekly Friday export: commercial enrichments always through HERO; time-sensitive enrichment changes via HERO + weekly report; non-forecast-related edits directly on UA1 in Logility, months 0–4 only. Updated <code>help/faq-common-gotchas.md</code>, <code>workflows/timing-system-sync.md</code>, and <code>reference/deferred-in-v0.md</code>.</li>
+<li><strong>NA-training clarifications.</strong> Confirmed and documented: Level 2.5 adjustments persist as deltas until manually reversed; a Level 2.5 correction disaggregates across all customers by baseline proportion and cannot target one account; Version Change / Channel Shift pairs must be manually zeroed once the Forecasting Range is fixed; KAMs have no access to Level 2.5 templates; governance after sign-off is audit-based (cycle-change filter), not lock-based. Updated <code>roles/demand-planner.md</code>, <code>roles/sales.md</code>, <code>tools/forecast-reconciliation-template.md</code>, and <code>reference/batch-orchestration-updates.md</code>.</li>
+</ol>
+<div class="admonition success">
+<p class="admonition-title">No open questions identified</p>
+<p>No open questions were identified from the available source material.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      © 2026 Hasbro. All rights reserved. All audio, visual and textual content on this site (including all names, characters, images, trademarks and logos) are protected by trademarks, copyrights and other Intellectual Property rights owned by Hasbro or its subsidiaries, licensors, licensees, suppliers and accounts.
+    </div>
+  
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.top", "navigation.tracking", "navigation.indexes", "toc.follow", "content.code.copy", "content.tooltips", "search.highlight", "search.suggest"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+<script>
+(function () {
+  var GPT_URL  = "https://chatgpt.com/g/g-6a39688f2e0c81918486c4d724888f96-brave-hero-assistant";
+  var LOGO_URL = "../../assets/img/hero-logo-icon.jpg";
+
+  /* ── Header button — injected once, survives instant navigation ── */
+  function injectHeader() {
+    if (document.querySelector(".ask-brave-header-btn")) return;
+    var title = document.querySelector(".md-header__title");
+    if (!title) return;
+    var btn = document.createElement("a");
+    btn.className = "ask-brave-header-btn";
+    btn.href      = GPT_URL;
+    btn.target    = "_blank";
+    btn.rel       = "noopener noreferrer";
+    btn.setAttribute("aria-label", "Ask Brave — HERO Assistant");
+    btn.innerHTML = "💬 <span class='ask-brave-header-btn__text'>Ask Brave</span>";
+    title.insertAdjacentElement("afterend", btn);
+  }
+
+  /* ── Sidebar card — re-injected on every page change ── */
+  function injectSidebar() {
+    var inner = document.querySelector(".md-sidebar--secondary .md-sidebar__inner");
+    if (!inner) return;
+    /* Remove stale card from previous page before appending fresh one */
+    var old = inner.querySelector(".ask-brave-card");
+    if (old) old.remove();
+    var card = document.createElement("div");
+    card.className = "ask-brave-card";
+    card.innerHTML =
+      '<img class="ask-brave-card__logo" src="' + LOGO_URL + '" alt="H.E.R.O. Tool" loading="lazy">' +
+      '<p class="ask-brave-card__eyebrow">Have a question?</p>' +
+      '<p class="ask-brave-card__title">💬 Ask Brave</p>' +
+      '<p class="ask-brave-card__sub">HERO Assistant</p>' +
+      '<a class="ask-brave-card__btn" href="' + GPT_URL + '" target="_blank" rel="noopener noreferrer">Open assistant ↗</a>';
+    inner.appendChild(card);
+    var sidebar = document.querySelector(".md-sidebar--secondary");
+    if (sidebar) {
+      sidebar.removeAttribute("hidden");
+      sidebar.style.removeProperty("display");
+    }
+  }
+
+  /* Initial load */
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", function () { injectHeader(); injectSidebar(); });
+  } else {
+    injectHeader(); injectSidebar();
+  }
+
+  /*
+    Hook into Material's instant navigation.
+    document$ is a global RxJS Subject exposed by Material for MkDocs that
+    emits after each page swap — the correct replacement for DOMContentLoaded
+    when navigation.instant is enabled.
+    Fallback: popstate for non-instant environments.
+  */
+  if (typeof document$ !== "undefined") {
+    document$.subscribe(function () { requestAnimationFrame(injectSidebar); });
+  } else {
+    window.addEventListener("popstate", injectSidebar);
+  }
+})();
+</script>
+
+  </body>
+</html>
