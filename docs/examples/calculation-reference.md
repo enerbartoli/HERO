@@ -66,8 +66,8 @@ One series-week: RESULTANT_FORECAST 100, Promo +20, Marketing +10, TMO +5 → po
 !!! example "Recurring year-over-year temporality missing"
     A seasonal pattern is not reflected because prior history did not capture it cleanly. **Use a Base Trend Adjustment** (not a one-off set) so the model learns it permanently and the correction is not re-entered each cycle. Owner: Sales.
 
-!!! note "Rounding on export"
-    Internally a unit spread can be fractional (e.g. 109.09 units/week). On export, published values are **rounded to the nearest whole integer**, with halves rounding **away from zero**. Published outputs are fully populated (no blank cells).
+!!! note "Rounding on export and on template display"
+    Internally a unit spread can be fractional (e.g. 109.09 units/week). On export, published values are **rounded to the nearest whole integer**, with halves rounding **away from zero**. Published outputs are fully populated (no blank cells). As of the **20 July 2026 release**, reconciliation templates also show **rounded display values** for readability — the underlying stored values remain unrounded. *(Confirm the display-rounding rule matches the export rule — not yet documented.)*
 
 ## Related pages
 

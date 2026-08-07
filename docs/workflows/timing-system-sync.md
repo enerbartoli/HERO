@@ -33,6 +33,22 @@ A Level 2.5 adjustment does not drop to Level 1 the instant you save it. A **pos
 
     A Level 2.5 change becomes visible at Level 1 / in the dashboard at the **next** scheduled run.
 
+## The dashboard has its own cadence
+
+The Power BI dashboard is not refreshed by your upload. It is rebuilt on a schedule of its own, after HERO's materialisation step has run.
+
+!!! note "Dashboard refresh"
+    The current cadence is **90 minutes**, with a target of one hour maximum. The constraint is hosting: the dashboard runs in an individual session rather than a service context.
+
+    If you have heard "15 minutes" quoted, that figure described something else — the delay between a load and the underlying data being updated, not the dashboard's own refresh cadence.
+
+## What runs on its own, and what still needs a person
+
+!!! tip "HERO does run scheduled jobs"
+    Running without anyone triggering it: ingestion of the Resultant baseline on its own scheduled path, the cycle refresh and post-processing jobs that build each cycle's render snapshots, the previous-cycle computation, dashboard materialisation and the Power BI refresh, and the Friday export batch — which runs whether or not anything changed that week.
+
+    Still needing a person: anything changed directly in Logility, because HERO never reads it. Seeing a new cycle, because your workbook is a point-in-time snapshot that has to be re-downloaded. And clearing a stale adjustment, because a display fix corrects what you see, not what you entered.
+
 ## Publication to Logility
 
 !!! warning "Logility is updated only through the Friday export"
