@@ -23,6 +23,18 @@ It is triggered when you download with **All Forecast Partners** selected. In th
 
 This is the opposite of standard reconciliation, which says *"apply this exact delta to this exact Level 1 row."*
 
+!!! note "This applies to every enrichment type, not only Base Trend Adjustments"
+    The baseline-share fan-out described here is HERO's own proportional step for any Level 2.5 capture reaching Level 1, whatever enrichment type carries it.
+
+!!! note "Earlier enrichments and reconciliation do not change the weights"
+    The weights used to split a new Level 2.5 target are calculated fresh from the current baseline, at the level and for the record in question, each time. **Earlier enrichments and carried-forward reconciliation changes do not affect these weights.** It is reasonable to assume they would; they do not. Also, because the basis is per record rather than a market-wide or brand-wide average, two SKUs sitting inside the same BU-SKU entry can be weighted differently.
+
+!!! warning "The partial-resultant trap"
+    Where some partners and weeks inside one Level 2.5 entry carry a baseline and others do not, baseline-share weighting concentrates the whole delta onto the minority that do. That can be worse than a flat split, and nothing about it looks broken on the surface. Check the Level 1 result after fan-out rather than assuming the split landed evenly.
+
+!!! note "A Level 2.5 change is visible at Level 1, once fan-out runs"
+    The Level 1 template carries the Level 2.5 adjustment as a read-only context column (see [Forecast Reconciliation Template](forecast-reconciliation-template.md)). The only limitation is timing: the value appears at Level 1 only after post-processing has run, which is minutes after upload, not instantly. Do not direct a Level 1 user to the dashboard for something their own template already shows them.
+
 ## Blank vs 0 vs signed value
 
 | Entry | Meaning |

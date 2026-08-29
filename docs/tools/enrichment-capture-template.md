@@ -30,6 +30,7 @@ Use the enrichments workflow when you have a **real-world event or overlay** tie
 | `EXCESS_DEPLETION` | Depletion-style adjustment (excess inventory) | — |
 | `DEMAND_PHASE_SHIFT` | Re-phasing demand between weeks (pull-forward / push-out, e.g. deals): author a **positive + negative pair** — a positive row where the demand lands, a negative row where it is taken from | — |
 | `SUPPLY_SHORTAGE_COMP` | Compensating item for a shortage | Shortage Planning SKU |
+| `NON_STATISTICAL_DEMAND` | Full forecast volume for a part of the portfolio a market has agreed **not** to forecast statistically | — |
 | `MARKETING` | Marketing overlay | `ALL_FORECAST_PARTNERS` allowed |
 | `DEMAND_PLANNING` | Demand-planning overlay | `ALL_FORECAST_PARTNERS` allowed |
 
@@ -53,6 +54,13 @@ Use the enrichments workflow when you have a **real-world event or overlay** tie
 
 !!! warning "No single-row move; SUPPLY_SHORTAGE_COMP stays tracking-only"
     A single `DEMAND_PHASE_SHIFT` row does **not** automatically move demand — it takes **two rows** (positive where the demand lands, negative where it comes from). Do **not** confuse it with **Channel Shift** (a reconciliation control): Channel Shift moves demand between channels (`DOM` ↔ `DI`) and creates the offsetting negative **automatically**; `DEMAND_PHASE_SHIFT` moves demand between **weeks** and both legs are authored manually. `SUPPLY_SHORTAGE_COMP` remains **tracking metadata**: it does not move volume between SKUs. Tracking-only refers to the forward forecast. The relationship it records is used at history cleansing, where it raises the adjusted demand of the item that was unavailable and reduces the same quantity from the substitute. See [How history cleansing works](../workflows/forecast-range-calculation.md#how-history-cleansing-works).
+
+!!! tip "NON_STATISTICAL_DEMAND: a label of its own for volume with no baseline to sit on"
+    Use `NON_STATISTICAL_DEMAND` for a part of the portfolio a market has agreed **not** to forecast statistically. It captures the **full forecast volume** for that segment, so it carries a label of its own instead of being indistinguishable from an adjustment layered on top of a baseline. What decides scope is the market-level agreement, not the channel and not the item class; today that means Direct Import and FAN in the UK pilot, and FAN in the United States.
+
+    <!-- TODO: confirm with Rene --> The literal value as it appears in the template's Enrichment Type field. `NON_STATISTICAL_DEMAND` follows the convention of every other type on this page, but the exact string has not been confirmed against the live template.
+
+    **It does not retire the base-trend route.** A market whose non-statistical demand is recurring at SKU and customer level may reasonably prefer to keep using a Level 1 base trend adjustment for it instead, and choosing that is not an error. Both routes are supported, and which one to use is the market's call, not a rule this manual sets. See [Forecast Calculation Range & Disaggregation](../workflows/forecast-range-calculation.md) and [Logility array & mart mapping](../reference/logility-array-mart-mapping.md) for how the type behaves once captured, including that it is not separately labelled in the export change-review report.
 
 !!! note "TMO comes from FAST"
     `TMO` rows are sourced from **FAST** and the template is seeded from FAST once a month. Do **not** author or edit TMO directly in the template — that would desynchronise FAST and Logility.

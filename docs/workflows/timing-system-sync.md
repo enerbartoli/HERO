@@ -16,22 +16,25 @@ Explain why a download, an upload, a dashboard refresh, and a Logility publicati
 |---|---|---|
 | Download any workbook (enrichment-only, standard, or BU-SKU) | Current HERO / Logility data for the selected scope | Immediately, at download (a point-in-time extract) |
 | **Upload** a valid workbook | HERO raw authored state | Authoring state is captured **immediately**; the export later emits only the rows you changed |
-| A **Level 2.5 (BU-SKU) reconciliation** change broadcast down to Level 1, and shown in the dashboard | Resolved weekly reporting layer | After the next **fan-out** run — **not instantly** |
-| View **resolved dashboard / reporting** | Resolved weekly reporting layer | After the fan-out run completes |
+| A **Level 2.5 (BU-SKU) reconciliation** change broadcast down to Level 1, and shown in the dashboard | Resolved weekly reporting layer | **In minutes**, triggered by the upload itself (the scheduled wrappers below are a safety net, not the mechanism) |
+| View **resolved dashboard / reporting** | Resolved weekly reporting layer | After the fan-out completes |
 | **Publish to Logility** | Resolved HERO state packaged into the export surfaces | **Only through the weekly Friday export pipeline** |
 
 ## The fan-out (how Level 2.5 changes reach Level 1)
 
-A Level 2.5 adjustment does not drop to Level 1 the instant you save it. A **post-processing ("fan-out") job** picks it up, distributes it down to the Level 1 partner rows, and refreshes the dashboard-facing Level 1 view.
+**The normal case is immediate.** When you upload a reconciliation or enrichment file, HERO triggers the post-processing refresh on the upload itself, and the partner grain reflects your change **in minutes**. This trigger has no schedule of its own; it runs because you uploaded, not because a time slot arrived. A user who has just uploaded does not wait for a slot.
 
-!!! note "Fan-out schedule"
-    The fan-out runs on a frequent, day-of-week schedule so Level 2.5 changes reach Level 1 quickly:
+!!! note "Scheduled wrappers are the safety net, not the mechanism"
+    Recurring wrappers around post-processing exist as a backstop, in case the immediate trigger is missed:
 
-    - **Monday–Thursday (UK workday):** 08:00, 10:00, 12:00, 14:00, 16:00 and 18:00 `Europe/London`.
-    - **Friday (UK morning):** 08:00, 10:00 and 12:00 `Europe/London`.
-    - **Monday–Thursday late-night catch-up:** 23:00 `America/New_York` (≈04:00 `Europe/London` next day) — so UK users start the next workday with any late-uploaded changes already fanned out.
+    | Wrapper | Days | Times | Timezone | Scope |
+    |---|---|---|---|---|
+    | UK workday | Monday to Thursday | 08:00, 11:00, 14:00 | `Europe/London` | United Kingdom |
+    | US workday | Monday to Thursday | 12:00, 15:00, 18:00 | `America/New_York` | Hasbro U.S. |
 
-    A Level 2.5 change becomes visible at Level 1 / in the dashboard at the **next** scheduled run.
+    There are no Friday runs and no late-night catch-up run. If you have heard a six-run UK day, a Friday schedule, or a 23:00 catch-up described, that description does not match the current schedule; treat this table as the figure to use.
+
+The answer to "when will my Level 2.5 change reach Level 1" is **minutes after upload**, with the scheduled wrappers as a backstop, not "wait for the next slot."
 
 ## The dashboard has its own cadence
 
@@ -54,6 +57,11 @@ The Power BI dashboard is not refreshed by your upload. It is rebuilt on a sched
 !!! warning "Logility is updated only through the Friday export"
     Uploading a workbook does **not** push Logility. HERO publishes to Logility **only through the weekly Friday noon Eastern export pipeline**. Anything authored during the week is held in HERO until that pipeline runs. (Downstream transport from Databricks into Logility is external orchestration — see [Batch orchestration & updates](../reference/batch-orchestration-updates.md).)
 
+!!! note "What is sent is not what you typed"
+    You author a **delta** in HERO (a plus or minus change). What the export sends is a **complete replacement value** for the affected array and week cell, not the delta itself. Those are two different things, and the distinction is behind several questions users ask about what shows up on the other side.
+
+    HERO also **rounds output to whole units** at partner, SKU, and week grain. Where a Level 2.5 adjustment fans out to many partner cells as fractions, each cell is rounded on its own, so small aggregate differences can appear between a BU-SKU total and the sum of its partner rows. That rounding, not a calculation error, is usually the answer to "why doesn't my BU-SKU total tie exactly to the sum of the partners."
+
 ## Urgent changes — the three governed paths
 
 !!! warning "The weekly export is not skippable — use one of these three paths instead"
@@ -67,7 +75,7 @@ The Power BI dashboard is not refreshed by your upload. It is rebuilt on a sched
 
 !!! tip "Four rules to live by"
     - A workbook download is a **point-in-time** extract of the current state.
-    - A successful upload updates HERO **authoring** state immediately, but the dashboard and Level 1 view only catch up at the **next fan-out run** (multiple times per UK workday — see the schedule above).
+    - A successful upload updates HERO **authoring** state immediately, and the dashboard and Level 1 view catch up **in minutes**, triggered by the upload itself, not by waiting for a scheduled slot.
     - **Re-download** if someone else has touched the same scope — especially before a later-stage reconciliation session.
     - Publication to Logility happens **only through the Friday export pipeline** — not on upload.
 

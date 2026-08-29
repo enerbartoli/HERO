@@ -1,0 +1,622 @@
+# HERO Canonical Facts, One-Pager (v11, 28 August 2026)
+
+_Top-authority document for Brave (the HERO Assistant). When any other document conflicts with this page, THIS PAGE WINS._
+
+_v4 supersedes v3 (16 July 2026). Two reasons: v3 was truncated on disk (it ended mid-sentence inside fact 16, so facts 16 and onward were incomplete in whatever Brave was grounded on), and the HERO/Logility data flow was ratified in detail by Rene Bartoli on 6 August 2026 while building Module 7. Where v4 changes a v3 fact, the change is stated explicitly so the old wording cannot survive as a second version._
+
+_v5 supersedes v4 (6 August 2026). One change: fact 45, and the cross-reference now added to fact 42, correct the NPI set / baseline case back to the negative base trend plus positive SET construct that the Module 2 facilitator deck has always taught. The v4 wording was a regression: the 16 July +SET/−SET simplification was over-extended to a case it never covered. Everything else in v4 is unchanged._
+
+_v6 supersedes v5, same day. It adds section 14 with seven facts ratified on 7 August 2026: authoring levels by role, portfolio scope for statistical forecasting, FAN at United States go-live, the history-cleansing mechanic, supply shortage compensation, and the statement that the cleansing logic is expected to evolve. **No existing fact was renumbered, reworded or moved.** Facts in this document are cited by number from the MOD 3 knowledge check, so this document grows by appending only._
+
+_v7 supersedes v6 (7 August 2026). It adds section 15 with seven facts, 82 to 88, and section 16 with four facts, 89 to 92, on TMO ownership by market, covering how a product enters Logility through the portfolio extension, what makes a product available for enrichment in a HERO template, and why the Logility Forecast Calculation Range does not govern that availability. **No existing fact was renumbered, reworded or moved.** Facts 82 and 83 are the first facts on this page derived from the HERO code repository rather than from written programme documentation, and carry a confirmation marker until Jarred Bultema validates them._
+
+_v8 supersedes v7 (26 August 2026). It adds section 17 with eight facts, 94 to 101, on the Forecast Calculation Range, the portfolio extension, and how enrichments behave when the range is closed on the weeks an adjustment lands on. Fact 94 separates the two disaggregations that were being conflated and resolves the apparent conflict with fact 87 rather than overriding it. Fact 99 scopes the Sales Forecast basis for the range to North America, 2026 and 2027. Fact 100 names the in-cycle and out-of-cycle owners for range maintenance. Fact 101 states that a Level 2.5 adjustment never loops back into the Level 1 template. **No existing fact was renumbered, reworded or moved.**_
+
+_v9 supersedes v8 (27 August 2026). It adds section 18 with four facts, 102 to 105, on the new `NON_STATISTICAL_DEMAND` enrichment type and the consolidated cross-market dashboard. Fact 103 amends the mechanism in facts 76 and 77 without retiring it: the new type is the recommended way to carry demand with no statistical baseline, and base trend at Level 1 remains valid where a market prefers it. Fact 104 records that the array mapping for the new type is still open, so it is not inferred. **No existing fact was renumbered, reworded or moved.**_
+
+
+_v10 supersedes v9 (28 August 2026). It adds section 19 with ten facts, 106 to 115, on the Forecast Calculation Range, the Management Indicator and the 2026 forecast losses. Fact 106 states that Management Indicator `M` preserves an out-of-range value while `H` and `N` lose it, and gives the vendor mechanism: the range zeroes through the Calculate Forecasts program, which only writes into periods indicated `N` or `H`. **This closes the open item standing against fact 87 since 21 August.** Fact 107 states that the range constrains the force down but not the roll up, because the roll up is the Summing program. Fact 112 states that a range is a continuous period rather than a year bucket, which is why a range loaded for 2027 can reach 2026. Fact 114 identifies our Management Indicator as the Logility Resultant Forecast Override Indicator and records that only `M` and `H` are in use. Fact 115 warns that `M` is forcible, so it protects against the recalculation and not against forcing. **No existing fact was renumbered, reworded or moved.**_
+**Acronyms used on this page.** HERO = Hasbro Enrichment and Reconciliation Optimizer (canonical spelling, singular "Enrichment"). UA1–UA6 = the User Adjustment arrays in Logility. ADS2 / ADS3 = Logility adjustment and consensus arrays. BTA = Base Trend Adjustment. NFR = Non-Forecast-Related. L1 = Level 1 (9-digit SKU x customer). L2.5 = Level 2.5 (BU-SKU). NPI = New Product Introduction. EDW = Enterprise Data Warehouse. TMO = the TMO enrichment type. FAN = the fan / action-figure item class. P2M = Plan to Market. GCO = Global Commercial Organisation.
+
+
+_v11 supersedes v10 (28 August 2026), which was built the same day and **never uploaded**. v11 carries sections 19 and 20 together. Section 20 adds twelve facts, 116 to 127, from the approved UA1 protection step-down and from the HERO product repository, which Rene Bartoli confirmed on 28 August 2026 as the canonical source for product behaviour. Fact 116 sets the cycle-by-cycle end of UA1 protection, approved in both pilot markets. Fact 117 confirms the horizon ends at month 21 and records that the build currently ends it at month 12, closing the verification item open against fact 11 since 30 July. Fact 118 **supersedes fact 60**: the fan-out runs on upload in minutes, and the scheduled wrappers are a safety net. Fact 119 **closes fact 104**. Fact 121 **corrects fact 101**. Fact 126 corrects the detection half of fact 98. Fact 127 records the two-pack authority split and adopts the repository's four-tier model. **No existing fact was renumbered, reworded or moved.**_
+---
+
+## 1. How the data moves
+
+1. **The flow is one-way, with exactly one exception.** Everything HERO manages travels HERO to Logility. Only the **Resultant** travels Logility to HERO. HERO **never reads** UA1, UA2–UA6, ADS2, Promo Lift or ADS3. _(Ratified 6 August 2026. This replaces any earlier wording describing UA2–UA6 as "always synced HERO to Logility"; there is no sync and no feedback loop.)_
+
+2. **A direct edit in Logility is invisible to HERO.** No download and no upload will ever bring it in. It exists in HERO only if someone deliberately makes the equivalent change inside HERO.
+
+3. **The Resultant is read-only to HERO.** It is the statistical proposal loaded by Genpact (Daybreak's initial proposal plus any adjustments Genpact generates on it). It can only be changed in Logility by the baseline owner. This protects Genpact's proposal from being overwritten.
+
+4. **Export mechanics.** One weekly batch, on Friday, which runs whether or not anything changed. It is **delta-based**: only records that changed in HERO travel, so a sparse export file is normal, not data loss. Values are exported as **whole units**.
+
+5. **Delta-based change detection has a precise meaning.** HERO's export only ever answers "did this value change in HERO since the last HERO export?" It does not compare itself against Logility. Direct Logility edits are therefore neither detected nor deliberately overwritten, **unless** HERO also changed that same intersection during the week, in which case HERO overwrites the arrays it authors. _(Rene Bartoli and Jarred Bultema, 23 July 2026.)_
+
+6. **Upload does not mean published.** Uploading a workbook writes HERO's own tables first. The Logility export is a separate, later, weekly batch.
+
+7. **ADS3 is a calculated consequence.** ADS3 (Consensus Forecast) = Resultant + ADS2 + Promo Lift, calculated by Logility. HERO never reads it and never writes it. That is precisely why ADS3 can be forced directly in Logility without desynchronising HERO: it is the escape hatch for cases that must bypass the forecast entirely.
+
+8. **Latency on the one inbound path.** Logility to EDW to Databricks exceeds 24 hours end to end. Same-day propagation of a baseline change is not a reasonable expectation.
+
+---
+
+## 2. Read / write by array, and the horizons
+
+9. **The array table.**
+
+| Array | HERO reads it? | HERO writes it? | Horizon |
+|---|---|---|---|
+| Resultant | Yes. The only one. | Never. | n/a (changed in Logility by the baseline owner) |
+| UA1 | No. | Yes, outside the frozen window only. | Months **5 to 21** |
+| UA2 – UA6 | No. | Yes. | Months **0 to 21** |
+| ADS2 / Promo Lift | No. | Yes. | Months **0 to 21** |
+| ADS3 | Never. | Never. | n/a (calculated) |
+
+10. **The horizon is 0 to 21 months, not 0 to 12.** Any statement that UA2–UA6, ADS2 or Promo Lift are managed across "0 to 12 months" is **superseded**. _(Ratified 6 August 2026. The 0–12 figure appeared in the KB v9 and in earlier architecture material.)_
+
+11. **UA1 is the only array with a window restriction, and HERO overwrites it across months 5 to 21.** UA1 starts after the frozen window and ends on the same wide horizon as every other array. This is the design of record _(Rene Bartoli, 6 August 2026)_, and the reason is structural: the Sales Forecast must not have a shorter reach than the Consensus arrays it is held equal to. _(Verification note, not a caveat on the design: on 30 July 2026 Jarred Bultema described the built UA1 export window as reaching month 12, which is what surfaced the FAN late-2027 case. Confirmation that the build matches the design has been requested. The answer changes the build, not this fact.)_
+
+12. **"Overwrite" is not absolute.** Because exports are delta-based, HERO does not blindly rewrite every array every week. It emits what changed, or everything on a full republish. The honest phrasing is: these arrays are HERO-managed and subject to overwrite whenever HERO emits that key.
+
+13. **Every array except the Resultant is served to the template from HERO's own database.** A fresh template download does not fetch the latest UA1, or any other array, from Logility. What a fresh download brings in from Logility is the Resultant, nothing else.
+
+---
+
+## 3. The frozen window
+
+14. **Frozen window = months 0 to 4, rolling from the current month every cycle.** It is not a fixed calendar period. In a July cycle, month +5 is December. _(Confirmed by Rene Bartoli, 12 July 2026. The NFR Addendum's "0–90 days" was an erratum, corrected in Addendum v2 of 12 July 2026.)_
+
+15. **Inside the window, HERO suppresses UA1 from its exports.** A direct UA1 edit in Logility inside months 0 to 4 is therefore not overwritten by HERO. This is deliberate: it is the one array and the one period where HERO and Logility are allowed to differ on purpose, and it is the room the commercial team needs for NFR work (allocation support, ship-match alignment, holding the month, operational visibility).
+
+16. **NFR use of UA1 is narrow.** Allowed: allocation support, ship-match alignment, holding the month, operational visibility. Not allowed: new demand assumptions, or strategic Marketing / Demand Planning judgement. A reduction must never take UA1 negative.
+
+17. **Not being overwritten is not the same as being known.** A UA1 edit inside the window does not reach HERO's templates, dashboards, attribution or consensus logic, because HERO does not read UA1 in any window.
+
+18. **Removing a change never sends a zero to UA1.** Deleting a BTA zeroes the **delta** that change represented. Neither UA1 nor the Consensus becomes zero. And that removal only reaches UA1 while the affected weeks are still outside the frozen window. Once those weeks are inside, deleting the delta leaves the Logility UA1 number unchanged. Seeing the old value after a removal is expected behaviour, not a failed upload.
+
+19. **Changing something inside the frozen window on purpose.** To change UA1 inside the window, make the change directly in Logility. To change enrichments inside the window, do it in HERO, which changes both the Consensus and the enrichments travelling to Supply.
+
+20. **Open question on cycle-open timing.** The July cycle formally opened on **22 June 2026**, the month before. `[GAP — needs Jarred Bultema]` Whether HERO's window calculation can therefore reach into the frozen period and overwrite part or all of November 2026 is not confirmed. Desired behaviour is that HERO suggest no UA1 change for July (month 0) through November (month 4).
+
+---
+
+## 4. What routes an entry: the template, not the role
+
+21. **Routing is driven by the template used, not by the author's job title.** This is the canonical framing. _(Ratified by Rene Bartoli, 6 August 2026. It replaces the v3 framing that called this a "pilot interim" state pending a user-role validation layer.)_
+
+22. **The two halves of the rule.**
+    - **Enrichment Capture template, L1, type MARKETING or DEMAND_PLANNING:** these do **not** flow to UA1. They reach the Consensus only (positives to ADS2, negatives to Promo Lift). The Sales Forecast represents the commercial vision, so a Marketing or Demand Planning enrichment never changes Sales's own number.
+    - **Forecast Reconciliation template:** adjustments made here **do** flow to UA1, whoever makes them. A Demand Planner or a Marketing user entering an L2.5 adjustment in the reconciliation template lands in UA1 exactly as a Brand Captain or commercial lead would.
+
+23. **UA1 composition (the detailed and correct version).** UA1 is the adjusted statistical baseline and also the Sales (Fill) Forecast. It carries: the baseline, **L1 BTA**, **L2.5 BTA** (after fan-out), **Version Adjustment**, **Channel Shift**, and the UA1-mapped enrichment types **PHASE_OUT, EXCESS_DEPLETION, DEMAND_PHASE_SHIFT, SUPPLY_SHORTAGE_COMP**. _(Ratified 6 August 2026. Earlier shorter formulations, "BASELINE + BASE_TREND + CHANNEL_SHIFT" and "BASELINE + BASE_TREND + CHANNEL_SHIFT + PHASE_OUT", were the same fact at a lower level of detail; this is the complete list.)_ PHASE_OUT is the canonical name; "MDP_ENRICHMENT" in the Transmission Design Topics V1 is a legacy name for the same component.
+
+24. **Enrichment type to array mapping.**
+
+| Enrichment type | Field Forecast array | Consensus |
+|---|---|---|
+| RETAIL_PROMOTION | UA2 | positive to ADS2, negative to Promo Lift |
+| SET | UA3 | positive to ADS2, negative to Promo Lift |
+| SAMPLE | UA4 | positive to ADS2, negative to Promo Lift |
+| TMO | UA5 | excluded from the Consensus calculation (see fact 25) |
+| PRE_ORDER | UA6 | positive to ADS2, negative to Promo Lift |
+| PHASE_OUT | UA1 | positive to ADS2, negative to Promo Lift |
+| EXCESS_DEPLETION | UA1 | positive to ADS2, negative to Promo Lift |
+| DEMAND_PHASE_SHIFT | UA1 | positive to ADS2, negative to Promo Lift |
+| SUPPLY_SHORTAGE_COMP | UA1 | positive to ADS2, negative to Promo Lift |
+| MARKETING | none | positive to ADS2, negative to Promo Lift |
+| DEMAND_PLANNING | none | positive to ADS2, negative to Promo Lift |
+| L1 BTA, L2.5 BTA, Version Adjustment, Channel Shift | UA1 | positive to ADS2, negative to Promo Lift |
+
+25. **TMO.** TMO lives in **UA5** and passes through exactly as stored. It **never sums into ADS3** the way the other arrays do: it stays an independent adjustment, exactly as it is treated today in Logility. Any TMO change made in HERO generates an update to UA5 through the Field Forecast export. _(Clarified by Rene Bartoli, 6 August 2026. The two earlier statements, "TMO passes through exactly as stored" and "TMO is excluded from the Consensus export", were both true; each was describing a different set of arrays.)_
+
+26. **The mapping is the export mapping after post-processing, not an instant effect of upload.** L2.5 adjustments need the fan-out to run before they appear downstream.
+
+---
+
+## 5. Negatives and the zero floor
+
+27. **The zero floor lives in Logility, at Level 1.** Logility prevents any Level 1 combination from being **published** negative. It applies the floor on both sides (Resultant + ADS2 + Promo Lift, and the UA arrays). _(Ratified by Rene Bartoli, 6 August 2026.)_
+
+28. **HERO has no negative restriction except on UA1.** UA1 is the single array where the limit applies (NFR reductions may never exceed the components, so UA1 can never go negative). Every other array will carry a negative straight out of HERO.
+
+29. **The floor is silent, and that is the trap.** Nothing errors, nothing is rejected, nobody is notified. Because the floor sits on the **total**, a negative hidden under positive components never surfaces downstream. So a published zero can hide a negative raw HERO total, and "Logility looks fine" is not evidence that HERO is fine.
+
+30. **The practical instruction that follows.** Watch the **total Preliminary Consensus Forecast**, not the individual adjustment fields. HERO has no view anywhere that compares itself against Logility, so the gap is never shown to the user. It closes only by correcting the components in the template, which is indirect.
+
+31. **A negative total is a real state HERO will show you.** If a baseline shrinks or disappears while a prior negative adjustment stays, the preliminary total goes negative. HERO displays it and does not guess which side is wrong, because it cannot know whether the missing baseline or the surviving adjustment is the error.
+
+---
+
+## 6. Clearing, persistence and cycle behaviour
+
+32. **Adjustments persist across cycles as deltas** until manually reversed. They are not reset each cycle. HERO deliberately preserves authored enrichments and BTAs across a baseline change, so a commercial decision is never silently erased.
+
+33. **Two different ways to clear, depending on what you are clearing.**
+    - **Enrichments:** set Status to **DECLINED**. The row is preserved in the template and the audit trail for visibility, but excluded from calculated downstream outputs (reconciliation, dashboard and export). Never delete the row. _(20 July 2026 release. This inverted the earlier behaviour where Status was log-only.)_
+    - **Reconciliation and BTAs:** there is no status field, so **enter a numeric zero**. Leaving the cell blank is not a reliable instruction to clear an existing adjustment. Blank is not zero.
+
+34. **Baseline movement between cycles is normal by itself.** A new cycle can bring a new baseline. Do not assume every change from last month is an error, and do not use a BTA to offset an unexpected movement until its source is understood.
+
+35. **Previous Cycle values come from the persisted L1 and L2.5 render snapshots.** _(WK31 hotfix, 29 July 2026.)_ Before the hotfix they were read from an activity-oriented table that only carried touched materials, so unchanged materials displayed as zero and normal cycle transitions looked like unexpected changes. The hotfix corrected **display only**; it does not rewrite user inputs and does not auto-clear adjustments. It also added diagnostics for dropped baselines, orphaned adjustments and negative preliminary forecasts.
+
+36. **The cycle-start rule.** Download a fresh template at the narrowest practical scope and review the total Preliminary Consensus Forecast **before** making a corrective adjustment. Never start a new cycle from a workbook saved during the previous cycle.
+
+37. **Escalate on pattern, not on one row.** One odd row is a question. The same unexpected movement repeating across many items, partners or brands is a signal for the squad. Do not build a large set of compensating BTAs while the source or the display is under investigation.
+
+38. **Templates are scope-locked at download time.** A template carries the scope of the dropdown selection made when it was downloaded, and uploads are agnostic to the dropdown's current values. Stale templates and overly broad scope (for example "ALL BRANDS") cause validation and overwrite problems, because HERO validates an upload against the latest backend state and a later upload can quietly replace an earlier person's work in the overlapping scope. _(Jarred Bultema, 21 and 23 July 2026.)_
+
+39. **Duplicate uploads warn and allow an intentional override.** The earlier "templates are one-time use" rule is superseded. Always download a fresh template before working.
+
+40. **Upload validation catches blanked headers and mid-sheet blank rows** and rejects with an explanation instead of silently dropping data.
+
+---
+
+## 7. Enrichment type decisions (ratified 16 July 2026; fact 45 corrected 7 August 2026)
+
+41. **Re-phasing demand** (ladders, deal buys, pull-forwards: timing changes **not** originating from problems in history) uses **DEMAND PHASE SHIFT**, authored as a positive + negative pair. Positive row where the demand lands, negative row on the weeks it comes from. Both legs cleanse out of history. Do not use SET or a base trend adjustment for the timing move.
+
+42. **SET is reserved for true set builds** (pipeline fill, planogram). Three branches, decided by what the baseline already contains. (a) The baseline does **not** carry the fill (new distribution, new stores, a partner the baseline has never served): enter a positive SET alone. If the same event also lifts the ongoing run rate, that lift is structural and is a separate positive base trend adjustment. (b) The set build also pulls existing demand forward from other weeks: offset it with **negative SET rows** on the weeks the demand comes from, same enrichment type for both legs. (c) The baseline already carries the fill: see fact 45, which is not a SET pair.
+
+43. **Boundary with reconciliation.** When the phasing issue stems from the baseline or from history (defects, or one-off events whose adjustment was not made in time, or movements that cannot be explained by commercial actions), correct it through **reconciliation (base trend adjustment)**, not an enrichment.
+
+44. **DEMAND PHASE SHIFT is not CHANNEL SHIFT.** Channel Shift (DOM to DI, a reconciliation control) performs the automated zero-out: it creates the offsetting negative automatically. Demand Phase Shift moves demand between **weeks** and both legs are authored manually. Demand Phase Shift is not tracking-only; its rows carry volume and flow downstream by sign.
+
+45. **NPI set / baseline interplay uses a negative base trend plus a positive SET.** When the Daybreak NPI baseline already embeds the channel fill in its launch curve, enter a negative base trend adjustment in F1 to reverse the fill the baseline encoded, plus a positive SET of equal magnitude in F1 to make the fill visible as a discrete commitment for allocation and supply sizing. Both legs sit on exactly the same weeks, the launch window, so neither carries into the next cycle and neither needs manual retirement. The leg types are asymmetric on purpose. The negative leg is a base trend because it corrects what the baseline encoded, and base trends are not cleansed. The positive leg is a SET because history cleansing runs in the opposite direction to the enrichment: cleansed history equals shipments minus the SET, which leaves replenishment demand only, so the model does not relearn the fill next year. Two offsetting SETs would hold the F1 total just as well but would net to zero in the cleansing calculation and the fill would be relearned. The two magnitudes do not have to match: the negative base trend is the excess the baseline assumed, the positive SET is the fill actually agreed, and where they differ the total moves, which is correct. True up the SET against the fill actually shipped before the period closes, or the residual goes into next year's baseline. _(Ratified by Rene Bartoli, 7 August 2026. This corrects the v4 wording, which said the case keeps a positive SET plus a negative SET of equal magnitude. That was an over-extension of the 16 July +SET/−SET simplification, which covers a set build that pulls demand forward, not a baseline that already carries the fill. The Module 2 facilitator deck scenario "Confirmed set — NPI with channel-fill in baseline" has taught the negative base trend plus positive SET construct throughout and was never changed.)_
+
+46. **Channel moves in the export.** The export keys include shipment_channel, so DOM and DI are separate export combinations. Moving an enrichment from one channel to another generates updates to **both** combinations: the original aggregation is reduced and the new one is created. Multiple enrichment rows sharing SKU, customer, channel and week aggregate together. _(23 July 2026.)_
+
+---
+
+## 8. Consensus and Sales Forecast as one number
+
+47. **HERO's job is to keep the Sales (Fill) Forecast and the Consensus Forecast as the same number.** Both are built from the same Daybreak statistical baseline, and HERO holds the alignment by overwriting changes in both, cycle to cycle. This is by design, to reduce the number of forecast versions the organisation carries, not a pilot side effect.
+
+48. **The two families.** Field Forecast family = UA1–UA6 (commercial vision plus operational adjustments). Consensus family = Resultant, ADS2, Promo Lift, ADS3 (the demand planning number that feeds Supply).
+
+49. **The alignment write on UA1 happens only beyond the frozen window.** Inside months 0 to 4 the Sales Forecast can consciously differ from the Consensus, which is the room the NFR path needs.
+
+50. **Keeping this year's Consensus unchanged does not mean the Sales Forecast stays untouched.** UA1 is recalculated as baseline plus the BTAs needed to reach the agreed Consensus.
+
+51. **2026 and 2027 are built differently.** 2026 preserves the existing Consensus: the COE calculates the BTAs needed to reconcile the Daybreak baseline with the already-agreed Consensus value. 2027 builds the Consensus from scratch, from the Daybreak baseline plus BTAs and Commercial Enrichments through the normal cycle. In both cases, once Consensus is set, HERO writes it into the Sales Forecast.
+
+52. **Channel impact in the UK pilot.** DI is low impact: in Europe the Sales Forecast was already built from the order book and copied into Consensus, so the BU total should not move, though distribution at customer level within DI may change because HERO uses different allocation rules. Domestic is higher impact: the Sales Forecast is rewritten with the Consensus value at export time, built from the Daybreak baseline, the same Commercial Enrichments migrated from Logility by the COE, and the BTAs the COE calculates to reach the agreed Consensus. The commercial signal itself does not change.
+
+53. **2026 adjustment routing.** Demand Planning uses HERO for all adjustments to the 2026 Consensus. Sales can go directly to Demand Planning for 2026 adjustments; for example removing a negative enrichment from 2026 FOB is a Demand Planning action. _(23 July 2026.)_
+
+---
+
+## 9. Go-live mechanics: seeding and FAN
+
+54. **The seeded BTA is a one-time launch device.** The COE pre-calculates BTAs once, in the first cycle only, because at go-live the Resultant is overwritten with a fresh Daybreak proposal. The seeded BTA carries the pre-pilot agreed number across and leaves a trace of why it is there.
+
+55. **FAN items have no baseline, and that changes the mechanics.** FAN has no fresh Daybreak proposal at go-live, so its pre-pilot forecast on the Resultant is neither erased nor overwritten. Holding CF for FAN is therefore **default behaviour**, not something to build.
+
+56. **If the hold has to be forced, force it at L1.** Use a single system-generated **L1 BTA = target CF minus Resultant baseline minus existing HERO contributions**. Do not do it at L2.5: without a baseline, HERO falls back to an equal split across active partners, which spreads the number evenly instead of placing it.
+
+57. **FAN commercial enrichments are captured at customer level** (8 or 9-digit account, L1), not loaded aggregate and disaggregated, so there is nothing to proportion.
+
+58. **Before a market goes live, HERO must be pre-loaded with all arrays.** Commercial enrichments, ADS2 and Promo Lift history, loaded manually or by bulk upload. After the initial migration there is no ongoing feedback from the Logility arrays back into HERO, so anything not seeded correctly stays outside the flow.
+
+---
+
+## 10. Calendar, timing and access
+
+59. **The enrichment calendar is not independent.** It follows the IBP cycle calendar, which is set by the **ADS3 summarization weekend**: that weekend closes one cycle and opens the next. Logility recalculates ADS3 and publishes it to Supply Planning at that summarization. _(22 July 2026.)_ Caveat: HERO cannot read the SharePoint calendar, so calendar changes have to be propagated into HERO manually. WK31 added a protected calendar-reference worksheet in the template; whether that fully removes the manual propagation step is not confirmed.
+
+60. **Fan-out schedule.** The fan-out (post-processing that distributes L2.5 changes down to L1 and refreshes the L1 view behind the dashboard) runs on a day-of-week schedule: Monday to Thursday at 08:00, 10:00, 12:00, 14:00, 16:00 and 18:00, Friday at 08:00, 10:00 and 12:00 (`Europe/London`), plus a Monday to Thursday catch-up at 23:00 (`America/New_York`). _(Per the HERO Manual. This is the canonical answer; earlier KB statements quoting a "~90-minute fan-out job", "~30 to 35 minutes" or "under 40 minutes" were durations of individual runs under specific scopes, not the cadence, and should not be quoted as the schedule.)_
+
+61. **Dashboard refresh is 90 minutes for now**, with a target of one hour maximum. The constraint is hosting: the dashboard runs in an individual session. _(31 July 2026.)_ The "15 minutes" figure used in a training session was the wrong reference: it described the time between a load and the underlying data update, not the dashboard's own cadence.
+
+62. **What runs without a user.** Ingestion of the Resultant on its own scheduled path, the cycle refresh and post-processing jobs that build each cycle's render snapshots, the Previous Cycle computation, dashboard materialization and the Power BI refresh, and the Friday export batch (which runs regardless of activity). _(Ratified 6 August 2026. This replaces the earlier blanket statement that "HERO refreshes when a user interacts, not on a fixed schedule".)_
+
+63. **What still needs a person.** Anything changed directly in Logility, because HERO never reads it. Seeing a new cycle, because the desktop workbook is a point-in-time snapshot that has to be re-downloaded. Clearing a stale adjustment, because the WK31 hotfix corrected display, not inputs.
+
+64. **Access model.** HERO access is granted only through **Platform-managed regional groups** (Databricks workspace membership). The earlier manual YAML grants are closed. There is **no granularity by role**: nothing distinguishes Marketing, Sales or Demand Planning. There are exactly **two levels**: the **planner** level, which gives access to the Level 2.5 templates, and the **regular user** level, which gives access to Level 1 only. Usage can be monitored, but it cannot be gated per day or per role. _(Ben Goddard and Jarred Bultema, 21 and 23 July 2026; two-level structure confirmed by Rene Bartoli, 6 August 2026. This replaces any KB text describing COE-managed or YAML-granted access, and the earlier note that "granting access is quick": the Platform ticket SLA is 2 to 4 weeks.)_
+
+65. **Users only see the Business Units they are authorised for.**
+
+---
+
+## 11. Traceability: enrichment records versus base trend adjustments
+
+66. **An enrichment record captures who made the change, the business event, when it applies, and why.** It survives a baseline change with its meaning intact.
+
+67. **A broad base trend adjustment captures only who changed the value and when, not why.** It cannot distinguish a commercial decision from a source-data correction or from a reaction to an unexpected template value. This is the tool's largest traceability gap.
+
+68. **In the pilot, most authored activity has gone through base trend adjustments rather than enrichment records.** Reconciliation was designed as a smaller exception path for final adjustments, not as the main way the forecast gets built. `[DIRECTIONAL — not decided]` Two responses are under discussion: "stop and escalate" guidance for users, and removing the 52-week BTA columns so everything is forced into row-level records. Making reconciliation fully auditable would mean converting it to row-based records and giving up those columns. No decision has been taken.
+
+---
+
+## 12. Other confirmed mechanics
+
+69. **Deltas, never totals, at every level.** Every adjustment, L1 or L2.5, is stored as a delta relative to the baseline, never as an absolute target. Totals entered into adjustment fields create doubled forecasts.
+
+70. **L1 (9-digit SKU x customer) is the database truth.** L2.5 is a user-interface convenience that HERO disaggregates to L1.
+
+71. **No NFR functionality exists in HERO v1.0.** This is a deliberate, phased choice. NFR edits are made directly in Logility on UA1, months 0 to 4 only, and never flow into the Consensus. Enrichment changes always go through HERO.
+
+72. **The working rule under HERO:** direct use of Logility disappears. You build and change the forecast in HERO and let the export carry it. Two deliberate exceptions: UA1 inside the frozen window, and ADS3.
+
+73. **UA2–UA6 direct-edit lockdown.** The security permission that allows direct edits on UA2–UA6 and Promo Lift in Logility **can** be removed, so that all changes flow only through HERO. UA1 stays directly editable in Logility on purpose, inside months 0 to 4. _(Dean and Suzanne McCoy, 24 July 2026.)_ `[GAP — needs confirmation]` Whether the UA2–UA6 lockdown has actually been applied, or is still only a process rule, is not confirmed. Training material states it as a rule: never edit UA2–UA6 directly in Logility.
+
+74. **Reconciliation templates:** rounded display values (stored values are unrounded), clearer calculated forecast totals so the effect is visible before upload, stale and invalid planning SKUs removed, clearer L1 versus L2.5 attribution.
+
+---
+
+## 13. Open items on this page
+
+- `[VERIFY AGAINST BUILD]` UA1 months 5 to 21 is the design of record and is stated as such throughout. Confirmation requested from Jarred Bultema that the built export window already reaches month 21; he described it as reaching month 12 on 30 July 2026 (fact 11).
+- `[GAP — Jarred Bultema]` Whether HERO can reach into November 2026 because the July cycle opened on 22 June (fact 20).
+- `[GAP]` Whether the UA2–UA6 direct-edit lockdown has been applied or remains a process rule (fact 73).
+- `[GAP]` Whether WK31's protected calendar-reference worksheet removes the manual calendar propagation step (fact 59).
+- `[NOT DECIDED]` 2027 freeze scope. All of 2026 falls inside the frozen period once the August release lands. For 2027 the options on the table run from the full year to a single quarter. No decision, no owner assigned.
+- `[NOT DECIDED]` The September automation date and the go-live date. Treat both as direction, gated by business readiness, not as commitments.
+- `[DIRECTIONAL]` The traceability response to BTA-heavy usage (fact 68).
+- `[EXCLUDED — in flight]` Language-based disaggregation for Europe. Not to be added until confirmed.
+
+---
+
+## 14. Authoring levels, portfolio scope and history cleansing (ratified 7 August 2026)
+
+75. **Authoring levels by role, and what nobody overwrites.** Key Account Managers (KAMs) author at **Level 1**. Brand Captains, Demand Planning and Marketing author at **Level 2.5**. In both cases the statistical **Resultant is never modified**: HERO does not overwrite it, and influences the published number only through enrichments and base trend adjustments layered on top. The phrase "Level 2-only overrides, Level 1 resultant untouched", used to describe the North America and Europe approach, means exactly this: the Resultant is not overwritten. It does **not** mean Level 1 authoring stops. _(Ratified by Rene Bartoli, 7 August 2026.)_
+
+76. **Which items have a statistical baseline is a market-level agreement.** Each market agrees which parts of its portfolio will be forecast statistically. Where Daybreak produces a baseline, that baseline is the starting point and the team layers enrichments and base trend adjustments on top. Where the market agreed **not** to forecast a segment statistically, there is no baseline underneath: the full forecast volume is captured as a **Base Trend enrichment at Level 1**, and the Level 1 lock is essentially all base trend with no statistical signal to challenge against. What decides this is the agreement, not the channel and not the item class. _(Ratified by Rene Bartoli, 7 August 2026.)_
+
+77. **How that differs today.** In the UK pilot neither Direct Import (DI) nor FAN is forecast statistically, so both are captured in full as base trend at Level 1. In the United States, DI **is** forecast statistically and carries a baseline in the Resultant, behaving like any other segment, while FAN is not. EMEA treatment is not recorded. _(Ratified by Rene Bartoli, 7 August 2026.)_
+
+78. **FAN at United States go-live: the carry-forward is the starting point.** The carry-forward is held for FAN. Because FAN has no statistical proposal underneath it, **no base trend adjustment is needed to force that hold**. As future periods are loaded, HERO is the tool used to reflect the forecast aligned by the regional and brand teams, and base trend adjustments are the mechanism for doing so. _(Ratified by Rene Bartoli, 7 August 2026. Supersedes an earlier working description of the hold being forced through a system-generated Level 1 base trend adjustment.)_
+
+79. **History cleansing runs in the opposite direction to the enrichment, and base trend adjustments are not cleansed.** Cleansing is applied in the **Adjusted Demand array**, the editable layer the statistical baseline learns from, never in raw Actuals. When a period closes, cleansed history is **actual shipments minus the SET**. Base trend adjustments never enter that calculation; they adjust the forward baseline only. This is why a SET does two jobs at once: it holds volume in the forecast now, and it is the instruction that removes that same volume from history later. It is also why a pair of offsetting SETs nets to zero in cleansing, which is correct when demand only moved between weeks and nothing new was created, and wrong when the point is to strip a volume out of what the model learns. See fact 45 for the NPI channel-fill case this mechanic decides. _(Ratified by Rene Bartoli, 7 August 2026.)_
+
+80. **Supply shortage compensation is a cleansing instruction, not a forecast movement.** When a shortage pushes demand onto a substitute item, `SUPPLY_SHORTAGE_COMP` records the relationship between the item that was unavailable and the item that absorbed the demand. At cleansing, that relationship **raises the adjusted demand of the item that was unavailable** by the compensating quantity, and **reduces the same quantity from the substitute**. The model then learns the demand the absent item would have had, and does not carry forward an inflated projection for a substitute that only sold because of the shortage. This does not contradict the existing rule that the enrichment does not automatically move volume between SKUs: that rule describes the **forward forecast**, where it moves nothing. What it does is instruct the cleansing of history. Capturing the relationship correctly matters even though nothing moves forward: the intent is to use it to **automate** the historical cleansing, so the correction happens without a planner having to reconstruct it by hand. _(Ratified by Rene Bartoli, 7 August 2026.)_
+
+81. **The cleansing logic is a starting point, not a finished design.** Facts 79 and 80 are the initial logic. They will evolve as the programme accumulates enough cycles of data to evaluate which cleansing treatment actually improves forecast accuracy. Two objectives guide that evolution: cleansing should measurably improve accuracy, and it should be automated far enough that it does not consume planner time. Treat the current rules as the working method and expect them to be refined rather than preserved for their own sake. _(Rene Bartoli, 7 August 2026.)_
+
+---
+
+## 15. Product entry into Logility and template availability (21 August 2026)
+
+82. **What makes a product available for enrichment in a HERO template.** HERO does not read the Active flag and does not read Lifecycle Status to decide availability. It builds the Planning SKU list **from the Logility forecast itself**: any planning SKU that has a forecast record for the requested fiscal year is available for enrichment, **even if every week is zero**. A planning SKU with no forecast record for that fiscal year is not selectable, whatever its status says. This is why a freshly extended product with a zero baseline still reaches the template: the record exists, and that is the only condition. _(Derived from the HERO code repository, 21 August 2026. The allowed-planning-SKU query is documented in code as "the universe of allowed planning SKUs is derived from Logility. Any sku with a forecast there (even all zeros) is allowed, and only those skus are allowed".)_ `[VERIFY AGAINST BUILD — Jarred Bultema]` Confirmation requested 21 August 2026. This is the first fact on this page taken from the repository rather than from written programme documentation.
+
+83. **No active, volume or lifecycle filter is applied to the Planning SKU list.** There is no active, fan, tail or minimum-volume filter applied when the list is built. Lifecycle Status appears in the workbook as a **read-only lookup** and can come through **blank**; it never gates availability. Access control gates which **Business Units** a user can see, not individual SKUs. _(Derived from the HERO code repository, 21 August 2026.)_ `[VERIFY AGAINST BUILD — Jarred Bultema]` Same confirmation request as fact 82.
+
+84. **The template is scope-bound, and a download is a point in time extract.** A workbook is generated for one **Business Unit, Forecast Partner, optional Brand and Fiscal Year**. A product outside the selected scope will not appear even when every other condition is met. And because a download is a point in time extract, a workbook pulled **before** a product landed will never show it however long the user waits. The fix is always a fresh download, never re-use of an earlier file.
+
+85. **How a product enters Logility: the portfolio extension.** A product becomes forecastable in Logility through a **portfolio extension**, executed by the portfolio team through **SAP custom transactions and master data loads** in Logility. This is Hasbro integration work, not a Logility product feature, so there is no Logility help topic for it. Three things follow. First, the activation is **purely a flag**: there are no dates and no periods attached to it. Second, it happens at **Level 1**, the planning SKU, Forecast Partner and distribution channel combination, so a product can be live for one forecast partner and not yet for another. Third, the new record defaults to the **H indicator**, meaning "use the Logility statistical forecast". _(Suzanne McCoy, 21 August 2026.)_
+
+86. **What the baseline looks like immediately after extension.** Two scenarios, both correct behaviour rather than defects. A record that is **new to Logility with no shipment history** arrives with the H indicator and a baseline of **zero**. A record that is **new to Logility but has sales history behind it** also arrives with the H indicator and **may** generate a baseline straight away. Separately, **P2M does not create the record**: P2M values only provide visibility to on shelf dates and quantities once the record already exists in Logility. The event to chase is therefore the extension, not the P2M load. _(Suzanne McCoy, 21 August 2026.)_
+
+87. **The Logility Forecast Calculation Range does not govern template availability.** Logility vendor documentation states that for future periods **outside** the range, forecast values are **set to zero**, not removed. A zero record is still a record, so by fact 82 an out-of-range product still reaches a HERO template, in zeros. The range therefore controls whether the numbers arrive non-zero, not whether the line is available. Two further points. The vendor's list of arrays zeroed outside the range is Forced System Forecast, Unforced System Forecast, **Resultant**, and ADS1 to ADS3; **UA1 to UA6 are absent from that list**. And the range is defined over **periods**, held on a record at a level of the forecast hierarchy, which is why adjusting it produces the per-customer outcome the User Manual describes as a customer no longer receiving baseline disaggregation. That outcome is a consequence of the level the range sits on, not the definition of the range. _(Logility Demand Optimization WebHelp, "DO Concepts, Forecast Calculation Range Logic", captured 21 August 2026. Full transcription in `Logility_DO_Forecast_Calculation_Range_Logic_v1_2026-08-21.md`.)_
+
+88. **UA1 to UA6 are built bottom up and manually, so the Forecast Calculation Range does not reach them.** The range constrains what the **Calculate Forecasts program** produces, which is exactly why the vendor's zeroing list covers the system forecasts, the Resultant and ADS1 to ADS3. The User Adjustment arrays are not statistically calculated: they are built bottom up from deliberate adjustments. There is therefore nothing for the range to zero in them, and no exposure for an enrichment written into a period that falls outside a product's range. _(Rene Bartoli, 21 August 2026. Resolves the open item raised against fact 87.)_
+
+### Answering the "how do I get this product into my template" question
+
+When a planner asks how to get a newly active Logility product into a template for enrichment, the sequence is: the **extension** is executed and covers **that planner's** Forecast Partner and distribution channel, then **one inbound data pass** is allowed (over 24 hours end to end per fact 8, so the next day rather than the same day), then a **fresh template download** for the correct Business Unit, Forecast Partner and Fiscal Year. The SKU is then selectable, and **zeros in the baseline are expected** on a brand new item. No special request into HERO is needed and there is nothing for the planner to configure in HERO itself.
+
+### Terminology warning for this section
+
+Three different labels are in circulation for closely related things, and Brave should ask which one the user means rather than assume:
+
+- The **Hasbro FCR pipeline**, our monthly process that derives Start and End dates from P2M and loads them into Logility.
+- **"Forecasting range"** as used in the HERO User Manual, always in the disaggregation sense of which customers receive baseline for an item.
+- The **Logility Forecast Calculation Range**, the field itself, whose own WebHelp anchors call it "Forecast Override".
+
+### Open items on this section
+
+- `[GAP — Jarred Bultema]` Whether a period zeroed by the range still produces a row in the Logility demand planning data that HERO reads. This decides whether an out-of-range product shows as zeros or does not appear at all.
+- `[GAP]` Whether Hasbro loads ranges as **Annual** or **Fixed**, and at which levels of the forecast hierarchy the range is held.
+- `[GAP]` The supported route to reverse an extension, and how HERO behaves when a line disappears mid cycle.
+- `[NOT RESOLVED]` Mid-cycle addition of a brand new product. Flagged as an open case in `HERO_Logility_Data_Transmission_Design_Topics_V1.docx`, where the current workaround is direct manipulation of Logility.
+- `[GAP]` No numeric target exists for the turnaround between an extension in Logility and the product becoming selectable in a template. "Over 24 hours, so the next day" (fact 8) is the only supported statement. Treat it as direction, not commitment.
+
+---
+
+## 16. TMO ownership: the FAST fork (21 August 2026)
+
+89. **Whether TMO is authored in HERO depends on the market, and the answer must always be given as both branches.** TMO is the one enrichment type whose ownership is not uniform across markets. Any answer about adding, editing or capturing a TMO that presents a single global rule is **wrong for roughly half the audience**. When asked, always give both branches, clearly labelled, rather than assuming the questioner's market or asking them first: **Europe**, which operates with FAST, and **everywhere else**, which does not. Note the shape of this: the non-FAST way is the general case and Europe is the exception, not the other way round (see fact 93). _(Rene Bartoli, 21 August 2026.)_ This supersedes any unconditional wording elsewhere in the knowledge base stating that TMO is sourced from FAST, that the template is seeded from FAST, or that TMO must not be authored in the template. Those statements are true **only** for FAST markets. The consolidated manual and the Build Learnings knowledge base still carry the unconditional version; **this page wins**.
+
+    **Why the knowledge base was skewed, and why it will skew again.** Each branch was taught to its own audience, in its own training, and only one of those trainings reached the knowledge base. The FAST branch was taught in the **United Kingdom** sessions, whose material is in Brave's knowledge. The non-FAST branch was taught in the **United States** sessions, whose material is not. So Brave held one branch, stated without a qualifier because the audience in the room did not need one, and generalised it to everybody. The lesson generalises past TMO: **a rule taught to one market and captured from that market's material will read as global unless somebody adds the qualifier at capture time.**
+
+90. **Markets that operate with FAST: do not author TMO in the template.** In these markets **FAST is the source of truth** for TMO. The Enrichment Capture Template is **seeded from FAST once a month**, on the second Friday of each Hasbro fiscal month. TMO rows must **not** be authored or edited directly in the template, because that desynchronises FAST and Logility. A discrepancy between FAST and Logility inside the month is a **timing difference** in the update cycle, not an error. The practical consequence, and the way it was put to the UK audience: **if you use FAST, you do not need to load TMOs in HERO at all.** **This is Europe only.** FAST is a solution used in Europe and nowhere else. Within Europe there is no sub-variation to hunt for: **the United Kingdom rules apply in full to the rest of EMEA** (see fact 93). _(Taught in the United Kingdom trainings, which is the material currently in Brave's knowledge. Mechanics from the UK pilot commercial cycle simulation, 3 June 2026. Market scoping confirmed by Rene Bartoli, 21 August 2026.)_
+
+91. **Everywhere outside Europe: the forecast partner owner captures the TMO in HERO.** There is no upstream seeding, so a TMO has to be captured in HERO like any other enrichment. **The people accountable for the forecast partners for which the TMO is being negotiated load the TMOs into the Enrichment Capture tool themselves.** Nothing about the downstream mechanics changes: TMO still lands in **UA5**, still passes through exactly as stored, and still stays out of the Consensus calculation (fact 25). The "do not touch TMO in the template" instruction does **not** apply here, and repeating it to a non-FAST market blocks work that is that market's job. This branch covers **North America, Asia Pacific and Latin America**, and it is the general case rather than the exception. _(Taught in the United States trainings, where FAST is not used: H.E.R.O. Training Day 1 and Day 2. Confirmed by Rene Bartoli, 21 August 2026, including that the branch extends beyond North America.)_
+
+92. **How to capture a TMO in the Enrichment Capture Template, for markets that capture it manually.** This is the walkthrough Rene gave to the **United States** audience, a non-FAST market, so it is the working method for the fact 91 branch rather than generic guidance _(H.E.R.O. Training Day 2 Part 2)_:
+    - **One row per item, never one row per pallet.** A TMO is usually composed of multiple items, and each one has to be reflected individually. A TMO covering three products needs **three rows**.
+    - **Taxonomy is TMO** on every one of those rows. There is no ambiguity to resolve here.
+    - **Use the pallet tag when the pallet SKU does not exist yet.** TMOs are normally planned before the pallet SKU number is created. The pallet tag is a **grouping flag that the user invents**, not a system identifier: any label works, for example a campaign name, as long as it is **exactly the same on every row belonging to that TMO**. Rene's own words in Day 2 point straight at the market difference: "It might be in certain market that you have system that will give you that pallet tag number. If that's the case, fine, that's the number that you will be reflecting there." Said to a non-FAST audience, that is a reference to the markets where an upstream system does supply the identifier.
+    - **Once the pallet number exists**, it goes in its own dedicated column rather than the pallet tag. `[GAP — verify column name]` The Day 2 transcript renders this column as "FPU"; the programme's documented term is FSDU. Confirm which is correct before this reaches a job aid.
+    - **Date entered is the intended ship date, not a rework date.** Same practice as today.
+    - **TMO drives a supply pull-forward.** The requirement is pulled forward so the inventory can be produced earlier, which is why TMO is captured first: it is the signal to supply that the inventory is needed roughly two months in advance.
+
+93. **Two blocs cover every market: Europe, and everywhere else.** For any rule that depends on the market there are exactly **two** answers, never one per country.
+
+    - **Europe.** Operates with FAST. Within Europe there is no sub-variation: **the United Kingdom rules apply in full to the rest of EMEA**, so the UK material answers for the whole region.
+    - **Everywhere else.** No FAST. **North America, Asia Pacific and Latin America all follow the same rules**, and those are the rules taught in the North America sessions.
+
+    Two consequences worth holding on to. First, **the non-FAST rule set is the general case and Europe is the exception**, so a process question is more often answered by the North America material than by the UK material. Second, knowing somebody's country adds nothing once you know whether they are in Europe, which is why the instruction for TMO is to give both branches rather than to ask. _(Rene Bartoli, 21 August 2026.)_
+
+    Care with one distinction. The **process rules** in the North America material apply across the whole non-Europe bloc. Statements in it about local org structure, local partner teams or local reference documents remain **United States** specifics and do not travel.
+
+### How to answer a TMO question
+
+Never answer "yes you should" or "no you should not" to "can I add a TMO to the enrichment template" without splitting by market. The shape of a correct answer is: state that ownership differs by market, give the FAST branch (fact 90), give the non-FAST branch (fact 91), and then, if the questioner wants the mechanics, give fact 92. The array mechanics in fact 25, UA5 and exclusion from the Consensus, are **identical in both branches** and can be stated without qualification.
+
+### Open items on this section
+
+- `[CLOSED 21 August 2026]` Bloc assignment. Europe is the only bloc with its own rule set; every other region, including Asia Pacific and Latin America, follows the non-FAST rules (fact 93).
+- `[CLOSED 21 August 2026]` The structural asymmetry that caused this error, Brave holding United Kingdom training material and no United States material, is addressed by the knowledge file `HERO_NA_Training_Knowledge_v1_2026-08-21.md`, added in the same reload. It carries the North America enrichment workflow as taught, with every market-specific statement flagged. Read it as the counterpart to the UK material rather than as a replacement for it: **neither file is global**.
+- `[GAP]` Whether a non-FAST market that later moves onto FAST needs a cutover rule for TMOs already captured manually in HERO.
+- `[GAP — verify column name]` FPU versus FSDU as the pallet number column (fact 92).
+- `[TO CORRECT]` Three statements in the consolidated manual (`TMO comes from FAST`, the note under the Enrichment Capture Template page, and two glossary rows) and three in the Build Learnings knowledge base state the FAST sourcing unconditionally. They need the market qualifier added at source. Until then, fact 89 governs.
+
+---
+
+## 17. The Forecast Calculation Range, the extension, and enrichment disaggregation (26 August 2026)
+
+94. **The Forecast Calculation Range does not affect HERO's enrichments, because HERO never asks Logility to disaggregate them.** The range **does** act on disaggregation, and ADS2 is genuinely in scope when Logility disaggregates. The vendor documentation is correct on that point and fact 87 quotes it accurately. It does not reach HERO's enrichments because of how HERO operates: **HERO always reconstructs from Level 1.** An enrichment captured at Level 2.5 is disaggregated down to Level 1 by HERO's own fan-out process, and the load into Logility happens **at Level 1**. From there Logility only **aggregates** upward, Level 1 to Level 2 to Level 3. There is no disaggregation step anywhere in that path, so there is nothing for the range to act on. _(Rene Bartoli, 26 August 2026.)_
+
+    This resolves the apparent conflict with fact 87 rather than overriding it. Both statements are accurate and they describe **different paths**. The vendor is describing what happens when Logility disaggregates. HERO's write never uses that path.
+
+95. **HERO's fan-out reads the resultant, and nothing else.** This is HERO's own proportional step, distinct from the Logility disaggregation that fact 94 describes. The proportions used to assign volume by customer come only from what sits in the resultant. Where a resultant exists across the relevant Forecast Partners, the delta is distributed proportionally to it. Where the resultant is zero at the lower levels, there is nothing to be proportional to, so the volume divides **equally across Forecast Partners**. The volume survives; the customer allocation is wrong. **This applies to every enrichment type, not only to Base Trend Adjustments.** _(Rene Bartoli, 26 August 2026.)_
+
+96. **The proportional basis is per record.** A Level 2.5 capture is fanned out to Level 1 using proportions calculated from the resultant **at that level, for that record**. It is not a market-wide or brand-wide average, which is why two SKUs inside a single entry can behave differently and why the Level 1 result has to be checked rather than assumed. _(Rene Bartoli, 26 August 2026.)_
+
+97. **ADS2 and Promo Lift can and should be built bottom up, from Level 1.** Level 1 capture puts volume on the right customer by construction, with no proportional step in between and nothing to go wrong. Level 2.5 is the case that needs the fan-out in fact 96. This is the mechanical reason behind fact 98, not a stylistic preference. _(Rene Bartoli, 26 August 2026.)_
+
+98. **When forecast is lost during disaggregation, recapture at Level 1, never at Level 2.5.** The case recurs because a range can end earlier than the Consensus Forecast still carries volume: Logility's Level 3 disaggregation into those customers has nowhere to put it and the forecast disappears. The agreed handling is an alert plus recapture by the Demand team in Logility. Recapturing at Level 2.5 is accepted by the system, nothing looks wrong at capture, and on fan-out the volume spreads evenly across all extended Forecast Partners instead of reaching the customer that lost it: the total ties out and every level below it is wrong. Level 1 assigns the volume to a named Forecast Partner. Where the range genuinely should cover those weeks, fixing the range is the root-cause alternative. _(Rene Bartoli, 26 August 2026.)_
+
+99. **How the Forecast Calculation Range is built: a North America decision, and a time-bounded one.** North America decided to build the forecasting range initially **from the Sales Forecast**. That was a deliberate business decision and it is valid for **2026 and 2027**. From that point on, and for any newly generated portfolio, the range depends entirely on **P2M**. This is why two statements about the range's basis are both current and neither is wrong: the Sales Forecast basis is North America's starting position for those two years, and the four-step P2M and lead-time pipeline documented in `forecast-range-calculation.md` is the mechanism everything converges to. Never present either one as the single global rule; say which case applies. _(Rene Bartoli, 26 August 2026.)_ `[GAP — Rene Bartoli]` Whether this decision travels to Asia Pacific and Latin America with the rest of the non-FAST rule set, or is North America only. Fact 93 says process rules travel across the bloc while organisational statements do not, and this one sits between the two.
+
+100. **Who maintains the Forecast Calculation Range, and by which route.** Two routes, and what separates them is whether the change is inside the monthly cycle. _(Rene Bartoli, 26 August 2026. Closes the open question on who takes an item when the range is not open in that window.)_
+
+    - **In cycle.** The **commercial team** owns the adjustments, made in the template **generated by Genpact** for that purpose. This is the normal path and it is where range corrections belong.
+    - **Exceptional, outside the monthly cycle.** The **planners** request the adjustment directly in Logility, **to the Genpact team**. This is an exception route and it is not self-service: the planner raises it, Genpact applies it.
+
+    So when a Level 2.5 item falls in a window where the range is not open, the answer is not to work around it at Level 2.5. Either the commercial team corrects the range in the Genpact template on the normal cycle, or, if it cannot wait, a planner raises it to Genpact as an exception.
+
+101. **A Level 2.5 adjustment never appears in the Level 1 template.** Because of the order of events in the design, Level 2.5 changes do not go back and fix the templates. They change the data that comes out, which goes to the dashboard and on to Logility. It was never designed to come back into the template and tell a Level 1 user that a Level 2.5 change already exists for their row, and it does not show it to them. A Level 1 user is therefore blind to it **in the template**, not blind overall: the answer is to rely on the dashboard. Waiting does not help, because nothing ever loops back. Separately, and this is a different limitation rather than the same one, the Level 2.5 to Level 1 calculation only happens once the reconciliation jobs run, so the dashboard is not instant either. _(Jarred Bultema and Rene Bartoli, HERO Tool Design Sprint, 9 June 2026.)_
+
+### The distinction to teach, in two lines
+
+> The **Forecast Calculation Range** defines **which customer and which periods receive part of the resultant**, the baseline.
+> The **portfolio extension** defines **which customers can hold forecast for a SKU at all**, whether or not that forecast was generated statistically.
+
+Both matter and they fail differently. No extension means nowhere for volume to land, and it can genuinely be lost. A closed range means no resultant, so the volume lands but lands flat.
+
+### Two disaggregations, and why only one of them meets the range
+
+This is the distinction that produced the original wrong answer, and it is worth stating on its own.
+
+| | Who does it | Does the range act on it? |
+|---|---|---|
+| **Logility disaggregation** | Logility, splitting a higher-level forecast down to customers | **Yes.** This is where the range zeroes values, ADS2 included |
+| **HERO fan-out** | HERO, taking a Level 2.5 capture down to Level 1 before export | **No.** It happens before anything reaches Logility, and HERO loads at Level 1, so Logility only aggregates from there |
+
+### Two cases fact 98 does not cover
+
+- **Partial resultant.** Some partners and some weeks carry a resultant and others do not, inside one Level 2.5 entry. Proportional-to-the-resultant then concentrates the whole delta onto the minority that have one. This can be worse than the flat split and nothing about it looks broken. Check the Level 1 result on the dashboard.
+- **No extension at all.** If the SKU was never extended to any Forecast Partner, there is nothing to spread across and the volume genuinely can be lost rather than misallocated. That is a portfolio extension problem, not a range problem.
+
+### Terminology, extending the section 15 warning
+
+A fourth label is now in circulation. The originating thread uses "forecast range" for what fact 85 calls the **portfolio extension**, which leaves two terms differing by two words: "forecast range" against "Forecast Calculation Range". `[GAP — Rene Bartoli]` The proposal on the table is to use **portfolio extension** for the activation and reserve **Forecast Calculation Range** for the Logility field. Until that is decided, Brave should ask which one the user means rather than assume, as section 15 already instructs.
+
+### Open items on this section
+
+- `[GAP — verify against build]` Whether the lost-forecast alert is built and where it surfaces. The handling in fact 98 depends on it existing.
+- `[GAP — Rene Bartoli]` Whether the fact 99 decision on building the range from the Sales Forecast applies beyond North America, to Asia Pacific and Latin America.
+- **First cycle expectation.** Cases of this shape will appear in the first cycle and not all of them will resolve quickly. Some unintended forecast changes are expected. Directional, not a commitment.
+
+**Closed while this section was being written.** Who updates the range template in a window where the range is not open, raised by Sarah Settano: answered by fact 100. How the forecasting range is defined, where the originating thread and `forecast-range-calculation.md` appeared to disagree: answered by fact 99, both were right for different scopes.
+
+---
+
+## 18. Non statistical demand and the consolidated dashboard (27 August 2026)
+
+102. **Demand that has no statistical baseline now has its own enrichment type.** `NON_STATISTICAL_DEMAND` is available in the Enrichment Capture Template. It captures the **full forecast volume** for any part of the portfolio a market has agreed not to forecast statistically, so that volume carries a label of its own instead of being indistinguishable from an adjustment layered on top of a baseline. The scope rule is unchanged from fact 76: what decides it is the market-level agreement, not the channel and not the item class. The current picture is unchanged from fact 77, which is to say Direct Import and FAN in the UK pilot, FAN in the United States, and any other segment a market has agreed sits outside the statistical model. _(Rene Bartoli, 27 August 2026.)_ `[GAP — Rene Bartoli]` The literal value as it appears in the template's Enrichment Type field. `NON_STATISTICAL_DEMAND` follows the convention of every other type documented on this page and in the manual; confirm the exact string before teaching it.
+
+103. **This amends the mechanism in facts 76 and 77 without retiring it.** Those facts state that where there is no baseline the full volume is captured as a **Base Trend enrichment at Level 1**. From 27 August the recommended mechanism is `NON_STATISTICAL_DEMAND`. Base trend at Level 1 stays valid and stays available: a market whose non statistical demand is recurring at SKU and customer level may reasonably prefer it, and choosing it is not an error. Both routes are supported and the choice belongs to the market. Facts 76 and 77 remain as written for the scope rule they carry, which has not changed. What changed is which instrument carries the volume. _(Rene Bartoli, 27 August 2026.)_
+
+104. **Where `NON_STATISTICAL_DEMAND` lands in the Logility arrays is not yet recorded.** `[GAP — Rene Bartoli / Jarred Bultema]` The array mapping lists the UA1-mapped enrichment types as `PHASE_OUT`, `EXCESS_DEPLETION`, `DEMAND_PHASE_SHIFT` and `SUPPLY_SHORTAGE_COMP`, and routes positive HERO adjustments to ADS2 and negative ones to Promo Lift. The new type has not been placed in that structure. Until it is, do not infer its mapping from the behaviour of any other type, and say the mapping is pending when asked. This is exactly the combination hazard named in the Instructions: three true statements about neighbouring types do not produce a fourth about this one.
+
+105. **One dashboard now covers every market live on HERO, and what a user sees follows their profile.** The separate per-market reports are replaced by a single consolidated dashboard. A user opening it sees the market they are authorised for, and nothing else. Members of regional teams see every market in their region that is already live on HERO, in one view. _(Rene Bartoli, 27 August 2026.)_
+
+### Open items on this section
+
+- `[GAP — Rene Bartoli]` The literal Enrichment Type value, per fact 102.
+- `[GAP — Rene Bartoli / Jarred Bultema]` The array mapping for the new type, per fact 104. This one blocks the corresponding manual edit to `reference/logility-array-mart-mapping.md`.
+- `[GAP — Rene Bartoli]` Which segments each market routes through the new type beyond Direct Import and FAN. Fact 77 already records that EMEA treatment is not documented, and that remains true.
+- **Guidance, not a rule, on choosing between the two routes.** Fact 103 leaves the choice to the market without stating what makes one preferable. If a decision rule emerges from the first cycles, it belongs here.
+
+---
+
+## 19. The Forecast Calculation Range, the Management Indicator, and the 2026 losses (28 August 2026)
+
+106. **The Management Indicator decides whether an out-of-range value survives. `M` preserves it, `H` loses it, and the flag has to be present at all three levels.** Where a record carries Management Indicator `M`, forecast values sitting outside the Forecast Calculation Range are **preserved**. Where it carries `H`, those values are **removed**. The flag is required at Levels 3, 2 and 1 for the affected periods, not at one of them: partial marking is not protection. _(Fabrizio and Rene Bartoli, 28 August 2026.)_
+
+    **The vendor mechanism, and why this does not contradict fact 87.** The range does not zero anything by itself. It zeroes values **through the Calculate Forecasts program (FCP)**, and the FCP only writes into the Resultant where the period's indicator allows it. In the vendor's words: the calculation copies the forced future forecast values into the Resultant Forecast **"if the indicator on the period is `N` or `H`"**, and when a period carries any other indicator (`P`, `D` or `M`) **"the quantity and indicator are left as they were before the processing, because management has indicated they are overriding the statistically-generated forecast quantities."**
+
+    So fact 87 is accurate and complete for `N` and `H` periods, and fact 106 is what happens on the rest. **This closes the open item raised on 21 August and restated on 26 August.** No reconciliation with Jarred Bultema is outstanding on this point.
+
+    **`N` is exposed exactly as `H` is.** The vendor names both. Hasbro uses only `M` and `H` today (fact 114), so `N` should not appear, but if it ever does it carries the same loss behaviour and should not be read as neutral.
+
+107. **The range constrains the force down, not the roll up.** What the range removes on the way **down** the hierarchy stays removed, but values already sitting at a lower level are **aggregated upward without the range acting on them**. A value present at Level 1 before the range was applied survives the disaggregation pass and rolls up into Level 2 and Level 3, producing a Level 3 number that does not reconcile with the range supposedly governing it. _(Rene Bartoli, 28 August 2026.)_
+
+    **The vendor mechanism.** The roll up is not performed by the FCP or by Force Forecasts (FIF). It is performed by the **Summing program (SID)**, which the vendor describes as bringing "the sum of the children to the parent record", and which operates **only on Resultant Forecasts**. The Forecast Calculation Range governs the FCP and is respected by FIF. It says nothing about the summing pass. That is why the asymmetry exists.
+
+    Fact 113 is why this matters in practice rather than in theory: in UK and EMEA, Level 1 was already populated before any range existed.
+
+108. **Level 2 is the scenario still to be validated in the system.** Of the three scenarios walked through (volume at Level 3, at Level 2, at Level 1 while out of range), the Level 2 case has not yet been exercised. The expected behaviour under fact 107 is that an out-of-range Level 2 value is not forced down to Level 1, and that the Level 1 zero then rolls up over it. **Action: build a dummy-data case in Logility and confirm it.** Level 2 is the level the process depends on, so this validation is worth running rather than assuming. _(Fabrizio, 28 August 2026.)_
+
+109. **The 2026 Management Indicator was loaded by the local demand teams, not by the central pipeline, and that is where the 2026 exposure came from.** The FCR pipeline did not carry a Management Indicator load for 2026; the local demand teams did it themselves. 2026 was the first time the indicator was set at this scale, and the resulting coverage came out as a mixture of periods the load did not reach and periods carrying `H` where `M` was needed. Combined with fact 106, those are precisely the combinations that lost forecast when a range beginning in 2027 put the 2026 weeks out of range. _(Rene Bartoli, 28 August 2026.)_
+
+    This is the expected shape of a first run at volume on a mechanic nobody had operated at that scale before, and it is why the losses were selective rather than total. It is also the reason the remedy is a coverage question, not a redesign: the mechanism worked exactly as the vendor documents it.
+
+110. **A range loaded "for 2027" can legitimately begin in 2026, and by design should sometimes do so.** The 2027 Forecast Calculation Range was built from the **P2M Start Date**, unless a manual override was supplied. Where an item had forecast, the full 2027 was taken; where it did not, the date was given in 2026. Start dates falling in 2026 are therefore expected, not anomalies. The range is derived as **On-Shelf Date minus Lead Time**, which is what pulls a January on-shelf date back to a December start. _(Fabrizio, 28 August 2026. Consistent with the four-step pipeline in `forecast-range-calculation.md` and with fact 99.)_
+
+    **The early-delivery failure case.** Where shipments went out earlier than the lead-time logic anticipated, for example in October against a lead time that only reaches November, those earlier weeks fall outside the range. Whether the volume is then lost or preserved follows the `M` / `H` rule in fact 106 like any other out-of-range period. Early deliveries in November and December against a January on-shelf date are the recurring shape of this. _(Rene Bartoli, 28 August 2026.)_
+
+111. **Deleting a Level 1 forecast propagates upward and removes the total.** Work done at Level 1 is never overwritten by the disaggregation, which is the protection users rely on. The same property cuts the other way: where someone clears a customer's Level 1 forecast, that zero is what rolls up through the summing pass, and because the total is never pushed back down again, the Level 3 number is the one that gets overwritten. The volume does not come back. _(Rene Bartoli and Fabrizio, 28 August 2026. Consistent with fact 94 and with the summing mechanism in fact 107.)_
+
+112. **A Forecast Calculation Range is a continuous period, not a year bucket.** It carries one start date and one end date, and every period outside those two dates is out of range regardless of which calendar year it sits in. "We only use the FCR for 2027" is a statement about **when we started using the mechanism**, not a boundary on **what the mechanism can reach**. A range loaded for a 2027 need, on a SKU that also traded in 2026, places the 2026 weeks out of range for that record. _(Rene Bartoli, 28 August 2026.)_
+
+    This is the misunderstanding to correct first in any conversation about the 2026 losses. Every other explanation in this section sits on top of it.
+
+113. **How UK and EMEA disaggregated 2026, and why Level 1 was already populated.** UK and EMEA used the **Sales Forecast as the disaggregation base at Level 1**. That Level 1 view was then **aggregated up to Level 2**, and the resulting Level 2 surface is what the **Resultant was disaggregated against**. _(Rene Bartoli, 28 August 2026.)_
+
+    **This is not the same statement as fact 99, and the two must not be merged.** Fact 99 says North America built the **range itself** from the Sales Forecast. Fact 113 says UK and EMEA used the Sales Forecast as the **disaggregation surface**. Different object, different market, both current. When asked what the Sales Forecast was used for, say which one applies.
+
+    **It is also why fact 107 has real consequences.** Because Level 1 already held values before any Forecast Calculation Range existed, those values survived the range and rolled up. That is why 2026 numbers appeared at Level 3 that do not reconcile with a range starting in 2027, and equally why the losses were selective rather than total.
+
+114. **Our "Management Indicator" is the Logility Resultant Forecast Override Indicator, and we use two of its values.** They are the same field. Hasbro's FCR pipeline writes it per item, per level, per week (`L1 / L2 / L3 Management Indicators.csv`, the value repeated across the 52 weeks of the year), and Logility holds it as a per-period indicator on the Resultant Forecast. _(Confirmed by Rene Bartoli, 28 August 2026.)_
+
+    Logility supports a wider set than we use:
+
+    | Value | Vendor meaning | Forcible? | In use at Hasbro |
+    |---|---|---|---|
+    | `M` | Management override. Your input becomes the Resultant | Forcible | **Yes.** Our "Manual" |
+    | `H` | Forcible indicator. The FCP overwrites the Resultant | Forcible | **Yes.** Our "Historical" |
+    | `N` | No override. Unforced System Forecast is copied into the Resultant | Unforcible from group level | No |
+    | `D` | Direct override. Your input becomes the Resultant | **Unforcible** | No |
+    | `P` | Promotion override. Your input becomes the Resultant | **Unforcible** | No |
+    | `U` | Upward sum. The Summary Forecast becomes the Resultant | n/a | No |
+    | `O`, `R`, `C` | Applied by the system, not by a user. `O` marks an original ADS value, `R` marks a Resultant replaced by an ADS value | n/a | n/a |
+
+    **Only `M` and `H` are in use today** _(Rene Bartoli, 28 August 2026)_. Do not teach or assume the others are configured. Their behaviour is recorded here so that a value appearing unexpectedly can be recognised rather than guessed at.
+
+    **Indicator priority when the Summing program runs** is `P`, then `D`, then `M` or `R`, then `N` or `H` or `C`. `M` and `R` are treated as equal and neither replaces the other at parent level.
+
+115. **`M` protects against the recalculation, not against forcing.** `M` is a **forcible** indicator. It stops the Calculate Forecasts program from overwriting the value, which is what makes it protection against the Forecast Calculation Range under fact 106, but it does **not** stop the Force Forecasts (FIF) program from redistributing the value from a parent. The two vendor values that are unforcible, `D` and `P`, are not in use at Hasbro. _(Logility WebHelp, "Forecast Override Indicators", 28 August 2026.)_
+
+    So "I marked it `M`, it is safe" is right about the range and wrong as a general statement. Say which protection is being asked about.
+
+    One qualifier that works in our favour here: the FCR page states that periods **outside** the range are processed by FIF as though the forecast were **inhibited**. So an `M` value sitting outside the range is protected from the FCP by its indicator and not forced by FIF because the range has stopped the forcing. Both doors are closed, but for two different reasons.
+
+### Open items on this section
+
+- `[GAP — test pending]` The Level 2 scenario in fact 108. Dummy data in Logility.
+- `[GAP — Rene Bartoli]` Whether a corrective Management Indicator pass over 2026 is planned, or the affected volume is recaptured case by case under fact 98.
+- `[GAP — Rene Bartoli]` Still carried from 26 August: the naming convention across the range-related labels.
+- **Directional, not a commitment.** The scale of the 2026 loss is not quantified in any source. Do not attach a number to it.
+
+**Closed by this section.** Whether a manually held value is exposed to the Forecast Calculation Range, open since 21 August and restated on 26 August against Jarred Bultema. Answered by fact 106 with vendor documentation. Nothing on this point is outstanding.
+
+### Deliberately not on this page
+
+A separate symptom was live during the 28 August conversation and is **not** recorded as a fact: cases where Level 3 was correct but Levels 2 and 1 showed no forecast, caused by the **force-down job having been suspended** and since reactivated. It is operational and time-bound, and this page is cited by fact number, so transient states do not belong on it. The only durable point worth carrying: when diagnosing a level mismatch, rule out job state before reaching for the range.
+
+### Source locations (filed 28 August 2026)
+
+Both sources are filed and the citations above point at their permanent locations. The recording is in `01_sources/pilot-recordings-H2/`. The vendor WebHelp bundle behind facts 106, 107, 114 and 115 is in `01_sources/data-architecture/`, renamed from its original `MANAGEMENT INDICATOR Y FCT.docx` so it is findable.
+
+---
+
+## 20. The UA1 write horizon, and corrections from the HERO repository (28 August 2026)
+
+116. **UA1 protection ends with 2026, stepping down one month per cycle.** HERO withholds UA1 authoring inside the frozen window. That protection is being retired on a fixed schedule so that from the January 2027 cycle the arrays delivering the Consensus Forecast and the Field Forecast carry the same number. _(Rene Bartoli, "Approval needed: UA1 protection ends with 2026, one number in January", 26 August 2026.)_
+
+    | Cycle | UA1 protected | HERO writes UA1 from |
+    |---|---|---|
+    | September 2026 | September to December, horizon months **0 to 3** | month 4 |
+    | October 2026 | October to December, **0 to 2** | month 3 |
+    | November 2026 | November and December, **0 to 1** | month 2 |
+    | December 2026 | December only, **0** | month 1 |
+    | January 2027 | none | month 0 |
+
+    **The frozen period itself does not disappear.** What ends is HERO holding UA1 back inside it. From January every change is made in HERO and lands on both sides.
+
+    **Why.** Under the original design, HERO wrote UA1 only from horizon month 5, so the rest of 2026 and January 2027 were edited directly in Logility while enrichments and the Consensus arrays flowed across the full horizon. Every UA1 edit made in Logility inside that window opened a gap between the Sales Forecast and the Consensus Forecast, and the gap lived as long as the protection did. Retiring it on a defined date reaches the Integrated Business Planning one-number objective on a date the programme controls.
+
+    **Approved in both pilot markets.** **United States:** Sarah Settano, 27 August 2026, in writing on the approval thread, with commercial confirmation and no pushback at Lisa's SLT. **United Kingdom:** Cameron Roberts, 28 August 2026, **verbally on a call**. Both markets are aligned and Jarred Bultema can proceed with the September cycle.
+
+    _(Note on the record: the UK approval is verbal and does not yet appear on the email thread. The decision is not in doubt, but a one-line confirmation back to the thread would give it the same audit trail the US approval has.)_
+
+117. **The UA1 write horizon ends at month 21, and the build currently ends it at month 12.** The end of the horizon is **month 21**, matching UA2 to UA6, ADS2 and Promo Lift. This is the design of record and it is unchanged from fact 11. _(Rene Bartoli, 28 August 2026.)_
+
+    **The build does not match it.** Six current repository documents state the built window as `horizon_month 5-12`, including the two documents stamped "Last verified against release candidate `release/hero-pilot-20260828-export-operations`, 2026-08-28", and the control defaults `ua1_export_start_horizon_month = 5` and `ua1_export_end_horizon_month = 12` for both the United Kingdom and Hasbro U.S.
+
+    **This is a build gap, not a design change.** Rene Bartoli is raising the correction with Jarred Bultema. Two reasons the end has to be 21 rather than 12, and the second is the one that decides it:
+
+    - The structural reason already in fact 11: the Sales Forecast must not have a shorter reach than the Consensus arrays it is held equal to.
+    - The one-number objective in fact 116 is not delivered by a horizon ending at 12. If UA1 stops at month 12 while ADS2 and Promo Lift run to 21, months 13 to 21 keep exactly the Sales-versus-Consensus gap that retiring the protection is meant to close.
+
+    **What to say meanwhile.** The horizon is 0 to 21 once the step-down completes, and the build is being corrected to reach month 21. Do not teach month 12 as the target. Where a user observes UA1 not publishing beyond month 12 today, that is the known build gap and not a defect in their work. `[GAP — Jarred Bultema]` Confirmation that the export window has been extended to month 21.
+
+    This closes the `[VERIFY AGAINST BUILD]` item open against fact 11 since 30 July 2026. The answer is that the build reaches month 12 and must be extended.
+
+118. **The fan-out runs on upload, in minutes, and the scheduled runs are a safety net.** This **supersedes fact 60 entirely**, which was wrong on the times, missed the United States wrapper, and missed the immediate path, which is the one users actually experience. _(Rene Bartoli, from the HERO repository at release 2.26.0, 28 August 2026.)_
+
+    **Path 1, immediate, and this is the normal case.** When a reconciliation or enrichment file is uploaded, the application triggers the refresh through `jobs.run_now` and the partner grain is reflected **in minutes**. This job is trigger-only and carries **no schedule** (`resources/model-workflow-resource.yml:762`). A user who has just uploaded does not wait for a slot.
+
+    **Path 2, scheduled wrappers, the safety net.** Recurring wrappers around `hero_post_processing_job`:
+
+    | Wrapper | Days | Times | Timezone | Scope |
+    |---|---|---|---|---|
+    | UK workday | Monday to Thursday | 08:00, 11:00, 14:00 | `Europe/London` | UNITED KINGDOM |
+    | US workday | Monday to Thursday | 12:00, 15:00, 18:00 | `America/New_York` | HASBRO U.S. |
+
+    **What fact 60 got wrong**, recorded so the old figures cannot come back: it gave six UK runs a day at 08:00, 10:00, 12:00, 14:00, 16:00 and 18:00, Friday runs at 08:00, 10:00 and 12:00, and a Monday to Thursday catch-up at 23:00 `America/New_York`. **None of those are correct.** There are three UK runs, no Friday runs, no late-night catch-up, and there is a US wrapper that fact 60 did not mention. Fact 60 cited the HERO Manual as its source, which made it circular; the manual pages `workflows/timing-system-sync.md` and `reference/batch-orchestration-updates.md` carry the same wrong figures and must be corrected.
+
+    **The answer to "when will my Level 2.5 change reach Level 1"** is therefore: minutes after upload, with the scheduled wrappers as a backstop. Not "wait for the next slot".
+
+119. **`NON_STATISTICAL_DEMAND` maps to UA1 on the Field Forecast side, with a sign-based Consensus contribution.** _(HERO repository, `HERO_Logility_Export_Array_Mapping_Reference.md`, corroborated in `HERO_TMO_Export_Handling.md`.)_ **This closes fact 104.** Three riders come with it and all three matter more than the mapping:
+
+    - **Percentage input is not supported**, "because there is no baseline against which to resolve it". Quantities only.
+    - **It inherits the UA1 window.** Its Field Forecast publication follows whatever UA1's window is, so it is subject to the step-down in fact 116 and the horizon in fact 117. Its Consensus contribution stays eligible across months 0 to 21 regardless.
+    - **It is not separately labelled in the export change-review report.** That report classifies every UA1 change as reconciliation or baseline-trend-adjustment activity, so this type cannot be told apart there.
+
+    **The third rider qualifies fact 102.** Fact 102 introduced the type so the volume would carry a label of its own rather than being indistinguishable from an adjustment on top of a baseline. The label exists in HERO and in the event history. **It does not survive into the export change-review report.** Say both when asked.
+
+120. **Five enrichment types map to UA1, not four, and there is a rule that generates the list.** `PHASE_OUT`, `EXCESS_DEPLETION`, `DEMAND_PHASE_SHIFT`, `SUPPLY_SHORTAGE_COMP` and now `NON_STATISTICAL_DEMAND`. This extends fact 23 and the manual's array-mart mapping page, both of which list four. _(HERO repository, `HERO_Logility_Export_Array_Mapping_Reference.md`.)_
+
+    The rule, which is better to teach than the list because the list will grow again: if an entry is an enrichment, is not `MARKETING`, is not `DEMAND_PLANNING`, and is not explicitly mapped to UA2 to UA6, then it influences **UA1**.
+
+    Explicit mappings, for completeness: `RETAIL_PROMOTION` to UA2, `SET` to UA3, `SAMPLE` to UA4, `TMO` to UA5, `PRE_ORDER` to UA6. `MARKETING` and `DEMAND_PLANNING` have no Field Forecast array and contribute to Consensus only.
+
+121. **A Level 2.5 adjustment does appear in the Level 1 template, as a read-only context column. This corrects fact 101.** The Level 1 template carries read-only baseline, enrichment, **Level 2.5**, prior-cycle and preliminary-forecast fields as context. In the forecast-partner template the editable columns are labelled L1 base trend adjustment and the read-only cross-level context is labelled **L2.5 adjustment**; in the `_ALL_FORECAST_PARTNERS_` BU-SKU template the labels invert. _(HERO repository, `HERO_Current_System_Overview.md` section 4.2 and `HERO_SUP_17_BU_SKU_Reconciliation_Plan.md`.)_
+
+    **What survives of fact 101** is the timing: the value appears only after post-processing, so a freshly uploaded Level 2.5 change is not visible at Level 1 until the fan-out runs, which per fact 118 is minutes. **What is withdrawn** is "never appears in the Level 1 template" and "the Level 1 user is blind to it in the template". Fact 101 dates from 9 June 2026 and predates the SUP-17 work that added the column. Stop directing Level 1 users to the dashboard for something their template shows them.
+
+122. **The fan-out weights by baseline share, and prior adjustments do not affect the weights.** Post-processing distributes a Level 2.5 adjustment to partner rows using **baseline share**, falling back to an **equal split across eligible forecast partners** where the slice's baseline sums to zero. _(HERO repository, `HERO_Current_System_Overview.md` section 4.3 and `HERO_SUP_17_BU_SKU_Reconciliation_Plan.md`.)_
+
+    This is the same behaviour as facts 95 and 96 and overturns neither. Two refinements: use **baseline share** as the vocabulary rather than "proportional to the resultant", and add the part we did not have, that **earlier enrichments and carried-forward reconciliation changes do not affect the disaggregation weights**. A planner would reasonably assume they do.
+
+123. **TMO is no longer a timing exception.** TMO maps to **UA5 only**, is excluded from the Consensus export, does not drive ADS3, and flows across horizon months 0 to 21 like the other non-UA1 field arrays. The earlier model in which TMO alone could flow inside months 0 to 4 was **explicitly abandoned**, and the control fields built to support it were removed. TMO is special in **mapping**, not in **timing**. _(HERO repository, `HERO_TMO_Export_Handling.md`, `HERO_Logility_Export_Control_Brief.md`, `HERO_Logility_Export_Implementation_Plan.md`.)_
+
+124. **Inside the frozen window the published UA1 carries the Logility baseline, not the live UA1, and that is a known gap.** Intended behaviour is to carry the current live Logility UA1 array. The current implementation carries the current live Logility **baseline**, because the export fetch path does not yet expose the live UA1 array as an input field. _(HERO repository, `HERO_Logility_Export_Array_Mapping_Reference.md`, restated in `HERO_Logility_Export_Consumer_Technical_Spec.md` and `HERO_Current_System_Overview.md`.)_
+
+    Our manual glossary currently says the published value "carries the live Logility UA1 / baseline", which reads as though either is acceptable. They are different numbers. Say which one happens and that the other is intended. Note this gap shrinks with fact 116 and disappears when the protection ends in January 2027.
+
+125. **The export sends replacement values, not deltas, and rounds to whole units.** Users author deltas in HERO. The export contains **complete replacement values** for the affected Logility array and week cells. HERO rounds output to whole units at partner, SKU and week grain, so small aggregate differences can appear when many fractional Level 2.5 fan-out cells are rounded separately. _(HERO repository, `brave/HERO_BRAVE_Knowledge_Base.md`.)_
+
+    The rounding point is the answer to "why does my BU-SKU total not tie exactly to the sum of the partners".
+
+126. **There is no lost-forecast alert, and the input-data monitor is not deployed.** The monitor design covers source freshness, row counts, measure spikes, duplicate keys, negative units, null keys, HERO-versus-Logility baseline comparison and dashboard cold start. **Nothing detects forecast lost during disaggregation, and nothing inspects the Forecast Calculation Range.** The Operations Runbook states the monitor job "is not currently deployed; do not treat the job name in the monitor design document as an available gate", and requires a manual source health signoff instead. _(HERO repository, `HERO_Pilot_Operations_Runbook.md`, `HERO_Input_Data_Monitor_Job_Definition.md`, `HERO_Data_Health_App_Warnings_Spec.md`.)_
+
+    **This corrects fact 98**, which says the agreed handling for lost forecast is "an alert plus recapture by the Demand team". The recapture half stands and the rule to recapture at Level 1 is unchanged. The detection half does not exist: today it is found by inspection, not by an alert. `[GAP — Rene Bartoli / Jarred Bultema]` Whether a forecast-lost check will be added when the monitor is deployed.
+
+127. **The HERO repository is the canonical source for product behaviour, and it maintains its own BRAVE pack.** The repository carries a documentation register with a four-tier authority model and its own controlled BRAVE source, generated by script and stamped against a commit. _(HERO repository, `HERO_Documentation_Register.md`, `brave/README.md`.)_
+
+    **The agreed division of labour** _(Rene Bartoli, 28 August 2026)_:
+
+    - **Our pack remains the primary source.** Canonical Facts stays the top authority for Brave.
+    - **Their pack is used for the technical aspects of using the tool**: export contract, arrays, horizons, workbook and upload behaviour, formulas, stale-template collisions, enrichment identity and status, preliminary forecast, dashboard-versus-template timing, missing SKUs, escalation.
+    - Where our material touches product behaviour, prefer citing theirs over restating it, because theirs changes with the code and ours does not.
+
+    **What their documentation does not cover at all**, verified by search across all 48 files: the Forecast Calculation Range, the Management Indicator, Forecast Override Indicators, proportioning, the enrichment taxonomy as a decision framework, FAST, market-by-market TMO ownership, per-market dashboard access, the frozen-period policy as a business rule rather than a horizon number, roles, and the training curriculum. That is the ground our material holds and it is not duplicated anywhere.
+
+    **The four tiers are adopted for our own material** _(Rene Bartoli, 28 August 2026)_: Tier 1 current canonical, Tier 2 current specialised, Tier 3 proposed or in flight and not proof of deployment, Tier 4 historical. Where two documents conflict, use the higher tier and open a correction against the lower one.
+
+### Deliberately not carried into this section
+
+Product-behaviour material that belongs in their pack under fact 127 and is **not** duplicated here: stale and overlapping workbook collisions, enrichment identity immutability and the `DECLINED` status, Excel formula handling, the eight known limitations in their Current System Overview, and their escalation checklist. Brave should answer those from their pack. Restating them here would create a second, staler copy of content that changes with the code, which is the failure this section is meant to prevent.
+
+### Open items on this section
+
+- `[GAP — Jarred Bultema]` Confirmation that the UA1 export window has been extended to month 21, per fact 117.
+- `[GAP — Rene Bartoli / Jarred Bultema]` Whether a forecast-lost check joins the monitor when it is deployed, per fact 126.
+- **Their register's own tension, for their team not ours.** `SUPPLY_SHORTAGE_COMP` is a proposal dated 9 April 2026 in one repository document, absent from the enrichment list in their Current System Overview, and listed as a UA1 residual type with "current code status: aligned" in their array mapping reference. Our fact 80 is newer than their proposal and covers the history-cleansing surface theirs does not address. **No change to fact 80 on this evidence.**

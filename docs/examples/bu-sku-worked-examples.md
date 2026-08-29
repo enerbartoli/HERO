@@ -19,6 +19,9 @@ Show what HERO holds fixed and what can still move after a Level 2.5 adjustment,
 
     The Level 2.5 edit fixes only the **reconciliation adjustment** piece. The other two pieces can still move — which is what the examples below show.
 
+!!! note "The split, not just this mechanism"
+    Baseline-share splitting applies to every enrichment type that fans out from Level 2.5 to Level 1, not only to Base Trend Adjustments. It is also **not affected by earlier enrichments or carried-forward reconciliation changes** already sitting on those Level 1 rows: the weights come fresh from the current baseline each time. Example 3 and Example 4 below show related but separate behaviour (enrichments and reconciliation as pieces that can move independently of your Level 2.5 target); the weights used to do the initial split are unaffected by any of it.
+
 In every example below there are two partners, **Target** and **Walmart**, that roll up to one **BU-SKU** total.
 
 ---

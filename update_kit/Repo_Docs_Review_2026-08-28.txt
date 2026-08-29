@@ -1,0 +1,235 @@
+# HERO repository documentation, 28 August 2026: what it changes in our material
+
+**What arrived.** `herodocsmain.zip`, the `docs/` tree of the HERO product repository at commit `1f8017ba9ee3f325bb4022bfaa948d0e3b1e8148`, extracted 2026-08-28. 53 files, 48 markdown documents plus HTML and DOCX renderings of three of them.
+
+**Standing.** Rene Bartoli, 28 August 2026: these documents are the canonical source and resolve any conflict with our material. This review applies that rule and records what it costs us.
+
+**One qualifier, because it changes how to read everything below.** The repository documents are canonical about **what the HERO product does**. Several of our facts describe **design intent** rather than build state, and the repository is explicit that "deployed code, database migrations, control seeds, and Databricks job definitions are the ultimate authority for current technical behavior." Where the two differ, that is not always a documentation error on our side. Sometimes it is a real divergence between what was decided and what was built, and it needs a decision rather than an edit. Section 3.1 is exactly that case and it is the most consequential item here.
+
+---
+
+## 1. The repository has its own authority model, and its own BRAVE
+
+`HERO_Documentation_Register.md` (last reviewed 2026-08-27) defines a four-tier authority model and a BRAVE publication process that is not the one we run.
+
+**Their tiers.**
+
+| Tier | Meaning | Documents |
+|---|---|---|
+| 1 | Current canonical | Current System Overview, Pilot Operations Runbook, **their** BRAVE Knowledge Base, the register itself |
+| 2 | Current specialised | Power BI data surface, Logility export array mapping, export consumer spec, dev/deploy runbook, PR structure, release runbook |
+| 3 | Proposed or in flight, **not proof of deployment** | Wave 2 specs, demand-planning decision notes, monitor and warning specs, dashboard cleanup, golden-slice validation, Jira plans |
+| 4 | Historical | POC material, `HeroEnrichmentCollection.md`, rollout usage, the March/June testing process, Spring and June readiness docs, off-week plans, PR review packs |
+
+**Their BRAVE process.** One controlled source, `docs/brave/HERO_BRAVE_Knowledge_Base.md`, generated into a `.txt` upload artifact by `generate_brave_pack.py`, reviewed, uploaded, with the source commit and publication date recorded. Their file is stamped "Verified against repository `main` at `1f1e0a23` on 2026-08-27". Their README says explicitly:
+
+> "Do not upload the full repository documentation set. Historical plans and open specifications are intentionally excluded from this pack."
+
+And the register:
+
+> "Do not point BRAVE at implementation plans, incident chats, raw table notes, or the entire repository. That makes planned and historical behavior indistinguishable from the current product."
+
+**The collision.** We run BRAVE on 12 knowledge files with the Canonical Facts One-Pager as top authority, updated by manual reload. They run it on one generated pack. Both are pointed at the same assistant.
+
+**This is not a case where one side is simply right.** Read their BRAVE KB against ours and the split is clean:
+
+- **Theirs is better on the product.** Export contract, array mapping, horizons, workbook and upload behaviour, formulas, stale-template collisions, enrichment identity and status, preliminary forecast, dashboard-versus-template timing, missing SKUs, escalation. It is current, stamped against a commit, and maintained by the people who change the code.
+- **Ours is the only source for the process.** The enrichment taxonomy and when to use which type, proportioning, the Forecast Calculation Range and the Management Indicator, reconciliation as a business process, roles and who owns what, the frozen-period policy as a business rule, market-by-market scope, the training curriculum and the module content the knowledge checks cite by fact number. **None of that appears anywhere in their 48 documents.** Their KB does not contain the strings "Forecast Calculation Range", "Management Indicator", "proportioning", or any role definition beyond naming audiences.
+
+**Recommendation, for Rene to decide.** Do not collapse one into the other. Adopt their pack as the product-behaviour source and keep ours as the process-and-training source, with an explicit boundary written into both: their file is authoritative on what the application does, ours on how the business is meant to use it, and where ours touches product behaviour it cites theirs rather than restating it. That is a real change to our Instructions authority order and it needs your call before anything is uploaded. See section 8.
+
+---
+
+## 2. Gaps closed
+
+### 2.1 Fact 104 is answered. `NON_STATISTICAL_DEMAND` maps to UA1
+
+Open since 27 August. `HERO_Logility_Export_Array_Mapping_Reference.md`:
+
+> "#### `NON_STATISTICAL_DEMAND`
+> - Field Forecast: `UA1`
+> - Consensus: sign-based consensus contribution"
+
+Corroborated independently in `HERO_TMO_Export_Handling.md` (`NON_STATISTICAL_DEMAND -> UA1`). Three riders come with it, and all three matter more than the mapping itself:
+
+1. **No percentage input.** "percentage input is not supported because there is no baseline against which to resolve it." Consistent with the type's purpose, and it must be taught.
+2. **It inherits the UA1 window.** "Field Forecast publication therefore follows the current `UA1` window of `horizon_month 5-12`; it does not publish to Field Forecast in `0-4` or after `12`". Its Consensus contribution stays eligible across `0-21`.
+3. **It cannot be told apart in the change-review report.** "the current export change-review report classifies all `UA1` changes as reconciliation / baseline-trend-adjustment activity, so it cannot separately label this enrichment type."
+
+**Rider 3 partly undercuts the rationale in our fact 102**, which introduced the type so the volume would "carry a label of its own instead of being indistinguishable from an adjustment layered on top of a baseline". The label exists inside HERO and in the event history. It does not survive into the export change-review report. Fact 102 should be qualified rather than left as written.
+
+### 2.2 Fact 23 and the UA1 enrichment list are incomplete
+
+Our fact 23 and the manual's array-mart mapping page both list four UA1-mapped enrichment types: `PHASE_OUT`, `EXCESS_DEPLETION`, `DEMAND_PHASE_SHIFT`, `SUPPLY_SHORTAGE_COMP`. The repository makes it **five**, adding `NON_STATISTICAL_DEMAND`, and states the rule that generates the group:
+
+> "if an enrichment is: an enrichment, not `MARKETING`, not `DEMAND_PLANNING`, and not explicitly mapped to `UA2-UA6`, then it should influence `UA1`"
+
+Teaching the rule is better than teaching the list, because the list will grow again.
+
+### 2.3 The lost-forecast alert does not exist
+
+Open item from 26 August, carried into section 19. Definitive answer: there is no such check. `HERO_Input_Data_Monitor_Job_Definition.md` defines freshness, row-count, spike, duplicate-key, negative-unit, null-key, HERO-versus-Logility baseline and dashboard cold-start checks. Nothing detects forecast lost during disaggregation, and nothing looks at the Forecast Calculation Range.
+
+Worse for our fact 98, which says "the agreed handling is an alert plus recapture by the Demand team": `HERO_Pilot_Operations_Runbook.md` states the monitor job itself **is not deployed**.
+
+> "The proposed `hdc_<env>-hero-input-data-monitor-job` is not currently deployed; do not treat the job name in the monitor design document as an available gate."
+
+So fact 98 currently describes a handling path whose detection half does not exist. It needs rewording to say the detection is manual today.
+
+---
+
+## 3. Conflicts. The repository wins, and here is what it costs
+
+### 3.1 UA1 horizon: we teach months 5 to 21, the build is 5 to 12
+
+**This is the most consequential finding in the review and it is not a documentation error.**
+
+Our fact 11 says months 5 to 21 is the design of record, ratified by Rene on 6 August, and already carries a verification note: Jarred Bultema described the built window as reaching month 12 on 30 July, "Confirmation that the build matches the design has been requested. The answer changes the build, not this fact." A `[VERIFY AGAINST BUILD]` item has been open against it since.
+
+**The answer has arrived, and the build is 5 to 12.** Not as an accident, but as configuration:
+
+- `HERO_Current_System_Overview.md`, stamped "Last verified against release candidate `release/hero-pilot-20260828-export-operations`, 2026-08-28": "UA1: horizon months 5 through 12".
+- `HERO_Pilot_Operations_Runbook.md`, same stamp, per-BU table: UNITED KINGDOM `31100` and HASBRO U.S. `10000`, both "months 5-12".
+- `HERO_Logility_Export_Control_Brief.md`: "For pilot, `UA1` is the only array with a restricted export horizon: `horizon_month 5-12`", with control defaults `ua1_export_start_horizon_month = 5` and `ua1_export_end_horizon_month = 12`.
+- Their BRAVE KB, the array mapping reference, the consumer spec, the implementation plan and the TMO doc all repeat 5-12.
+
+Six current documents, both markets, and the two Tier 1 files verified against yesterday's release candidate.
+
+**What this means.** UA1 stops publishing to Field Forecast after month 12. Everything from month 13 to 21 that we have been teaching as covered is not. This is the same discrepancy that surfaced the FAN late-2027 case, and it has now persisted through a release stamped 2026-08-28.
+
+**This is a decision, not an edit.** Either the build is wrong and 5-21 remains the target, or the design changed to 5-12 and our material is teaching a reach the system does not have. Only Rene and Jarred can say which. What is no longer available is leaving fact 11 as "the answer changes the build, not this fact" while shipping training that assumes 21.
+
+**Affected if it resolves to 5-12:** Canonical Facts 10, 11 and the array table in section 2; manual `help/glossary.md` ("HERO authors UA1 in horizon months 5–21"); manual `reference/logility-array-mart-mapping.md`, two places; and any module content teaching the UA1 reach.
+
+### 3.2 The fan-out schedule in our manual is not corroborated anywhere
+
+Our fact 60 and two manual pages state the fan-out runs Monday to Thursday at 08:00, 10:00, 12:00, 14:00, 16:00 and 18:00 `Europe/London`, Friday at 08:00, 10:00 and 12:00, plus a Monday to Thursday 23:00 `America/New_York` catch-up.
+
+**No repository document contains any of that.** No Europe/London time appears anywhere in the nine operations and system documents reviewed, no multi-run weekday cadence, no 23:00 catch-up. What the current-authority documents describe is different in kind:
+
+> "The release configures two independent, single-BU parent schedules: `hdc_<env>-hero-friday-logility-export-pipeline-job` runs Friday at 10:15 `America/New_York` for `UNITED KINGDOM`. `hdc_<env>-hero-saturday-us-logility-export-pipeline-job` runs Saturday at 12:00 `America/New_York` for `HASBRO U.S.`. Each parent has queuing disabled, allows at most one active run, runs its BU's post-processing before export, and passes one parent `as_of` to both children."
+
+So post-processing runs **inside the weekly export parent**, and otherwise on demand: "Run post-processing before export if recent uploads or L2.5 fan-out changes need to be reflected."
+
+The only multi-time weekday schedule anywhere in the set belongs to the input-data monitor, in Eastern time, and that job is not deployed.
+
+**Assessment.** Fact 60 cites "the HERO Manual" as its source, which makes this circular: our manual is the only authority for a schedule the product documentation does not describe. Either a recurring fan-out schedule exists outside these documents, or our figure is stale. **Do not correct it silently in either direction.** This is a question for Jarred, and it is urgent, because "when will my L2.5 change appear at Level 1" is a question users ask every cycle and we are currently answering it with a six-runs-a-day cadence that may not exist.
+
+Note the release also adds something we do not teach at all: **the US export runs Saturday at 12:00 Eastern**, deliberately extending the US authoring window through Saturday morning.
+
+### 3.3 Fact 101 is wrong. Level 2.5 does appear in the Level 1 template
+
+Our fact 101, from the 9 June design sprint, says a Level 2.5 adjustment "never appears in the Level 1 template", that the Level 1 user "is therefore blind to it in the template", and that "the answer is to rely on the dashboard".
+
+The current documents say the opposite. `HERO_Current_System_Overview.md`, section 4.2: "Read-only baseline, enrichment, **L2.5**, prior-cycle, and preliminary-forecast fields provide context." And `HERO_SUP_17_BU_SKU_Reconciliation_Plan.md`:
+
+> "In the forecast-partner/L1 template, the own-level adjustment columns are labeled as L1 base trend adjustment and the read-only cross-level context is labeled as L2.5 adjustment."
+
+Confirmed again in the Power BI reference, which notes the same schema fields render under different labels depending on template mode.
+
+**What survives of fact 101** is the timing half: the value appears only after post-processing, so a fresh L2.5 upload is not visible at Level 1 until the fan-out runs. That is real and both sources agree on it. What must go is "never appears" and "blind in the template". Fact 101 predates the SUP-17 work that added the column.
+
+This one has direct training consequences. We have been telling Level 1 users to go to the dashboard for something their template shows them.
+
+### 3.4 Fan-out weighting: say baseline share, not resultant
+
+Our facts 95 and 96 say the fan-out reads the resultant and distributes proportionally to it. The repository consistently says **baseline share**:
+
+> "Post-processing distributes L2.5 adjustments to partner-grain rows using baseline share. If the applicable slice has zero baseline, HERO uses the configured fallback behavior, currently an equal split across eligible partners."
+
+And SUP-17: "each partner's allocation weight comes from that partner's `baseline_units`... Earlier enrichments and carried-forward reconciliation changes do not affect BU-SKU disaggregation weights."
+
+The behaviour is the same one we ratified on 26 August, including the equal-split fallback, so no fact is overturned. But the vocabulary should follow theirs, and their version adds something ours does not say: **earlier enrichments and carried-forward reconciliation changes do not affect the weights**. That is worth teaching, because a planner would reasonably assume they do.
+
+### 3.5 TMO is no longer a timing exception
+
+Documented as a deliberate reversal: "`TMO` is no longer treated as a special frozen-window timing exception", "`TMO` is special in **mapping**, not in **timing**", and the implementation plan records removing the `tmo_export_enabled` / `tmo_export_start_horizon_month` / `tmo_export_end_horizon_month` fields that existed to support the older assumption.
+
+Current behaviour: `TMO` maps to `UA5` only, is excluded from consensus, does not drive ADS3, and flows across `horizon_month 0-21` like the other non-UA1 arrays. If any of our material still frames TMO as a timing special case, it is describing a design that was explicitly abandoned.
+
+### 3.6 The frozen-window UA1 carry-forward does not do what it is supposed to
+
+A limitation we do not carry anywhere:
+
+> "The remaining gap is specifically the frozen-window `UA1` carry-forward source: intended behavior: carry the current live Logility `UA1` array. current implementation: carry the current live Logility baseline. reason: the current export-scope Logility fetch does not yet expose the live `UA1` array as an input field."
+
+So inside the frozen window, the published value carries the live Logility **baseline**, not the live **UA1**. Our manual glossary already says "the published value carries the live Logility UA1 / baseline instead", which reads as if either is fine. They are not the same, one is intended and the other is what happens, and the difference is a real number.
+
+---
+
+## 4. Tensions inside the repository documents themselves
+
+Flagged rather than resolved, because their own register says to use the higher tier and open a correction against the lower one.
+
+**`SUPPLY_SHORTAGE_COMP`.** `HERO_Supply_Shortage_Comp_Proposal.md` is dated 2026-04-09, ticket SUP-11, status "proposal ready for review", and says the type is "metadata only", "should not alter HERO math by itself", and "a tracking label, not a demand movement engine". `HERO_Current_System_Overview.md` does not list it among current enrichment types. Yet `HERO_Logility_Export_Array_Mapping_Reference.md`, a Tier 2 current reference, lists it as a residual UA1 type with "Current code status: aligned".
+
+Our fact 80, ratified 7 August, is **newer than their proposal** and covers a surface theirs does not: the history-cleansing instruction, raising the adjusted demand of the unavailable item and reducing the substitute. Their proposal never mentions history cleansing. The two are compatible on the forward forecast, where both say nothing moves. **No change to fact 80 is warranted on this evidence**, but their proposal should not be read as contradicting it either, and their own three documents should be reconciled by their team.
+
+**`HERO_SUP_17_BU_SKU_Reconciliation_Plan.md`** is a "Wave 3 / June pilot" document that the Current System Overview's own authority statement places in the "useful history, not current operating authority" category, while its fan-out mechanics are simultaneously restated in current-authority language inside the Current System Overview. Treat the Current System Overview wording as canonical and SUP-17 as the detail behind it.
+
+---
+
+## 5. New material worth teaching that we do not carry
+
+1. **The export contains replacement values, not deltas.** "Users author deltas in HERO, but the export contains complete replacement values for affected Logility array/week cells." Users author a delta and the system sends a total. That distinction explains several questions we currently answer awkwardly.
+2. **Rounding.** "HERO rounds output to whole units at partner/SKU/week grain. Small aggregate differences can result when many fractional L2.5 fan-out cells are rounded separately." A ready-made answer to "why does my BU-SKU total not tie exactly".
+3. **Stale-workbook collisions.** A full treatment: the later upload generally wins in overlapping scope, duplicate-file protection does not make an old workbook safe, and deleting unrelated rows before upload reduces overlap. This is the single most likely support issue in a live cycle and our material is thinner on it than theirs.
+4. **Enrichment identity is immutable.** Do not change SKU or forecast partner on an existing event to move it; that can create a new event while leaving the old one active. Decline and re-create. Deleting the Excel row does not remove the stored enrichment; the supported inactive status is normally `DECLINED`.
+5. **Excel formulas** are accepted only in weekly L1 or L2.5 BTA cells, only when Excel has saved a finite numeric result. HERO does not evaluate formulas server-side. Formulas in enrichment, identity, date, context or read-only fields are rejected.
+6. **The eight known limitations** in Current System Overview section 10, several of which belong in facilitator material verbatim. Notably: "BTA attribution is weaker than enrichment attribution... the published BTA is a net adjustment rather than a full business-reason ledger", and "Automated downstream Logility pickup is not proven by this repository alone."
+7. **A successful HERO export does not mean Logility was updated.** Stated three times across their material, and their BRAVE instruction is blunt: "BRAVE must not state that Logility is updated until the downstream owner confirms it." We should adopt the same rule.
+8. **Never report a BU as fully live from the controls table alone.**
+
+---
+
+## 6. What the repository does not cover, so our files still earn their place
+
+Verified by search across all 48 documents. Absent entirely: Forecast Calculation Range, Management Indicator, Forecast Override Indicators, proportioning, the enrichment taxonomy as a decision framework, FAST, market-by-market TMO ownership, per-market or per-region dashboard access rules, user profiles, the frozen-period policy as a business rule rather than a horizon number, roles and RACI, and the entire training curriculum.
+
+Two of our recent knowledge additions sit squarely in that space and are unaffected by this review: section 19 on the Forecast Calculation Range and the Management Indicator, and the two Logility vendor WebHelp transcriptions.
+
+---
+
+## 7. The change list
+
+**Canonical Facts.** Append-only, so a new section 20 rather than edits:
+
+- Close fact 104. `NON_STATISTICAL_DEMAND` maps to UA1 with sign-based consensus, no percentage input, inherits the UA1 window, and is not separately labelled in the export change-review report.
+- Qualify fact 102 on the labelling rider.
+- Extend fact 23 and the UA1 enrichment list to five types, and state the generating rule.
+- Correct fact 101. The L1 template carries a read-only L2.5 context column; only the timing caveat survives.
+- Correct fact 60, or mark it unverified, pending the answer in 3.2.
+- Resolve fact 11 and fact 10 once Rene and Jarred decide on 5-12 versus 5-21.
+- Reword fact 98: the detection half is manual, the monitor is not deployed.
+- Align facts 95 and 96 to "baseline share", and add that earlier enrichments and carried-forward reconciliation do not affect the weights.
+- Add the new material in section 5 as facts.
+
+**Brave.** Do not reload until the authority question in section 1 is decided. A second, better-maintained product source now exists and pointing Brave at both without a stated boundary is how the 21 August incident happened.
+
+**Manual.** The backlog is now four sections deep, 17, 18, 19 and this. Pages needing edits: `help/glossary.md` and `reference/logility-array-mart-mapping.md` for the UA1 horizon and the five-type list; `workflows/timing-system-sync.md` and `reference/batch-orchestration-updates.md` for the fan-out schedule; `workflows/forecast-range-calculation.md` and `special-considerations/fcr-adjustment-rules.md` for section 19.
+
+---
+
+## 8. Decisions — all four answered by Rene Bartoli, 28 August 2026
+
+**1. UA1 horizon. Answered: the horizon ends at month 21.** The build's month 12 is a gap Rene is raising with Jarred Bultema for correction, not a design change. Documented as both halves in fact 117.
+
+Separately, and this did not surface until the source email was read: the approved change in "Approval needed: UA1 protection ends with 2026, one number in January" (26 August) governs the **start** of the window, not the end. The protection steps down one month per cycle, 0-3 in September through 0 in December, ending in January 2027. **Approved for the United States** by Sarah Settano on 27 August. **Pending for the United Kingdom** with Cameron Roberts. Documented in fact 116.
+
+The email's own logic is what settled the end. Its stated goal is that the arrays delivering the Consensus Forecast and the Field Forecast "match perfectly". A UA1 ending at month 12 against ADS2 and Promo Lift running to 21 leaves months 13 to 21 carrying exactly the gap the change is meant to close.
+
+**2. Fan-out schedule. Answered, and our figure was wrong in four ways.** There are two paths. An upload triggers the refresh immediately through `jobs.run_now` and the partner grain reflects in minutes; that job is trigger-only and has no schedule. The scheduled wrappers are a safety net: UK Monday to Thursday at 08:00, 11:00 and 14:00 `Europe/London`, US Monday to Thursday at 12:00, 15:00 and 18:00 `America/New_York`. Our fact 60 had the wrong UK times, invented Friday runs and a 23:00 catch-up, missed the US wrapper entirely, and missed the immediate path. Superseded by fact 118. Source is the live repository at release 2.26.0, which is ahead of the filed snapshot.
+
+**3. BRAVE authority. Answered: our pack stays primary, theirs is used for the technical aspects of using the tool.** Enforced through fact 127 rather than an Instructions change, so their file uploads unmodified and stays traceable to their commit, and the Instructions budget is untouched.
+
+**4. Tier model. Adopted.** All four tiers, applied to our own material. Labelling `04_outputs/` is separate work and has not started.
+
+---
+
+## Sources
+
+All under `01_sources/hero-repo-docs/` once filed, from `herodocsmain.zip`, commit `1f8017ba9ee3f325bb4022bfaa948d0e3b1e8148`, extracted 2026-08-28.
+
+Primary: `HERO_Documentation_Register.md`, `HERO_Current_System_Overview.md`, `HERO_Pilot_Operations_Runbook.md`, `brave/HERO_BRAVE_Knowledge_Base.md`, `brave/README.md`, `HERO_Logility_Export_Array_Mapping_Reference.md`, `HERO_Logility_Export_Control_Brief.md`, `HERO_Logility_Export_Consumer_Technical_Spec.md`, `HERO_TMO_Export_Handling.md`, `HERO_SUP_17_BU_SKU_Reconciliation_Plan.md`, `HERO_Supply_Shortage_Comp_Proposal.md`, `HERO_Input_Data_Monitor_Job_Definition.md`, `HERO_Data_Health_App_Warnings_Spec.md`, `HERO_PowerBI_Data_Surface_Reference_for_Edgar.md`, `HERO_Logility_Contingency_CSV_Spec.md`, `HERO_Field_Forecast_Migration_Strategy.md`, `HERO_Logility_Export_Implementation_Plan.md`, `HeroEnrichmentCollection.md`.
+
+Compared against `HERO_Canonical_Facts_OnePager_v10_2026-08-28.md` and the HERO Manual site source in `04_outputs/HERO_Manual_Site/docs/`.

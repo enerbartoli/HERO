@@ -19,6 +19,9 @@ Describe the Power BI views that present resolved HERO (Hasbro Enrichment & Reco
 
 Provides visualisations of baseline forecasts, enrichments, consensus forecasts, and key performance indicators, with drill-down to SKU-level detail. Domestic (DOM) and Direct Import (DI) data are separated; DI forecasts are reflected as base trend adjustments while Domestic forecasts include captain adjustments.
 
+!!! note "One consolidated dashboard, scoped to what you are authorised for"
+    The separate per-market reports have been replaced by this single consolidated dashboard. Opening it shows you the market you are authorised for, and nothing else. Members of a regional team see every market in their region that is already live on HERO, in one view, rather than switching between per-market reports.
+
 ## POS (Point of Sale) Glidepath
 
 [Open in Power BI](https://app.powerbi.com/links/9YKCWlN-jc?ctid=701edd3e-c7a8-4789-b1ce-8a243620d68f&pbi_source=linkShare)
