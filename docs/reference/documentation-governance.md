@@ -50,7 +50,7 @@ The **repository is the source of truth** for manual content. Changes arrive as 
 
 ## Revision log
 
-**2026-08-28** — Landed Canonical Facts sections 17 to 20 (facts 94 to 127), catching the manual up after three earlier update passes did not reach the site. Two of the changes correct guidance the manual was giving confidently and had to be fixed first:
+**2026-08-28**: Landed Canonical Facts sections 17 to 20 (facts 94 to 127), catching the manual up after three earlier update passes did not reach the site. Two of the changes correct guidance the manual was giving confidently and had to be fixed first:
 
 1. **The fan-out schedule is corrected.** The manual described a six-run UK weekday cadence plus Friday runs and a late-night catch-up; none of that exists. The actual mechanism is an immediate, upload-triggered refresh reaching Level 1 in minutes, with recurring UK and US wrappers as a safety net rather than the mechanism. Updated `workflows/timing-system-sync.md` and `reference/batch-orchestration-updates.md`.
 2. **Level 2.5 visibility in the Level 1 template is corrected.** A Level 1 user is not blind to a Level 2.5 adjustment in their template; the template carries it as a read-only context column, subject only to the same minutes-after-upload timing as everything else post-processing touches. Updated `tools/bu-sku-level-25-mode.md` and `tools/forecast-reconciliation-template.md`.

@@ -122,7 +122,7 @@ Capturing that relationship correctly matters even though nothing moves in the f
 - [Forecast Reconciliation Template (FRT)](../tools/forecast-reconciliation-template.md) — the in-template "set an end date to stop forecasting" usage.
 - [BU-SKU / Level 2.5 mode](../tools/bu-sku-level-25-mode.md) — note the difference: the **range** decides *which customers* receive a forecast; **Level 2.5** decides *how an aggregate adjustment is split* across them.
 - [Batch orchestration & updates](../reference/batch-orchestration-updates.md)
-- [Rules for FCR adjustment within cycle](../special-considerations/fcr-adjustment-rules.md) — what to do when forecast is lost because of the range, and the `(M)` tag used there.
+- [Rules for FCR adjustment within cycle](../special-considerations/fcr-adjustment-rules.md): what to do when forecast is lost because of the range, and the `(M)` tag used there.
 
 !!! warning "Gaps & Open Questions"
     - **Level 2 out-of-range scenario, not yet exercised.** The expected behaviour under the roll-up rule above is that an out-of-range Level 2 value is not forced down to Level 1 and is then rolled over by a Level 1 zero. `[GAP: test pending]` A dummy-data case in Logility to confirm it.

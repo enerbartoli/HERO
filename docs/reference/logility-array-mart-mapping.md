@@ -19,13 +19,15 @@ HERO **reads** exactly one array from Logility: `RESULTANT_FORECAST`. Everything
 
 | | Horizon HERO manages |
 |---|---|
-| UA1 | design horizon months 5–21, suppressed inside the frozen window; the current build stops publishing UA1 after month 12 (see the note below the table) |
+| UA1 | design horizon months 5 to 21, suppressed inside the frozen window; the current build stops publishing UA1 after month 12 (see the note below the table) |
 | UA2–UA6, ADS2, PROMO_LIFT | months 0–21 |
 | RESULTANT_FORECAST | not written by HERO; changed in Logility by the baseline owner |
 | ADS3 | not written by HERO; calculated by Logility from its components |
 
 !!! warning "UA1 horizon: design is 21, the build currently stops at 12"
-    Month 21 is the design of record, matching UA2 to UA6, ADS2 and Promo Lift so that the Sales Forecast does not have a shorter reach than the Consensus arrays it is held equal to. Six current product-repository documents describe the built export window as stopping at month 12. **This is a known build gap, not a design change**, and Rene Bartoli is raising it with Jarred Bultema for correction. Do not teach month 12 as the target: if you observe UA1 not publishing beyond month 12 today, that is the known gap, not a defect in your own work. `[GAP: Jarred Bultema]` Confirmation that the export window has been extended to month 21.
+    Month 21 is the design of record, matching UA2 to UA6, ADS2 and Promo Lift so that the Sales Forecast does not have a shorter reach than the Consensus arrays it is held equal to. Six current product-repository documents describe the built export window as stopping at month 12. **This is a known build gap, not a design change**, and Rene Bartoli is raising it with Jarred Bultema for correction. Do not teach month 12 as the target: if you observe UA1 not publishing beyond month 12 today, that is the known gap, not a defect in your own work.
+
+    <!-- TODO: confirm with Rene --> When the export window has been extended to month 21, remove this warning and state month 21 plainly. `[GAP: Jarred Bultema]` Confirmation that the export window has been extended.
 
     Separately, UA1 authoring is currently withheld inside a **frozen window** at the start of the horizon. That window is stepping down cycle by cycle and ends with the January 2027 cycle; see the [frozen window](../help/glossary.md) entry for the schedule. The frozen window and the month-12 build gap are two different limits and should not be merged into one statement.
 
@@ -33,7 +35,7 @@ HERO **reads** exactly one array from Logility: `RESULTANT_FORECAST`. Everything
 
 | Array | Holds | Notes |
 |---|---|---|
-| **UA1** | Adjusted statistical baseline, and also the Sales (Fill) Forecast | Carries the baseline, the Level 1 base-trend adjustment, the Level 2.5 base-trend adjustment (after fan-out), version adjustments, channel shift, and five UA1-mapped enrichment types: `PHASE_OUT`, `EXCESS_DEPLETION`, `DEMAND_PHASE_SHIFT`, `SUPPLY_SHORTAGE_COMP` and `NON_STATISTICAL_DEMAND`. Level 1 `MARKETING` and `DEMAND_PLANNING` enrichments from the enrichment capture template do **not** land here; adjustments from the forecast reconciliation template **do**, whoever makes them (see [what routes an entry](batch-orchestration-updates.md)). Authored by HERO in design horizon months 5–21 (see the build-gap warning above); see the [frozen window](../help/glossary.md). |
+| **UA1** | Adjusted statistical baseline, and also the Sales (Fill) Forecast | Carries the baseline, the Level 1 base-trend adjustment, the Level 2.5 base-trend adjustment (after fan-out), version adjustments, channel shift, and five UA1-mapped enrichment types: `PHASE_OUT`, `EXCESS_DEPLETION`, `DEMAND_PHASE_SHIFT`, `SUPPLY_SHORTAGE_COMP` and `NON_STATISTICAL_DEMAND`. Level 1 `MARKETING` and `DEMAND_PLANNING` enrichments from the enrichment capture template do **not** land here; adjustments from the forecast reconciliation template **do**, whoever makes them (see [what routes an entry](batch-orchestration-updates.md)). Authored by HERO in design horizon months 5 to 21 (see the build-gap warning above); see the [frozen window](../help/glossary.md). |
 | **UA2** | Promotional activity | Promo-type sales adjustments. |
 | **UA3** | Sets / initial stocking | Set-type sales adjustments. |
 | **UA4** | Samples | Sample-type sales adjustments. |
@@ -49,7 +51,7 @@ HERO **reads** exactly one array from Logility: `RESULTANT_FORECAST`. Everything
     `NON_STATISTICAL_DEMAND` maps to UA1 with a sign-based Consensus contribution, and carries three riders worth knowing on top of the mapping itself:
 
     - **No percentage input.** There is no baseline to resolve a percentage against, so entries are quantities only.
-    - **It inherits the UA1 window.** Its Field Forecast publication follows whatever UA1's window is at the time, so it is subject to the same frozen-window step-down and the same build gap as the rest of UA1. Its Consensus contribution, by contrast, stays eligible across the full 0–21 horizon regardless.
+    - **It inherits the UA1 window.** Its Field Forecast publication follows whatever UA1's window is at the time, so it is subject to the same frozen-window step-down and the same build gap as the rest of UA1. Its Consensus contribution, by contrast, stays eligible across the full 0 to 21 horizon regardless.
     - **It is not separately labelled in the export change-review report.** That report classifies every UA1 change as reconciliation or base-trend-adjustment activity, so this type cannot be told apart there even though it carries its own label inside HERO.
 
     See [Enrichment Capture Template](../tools/enrichment-capture-template.md) for what the type captures and when to choose it over a Level 1 base trend adjustment.

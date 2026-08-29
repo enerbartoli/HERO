@@ -859,7 +859,7 @@ Explain why a download, an upload, a dashboard refresh, and a Logility publicati
 |---|---|---|
 | Download any workbook (enrichment-only, standard, or BU-SKU) | Current HERO / Logility data for the selected scope | Immediately, at download (a point-in-time extract) |
 | **Upload** a valid workbook | HERO raw authored state | Authoring state is captured **immediately**; the export later emits only the rows you changed |
-| A **Level 2.5 (BU-SKU) reconciliation** change broadcast down to Level 1, and shown in the dashboard | Resolved weekly reporting layer | **In minutes**, triggered by the upload itself — the scheduled wrappers below are a safety net, not the mechanism |
+| A **Level 2.5 (BU-SKU) reconciliation** change broadcast down to Level 1, and shown in the dashboard | Resolved weekly reporting layer | **In minutes**, triggered by the upload itself (the scheduled wrappers below are a safety net, not the mechanism) |
 | View **resolved dashboard / reporting** | Resolved weekly reporting layer | After the fan-out completes |
 | **Publish to Logility** | Resolved HERO state packaged into the export surfaces | **Only through the weekly Friday export pipeline** |
 
@@ -1148,7 +1148,7 @@ The rules on this page are the starting point, not a finished design. They will 
 - [Forecast Reconciliation Template (FRT)](../tools/forecast-reconciliation-template.md) — the in-template "set an end date to stop forecasting" usage.
 - [BU-SKU / Level 2.5 mode](../tools/bu-sku-level-25-mode.md) — note the difference: the **range** decides *which customers* receive a forecast; **Level 2.5** decides *how an aggregate adjustment is split* across them.
 - [Batch orchestration & updates](../reference/batch-orchestration-updates.md)
-- [Rules for FCR adjustment within cycle](../special-considerations/fcr-adjustment-rules.md) — what to do when forecast is lost because of the range, and the `(M)` tag used there.
+- [Rules for FCR adjustment within cycle](../special-considerations/fcr-adjustment-rules.md): what to do when forecast is lost because of the range, and the `(M)` tag used there.
 
 **Warning — Gaps & Open Questions**
 
@@ -1598,7 +1598,7 @@ Single reference for HERO terms and acronyms.
 | **SKU hierarchy levels** | Nodes in the item hierarchy: L5 Brand/BU · L4 Global SKU/BU · L3 Parent SKU/BU/Channel · L2 Planning SKU/Customer · L1 Planning SKU/Customer/Channel. "Level 3" is a hierarchy node (e.g. Parent SKU / BU / Channel), **not** a review stage; the later-stage review stage is Level 2.5 / BU-SKU. |
 | **Base Trend Adjustment** | A direct week-level delta against the displayed baseline forecast. Persists across cycles until manually reversed — it is not a single-cycle entry. At Level 2.5 it disaggregates across **all** forecast partners by baseline proportion; it cannot be targeted at one account. |
 | **Cleansing** | Correction of the **Adjusted Demand array** so the statistical baseline learns real demand rather than what shipped. It runs in the opposite direction to the enrichment — when a period closes, cleansed history is actual shipments minus the `SET` — and never touches raw Actuals. See [How history cleansing works](../workflows/forecast-range-calculation.md#how-history-cleansing-works). |
-| **Frozen window** | The rolling lead-time horizon at the start of the UA1 authoring window, inside which HERO withholds UA1 authoring. It is stepping down cycle by cycle rather than staying fixed at months 0–4: September 2026 protects months 0–3, October 0–2, November 0–1, December 0 only, and from the January 2027 cycle there is no protection and HERO writes UA1 from month 0. The window itself does not disappear; what ends is HERO holding UA1 back inside it. The step-down is agreed direction for both pilot markets (United States and United Kingdom); it does not extend to markets that are not yet live on HERO. Inside the frozen window, the published value currently carries the current live Logility **baseline**, not the live UA1 array; the intent is to carry the live UA1 array, and the difference is a known gap that narrows as the step-down proceeds and closes when it completes. HERO authors UA1 in design horizon months 5–21, though the current build stops publishing UA1 after month 12, a build gap rather than a horizon change (see [Logility array & mart mapping](../reference/logility-array-mart-mapping.md)). |
+| **Frozen window** | The rolling lead-time horizon at the start of the UA1 authoring window, inside which HERO withholds UA1 authoring. It is stepping down cycle by cycle rather than staying fixed at months 0 to 4: September 2026 protects months 0 to 3, October protects 0 to 2, November protects 0 to 1, December protects month 0 only, and from the January 2027 cycle there is no protection and HERO writes UA1 from month 0. The window itself does not disappear; what ends is HERO holding UA1 back inside it. The step-down is agreed direction for both pilot markets (United States and United Kingdom); it does not extend to markets that are not yet live on HERO. Inside the frozen window, the published value currently carries the current live Logility **baseline**, not the live UA1 array; the intent is to carry the live UA1 array, and the difference is a known gap that narrows as the step-down proceeds and closes when it completes. HERO authors UA1 in design horizon months 5 to 21, though the current build stops publishing UA1 after month 12, a build gap rather than a horizon change (see [Logility array & mart mapping](../reference/logility-array-mart-mapping.md)). |
 | **Version Change** | A net-zero move of demand from one planning SKU to another over selected weeks. |
 | **Channel Shift** | A move of some or all demand between `DOM` and `DI` over selected weeks. |
 | **TMO** | Trade / pallet adjustment that travels through the UA5 / TMO path. Sourced from FAST. |
@@ -1647,14 +1647,16 @@ A HERO entry is a plus or minus delta against what was there before. The export 
 
 | | Horizon HERO manages |
 |---|---|
-| UA1 | design horizon months 5–21, suppressed inside the frozen window; the current build stops publishing UA1 after month 12 (see the note below the table) |
+| UA1 | design horizon months 5 to 21, suppressed inside the frozen window; the current build stops publishing UA1 after month 12 (see the note below the table) |
 | UA2–UA6, ADS2, PROMO_LIFT | months 0–21 |
 | RESULTANT_FORECAST | not written by HERO; changed in Logility by the baseline owner |
 | ADS3 | not written by HERO; calculated by Logility from its components |
 
 **Warning — UA1 horizon: design is 21, the build currently stops at 12**
 
-Month 21 is the design of record, matching UA2 to UA6, ADS2 and Promo Lift so that the Sales Forecast does not have a shorter reach than the Consensus arrays it is held equal to. Six current product-repository documents describe the built export window as stopping at month 12. **This is a known build gap, not a design change**, and Rene Bartoli is raising it with Jarred Bultema for correction. Do not teach month 12 as the target: if you observe UA1 not publishing beyond month 12 today, that is the known gap, not a defect in your own work. `[GAP: Jarred Bultema]` Confirmation that the export window has been extended to month 21.
+Month 21 is the design of record, matching UA2 to UA6, ADS2 and Promo Lift so that the Sales Forecast does not have a shorter reach than the Consensus arrays it is held equal to. Six current product-repository documents describe the built export window as stopping at month 12. **This is a known build gap, not a design change**, and Rene Bartoli is raising it with Jarred Bultema for correction. Do not teach month 12 as the target: if you observe UA1 not publishing beyond month 12 today, that is the known gap, not a defect in your own work.
+
+<!-- TODO: confirm with Rene --> When the export window has been extended to month 21, remove this warning and state month 21 plainly. `[GAP: Jarred Bultema]` Confirmation that the export window has been extended.
 
 Separately, UA1 authoring is currently withheld inside a **frozen window** at the start of the horizon. That window is stepping down cycle by cycle and ends with the January 2027 cycle; see the [frozen window](../help/glossary.md) entry for the schedule. The frozen window and the month-12 build gap are two different limits and should not be merged into one statement.
 
@@ -1662,7 +1664,7 @@ Separately, UA1 authoring is currently withheld inside a **frozen window** at th
 
 | Array | Holds | Notes |
 |---|---|---|
-| **UA1** | Adjusted statistical baseline, and also the Sales (Fill) Forecast | Carries the baseline, the Level 1 base-trend adjustment, the Level 2.5 base-trend adjustment (after fan-out), version adjustments, channel shift, and five UA1-mapped enrichment types: `PHASE_OUT`, `EXCESS_DEPLETION`, `DEMAND_PHASE_SHIFT`, `SUPPLY_SHORTAGE_COMP` and `NON_STATISTICAL_DEMAND`. Level 1 `MARKETING` and `DEMAND_PLANNING` enrichments from the enrichment capture template do **not** land here; adjustments from the forecast reconciliation template **do**, whoever makes them (see [what routes an entry](batch-orchestration-updates.md)). Authored by HERO in design horizon months 5–21 (see the build-gap warning above); see the [frozen window](../help/glossary.md). |
+| **UA1** | Adjusted statistical baseline, and also the Sales (Fill) Forecast | Carries the baseline, the Level 1 base-trend adjustment, the Level 2.5 base-trend adjustment (after fan-out), version adjustments, channel shift, and five UA1-mapped enrichment types: `PHASE_OUT`, `EXCESS_DEPLETION`, `DEMAND_PHASE_SHIFT`, `SUPPLY_SHORTAGE_COMP` and `NON_STATISTICAL_DEMAND`. Level 1 `MARKETING` and `DEMAND_PLANNING` enrichments from the enrichment capture template do **not** land here; adjustments from the forecast reconciliation template **do**, whoever makes them (see [what routes an entry](batch-orchestration-updates.md)). Authored by HERO in design horizon months 5 to 21 (see the build-gap warning above); see the [frozen window](../help/glossary.md). |
 | **UA2** | Promotional activity | Promo-type sales adjustments. |
 | **UA3** | Sets / initial stocking | Set-type sales adjustments. |
 | **UA4** | Samples | Sample-type sales adjustments. |
@@ -1680,7 +1682,7 @@ If an entry is an enrichment, is not `MARKETING`, is not `DEMAND_PLANNING`, and 
 `NON_STATISTICAL_DEMAND` maps to UA1 with a sign-based Consensus contribution, and carries three riders worth knowing on top of the mapping itself:
 
 - **No percentage input.** There is no baseline to resolve a percentage against, so entries are quantities only.
-- **It inherits the UA1 window.** Its Field Forecast publication follows whatever UA1's window is at the time, so it is subject to the same frozen-window step-down and the same build gap as the rest of UA1. Its Consensus contribution, by contrast, stays eligible across the full 0–21 horizon regardless.
+- **It inherits the UA1 window.** Its Field Forecast publication follows whatever UA1's window is at the time, so it is subject to the same frozen-window step-down and the same build gap as the rest of UA1. Its Consensus contribution, by contrast, stays eligible across the full 0 to 21 horizon regardless.
 - **It is not separately labelled in the export change-review report.** That report classifies every UA1 change as reconciliation or base-trend-adjustment activity, so this type cannot be told apart there even though it carries its own label inside HERO.
 
 See [Enrichment Capture Template](../tools/enrichment-capture-template.md) for what the type captures and when to choose it over a Level 1 base trend adjustment.
@@ -1808,7 +1810,7 @@ No technical lock prevents changes after executive sign-off. The control is the 
 
 **Warning — Gaps & Open Questions**
 
-- **UA1 upper horizon — design confirmed at 21, build confirmed at 12.** The design of record is month 21 (Rene Bartoli, 6 August 2026; reaffirmed 28 August 2026 to match UA2 to UA6, ADS2 and Promo Lift). The build currently stops publishing UA1 at month 12; this is a known build gap being raised for correction, not a design change. `[GAP — Jarred Bultema]` Confirmation that the export window has been extended to month 21.
+- **UA1 upper horizon: design confirmed at 21, build confirmed at 12.** The design of record is month 21 (Rene Bartoli, 6 August 2026; reaffirmed 28 August 2026 to match UA2 to UA6, ADS2 and Promo Lift). The build currently stops publishing UA1 at month 12; this is a known build gap being raised for correction, not a design change. `[GAP: Jarred Bultema]` Confirmation that the export window has been extended to month 21.
 - **Frozen-window calculation when a cycle opens in the prior month.** A cycle formally opens the month before its name (the July 2026 cycle opened on 22 June 2026). Whether HERO's rolling window can therefore reach into the last month of the frozen period is not confirmed.
 - **UA2–UA6 direct-edit lockdown.** The Logility permission that allows direct edits on UA2–UA6 and PROMO_LIFT can be removed so that every change flows through HERO. Whether it has been applied, or remains a process rule only, is not confirmed. UA1 stays directly editable inside the frozen window by design, though that window is stepping down cycle by cycle (see [Logility array & mart mapping](logility-array-mart-mapping.md)).
 
@@ -1902,7 +1904,7 @@ The **repository is the source of truth** for manual content. Changes arrive as 
 
 ## Revision log
 
-**2026-08-28** — Landed Canonical Facts sections 17 to 20 (facts 94 to 127), catching the manual up after three earlier update passes did not reach the site. Two of the changes correct guidance the manual was giving confidently and had to be fixed first:
+**2026-08-28**: Landed Canonical Facts sections 17 to 20 (facts 94 to 127), catching the manual up after three earlier update passes did not reach the site. Two of the changes correct guidance the manual was giving confidently and had to be fixed first:
 
 1. **The fan-out schedule is corrected.** The manual described a six-run UK weekday cadence plus Friday runs and a late-night catch-up; none of that exists. The actual mechanism is an immediate, upload-triggered refresh reaching Level 1 in minutes, with recurring UK and US wrappers as a safety net rather than the mechanism. Updated `workflows/timing-system-sync.md` and `reference/batch-orchestration-updates.md`.
 2. **Level 2.5 visibility in the Level 1 template is corrected.** A Level 1 user is not blind to a Level 2.5 adjustment in their template; the template carries it as a read-only context column, subject only to the same minutes-after-upload timing as everything else post-processing touches. Updated `tools/bu-sku-level-25-mode.md` and `tools/forecast-reconciliation-template.md`.
@@ -2101,7 +2103,7 @@ After the disaggregation batch, the updated data is transmitted to the EDW table
 
 Result: **Level 3 stays stable**; **Level 1 is redistributed** only across the correct customers. Use this only when the business decision is to preserve the total SKU forecast and redistribute, rather than reduce the SKU or compensate through another product.
 
-## Case 4 — Forecast lost during disaggregation: recapture at Level 1
+## Case 4: forecast lost during disaggregation, recapture at Level 1
 
 Applies when a product has forecast for its partners only through a given month, and the forecasting range for those partners ends at that same point, while the Consensus Forecast still carries volume beyond it. Level 3 disaggregation into those customers then has nowhere to put the extra volume, and it disappears rather than landing anywhere wrong.
 

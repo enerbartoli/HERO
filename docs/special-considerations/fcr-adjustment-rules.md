@@ -65,7 +65,7 @@ The team then waits for the **end-of-day disaggregation batch**, which recalcula
 
 Result: **Level 3 stays stable**; **Level 1 is redistributed** only across the correct customers. Use this only when the business decision is to preserve the total SKU forecast and redistribute, rather than reduce the SKU or compensate through another product.
 
-## Case 4 — Forecast lost during disaggregation: recapture at Level 1
+## Case 4: forecast lost during disaggregation, recapture at Level 1
 
 Applies when a product has forecast for its partners only through a given month, and the forecasting range for those partners ends at that same point, while the Consensus Forecast still carries volume beyond it. Level 3 disaggregation into those customers then has nowhere to put the extra volume, and it disappears rather than landing anywhere wrong.
 

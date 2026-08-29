@@ -16,7 +16,7 @@ Explain why a download, an upload, a dashboard refresh, and a Logility publicati
 |---|---|---|
 | Download any workbook (enrichment-only, standard, or BU-SKU) | Current HERO / Logility data for the selected scope | Immediately, at download (a point-in-time extract) |
 | **Upload** a valid workbook | HERO raw authored state | Authoring state is captured **immediately**; the export later emits only the rows you changed |
-| A **Level 2.5 (BU-SKU) reconciliation** change broadcast down to Level 1, and shown in the dashboard | Resolved weekly reporting layer | **In minutes**, triggered by the upload itself — the scheduled wrappers below are a safety net, not the mechanism |
+| A **Level 2.5 (BU-SKU) reconciliation** change broadcast down to Level 1, and shown in the dashboard | Resolved weekly reporting layer | **In minutes**, triggered by the upload itself (the scheduled wrappers below are a safety net, not the mechanism) |
 | View **resolved dashboard / reporting** | Resolved weekly reporting layer | After the fan-out completes |
 | **Publish to Logility** | Resolved HERO state packaged into the export surfaces | **Only through the weekly Friday export pipeline** |
 
