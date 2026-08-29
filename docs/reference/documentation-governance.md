@@ -14,6 +14,20 @@ State how this documentation is sourced, versioned, and kept honest about uncert
 
 This manual is consolidated from controlled source documents — primarily the **HERO User Manual (v0)** and the **BU-SKU Reconciliation Behavior Explainer**, with practical examples drawn from the **Module 2** enablement material. Do not add HERO functionality that is not supported by those sources.
 
+!!! note "The HERO product repository is canonical for product behaviour"
+    Confirmed by Rene Bartoli, 28 August 2026: the HERO product repository is the canonical source for **what the application does** (the export contract, arrays and horizons, workbook and upload behaviour, formulas, stale-template collisions, enrichment identity and status, the preliminary forecast, dashboard-versus-template timing, missing SKUs, and escalation). Where a page in this manual describes tool behaviour that their repository also documents, it should defer to that source rather than restate it, because their material changes with the code and this manual does not update on the same cadence. This manual remains the only source for the material their repository does not cover: the Forecast Calculation Range as a business process, the Management Indicator, proportioning, the enrichment taxonomy as a decision framework, roles, market scope, and the frozen-window policy as a business rule rather than a horizon number.
+
+## Authority tiers
+
+Adopted 28 August 2026, for this manual's own material. Where two documents disagree, use the higher tier and open a correction against the lower one.
+
+| Tier | Meaning |
+|---|---|
+| 1 | Current canonical |
+| 2 | Current specialised |
+| 3 | Proposed or in flight, and **not proof of deployment** |
+| 4 | Historical |
+
 ## Handling uncertainty
 
 !!! warning "Never hide gaps"
@@ -35,6 +49,24 @@ This manual is consolidated from controlled source documents — primarily the *
 The **repository is the source of truth** for manual content. Changes arrive as instructions rather than as inbound packaged archives. The process owner's local folder is a **one-way, read-only copy** of the repository — delivered as a generated snapshot (a zip drop produced on each merge to `main`), copied in by hand, never edited in place and never shipped back as a master. This retires the earlier two-way packaged-archive round-trip, which was itself a place where the repository and the local copy could quietly drift apart.
 
 ## Revision log
+
+**2026-08-28** — Landed Canonical Facts sections 17 to 20 (facts 94 to 127), catching the manual up after three earlier update passes did not reach the site. Two of the changes correct guidance the manual was giving confidently and had to be fixed first:
+
+1. **The fan-out schedule is corrected.** The manual described a six-run UK weekday cadence plus Friday runs and a late-night catch-up; none of that exists. The actual mechanism is an immediate, upload-triggered refresh reaching Level 1 in minutes, with recurring UK and US wrappers as a safety net rather than the mechanism. Updated `workflows/timing-system-sync.md` and `reference/batch-orchestration-updates.md`.
+2. **Level 2.5 visibility in the Level 1 template is corrected.** A Level 1 user is not blind to a Level 2.5 adjustment in their template; the template carries it as a read-only context column, subject only to the same minutes-after-upload timing as everything else post-processing touches. Updated `tools/bu-sku-level-25-mode.md` and `tools/forecast-reconciliation-template.md`.
+3. **The Forecast Calculation Range chapter gained the mechanism it was missing**: the range is a continuous period rather than a year bucket, the Management Indicator (`M` preserves an out-of-range value, `H` removes it) decides what survives it, the range constrains the force down but not the roll up (a different mechanism, the Summing program, handles that), and how the range is built differs by market. Updated `workflows/forecast-range-calculation.md`.
+4. **A new recapture case.** When forecast is lost during disaggregation because the range ends before the Consensus Forecast does, the fix is a Level 1 recapture, never a Level 2.5 one; recapturing at Level 2.5 spreads the volume across every extended partner instead of reaching the one that lost it. Detection is manual today; no monitor exists for this yet. New Case 4 in `special-considerations/fcr-adjustment-rules.md`.
+5. **Fan-out weighting is described as baseline share**, with the addition that earlier enrichments and carried-forward reconciliation changes do not affect those weights. Updated `tools/bu-sku-level-25-mode.md` and `examples/bu-sku-worked-examples.md`.
+6. **A fifth UA1-mapped enrichment type, `NON_STATISTICAL_DEMAND`**, joins `PHASE_OUT`, `EXCESS_DEPLETION`, `DEMAND_PHASE_SHIFT` and `SUPPLY_SHORTAGE_COMP`, and the generating rule behind the list is now taught directly. It captures full forecast volume for a portfolio segment a market has agreed not to forecast statistically, and does not retire the Level 1 base-trend route as an alternative. Updated `reference/logility-array-mart-mapping.md` and `tools/enrichment-capture-template.md`; new glossary entry.
+7. **TMO's timing framing was checked and found not to be present** in this manual; no correction was needed.
+8. **The UA1 horizon and the frozen window step-down.** The design horizon is confirmed at month 21; the current build stops publishing UA1 at month 12, a known gap being raised for correction rather than a design change. Separately, the frozen window inside which HERO withholds UA1 authoring is stepping down cycle by cycle and is retired entirely from the January 2027 cycle, agreed direction in both pilot markets. Updated `help/glossary.md` and `reference/logility-array-mart-mapping.md`.
+9. **The frozen-window carry-forward is stated precisely**: it currently carries the live Logility baseline, not the live UA1 array as intended; the gap narrows as the step-down proceeds. Updated `help/glossary.md`.
+10. **What HERO actually sends to Logility.** Users author deltas; the export sends complete replacement values, and output is rounded to whole units at partner, SKU and week grain, which is the usual answer to a BU-SKU total not tying exactly to the sum of its partners. Updated `reference/logility-array-mart-mapping.md` and `workflows/timing-system-sync.md`.
+11. **New glossary entries**: Management Indicator, `NON_STATISTICAL_DEMAND`, Summing program, and a tightened Forecast Calculation Range entry that separates it explicitly from the portfolio extension.
+12. **One consolidated Power BI dashboard** replaces the earlier separate per-market reports; a user sees the market they are authorised for, and regional-team members see every live market in their region. Updated `tools/reference-views-dashboards.md`.
+13. **Documentation governance itself.** Recorded the HERO product repository as the canonical source for product behaviour, with this manual deferring to it on tool mechanics and remaining the only source for the business-process material it does not cover; adopted the four-tier authority model above.
+
+Sourced from `HERO_Canonical_Facts_OnePager_v11_2026-08-28`, the two Logility vendor WebHelp transcriptions in `update_kit/`, and the HERO product repository review in `update_kit/Repo_Docs_Review_2026-08-28.txt`.
 
 **2026-08-07** — Confirmed by Rene Bartoli (process owner) on 7 August 2026:
 

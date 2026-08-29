@@ -1,0 +1,216 @@
+# Logility Demand Optimization: Forecast Override Indicators, the Indicators Window, and Summing Up Indicators
+
+## Provenance
+
+| Field | Value |
+|---|---|
+| Source type | **Vendor documentation** (Logility product WebHelp) |
+| Source pages | `DO Concepts - Forecast Override Indicators`, `Demand Pages - Forecast Indicators Window - DO`, `Summarize Data Logic - Summing Up Indicators - DO` |
+| Supplied by | Rene Bartoli, 28 August 2026, as `01_sources/data-architecture/Logility_WebHelp_ForecastOverrideIndicators_and_FCR_2026-08-28.docx` |
+| Copyright line in source | 2023 American Software, Inc. Proprietary & Confidential |
+| Status | **Authoritative for Logility system behaviour.** Not a Hasbro process document |
+| Captured as | Text transcription. The source contains 42 screenshots of the workflow grids; those images are **not** reproduced here |
+
+> **Read this first.** This page is the mechanism behind **Canonical Facts 106, 107, 114 and 115**. What
+> Hasbro calls the **Management Indicator**, and loads per item, per level, per week through the FCR
+> pipeline, is the field this page calls the **Resultant Forecast Override Indicator**. We use two of its
+> values, `M` and `H`. Confirmed by Rene Bartoli, 28 August 2026.
+>
+> The companion page, `Logility_DO_Forecast_Calculation_Range_Logic_v2_2026-08-28.md`, describes the
+> Forecast Calculation Range. **Neither page is complete without the other.** The range zeroes values
+> *through* the Calculate Forecasts program, and this page is what decides which periods that program is
+> allowed to write into.
+>
+> The source document also re-included the Forecast Calculation Range Logic page, which is already
+> transcribed in the companion file and is not duplicated here.
+
+---
+
+## 1. What a forecast override indicator is
+
+The page describes all the valid indicator values used when entering a forecast override to a **Resultant Forecast** value on the **Forecast Hierarchy** page. This feature requires the Demand Optimization (DO) module.
+
+To enter an override you click in the cell and type a value. You can also click on an arithmetic operator so your input is added (+), subtracted (-), multiplied (\*) or divided (/) into the existing amount. The indicator for the period then changes to the **Default Indicator** specified for the Resultant Forecast on the Indicators options page, or you can specify `D`, `H`, `M`, `N`, `P` or `U` explicitly.
+
+**Single period only.** These override indicators apply only when you enter an override in a **single period**. If you enter a **total** override, the total is distributed across the displayed periods in proportion to the forecast, and the indicator on each period changes to the Default Indicator.
+
+### Forcible and unforcible
+
+Every indicator is either forcible or unforcible, and this determines what the Force Forecasts (FIF) program and Interactive Forcing can do to it:
+
+- **Forcible.** Forcing will distribute the group Resultant Forecast down to the lower level records that carry forcible indicators. The Resultant Forecast is adjusted when FIF or Interactive Forcing runs.
+- **Unforcible.** Forcing from a product group does not reach these. The Resultant Forecast does not change when FIF or Interactive Forcing runs.
+
+---
+
+## 2. The indicator values
+
+### `D` — Direct unforcible forecast override
+
+Your input is used as the Resultant Forecast. The Resultant Forecast is **unforcible**.
+
+> Resultant forecast = Your input
+
+### `H` — Forcible indicator
+
+The Resultant Forecast is **forcible**.
+
+**This is the paragraph that matters most for Hasbro.** When an item or record forecast is calculated by the **Calculate Forecasts (FCP)** program, or when you run Forecast Analysis to calculate an individual forecast, the calculation updates the Unforced Forecast and the Resultant Forecast array. The Forced Forecast is copied into the Resultant Forecast so both arrays hold the same values.
+
+> "The calculation copies the Forced future forecast values for each future period to each period of the
+> Resultant Forecast **if the indicator on the period is 'N' or 'H'.** When a period has any other
+> indicator ('P', 'D', or 'M'), the quantity and indicator are **left as they were before the
+> processing**, because management has indicated they are overriding the statistically-generated forecast
+> quantities."
+
+The same rule is restated on the page for the Unforced System Forecast array: it is updated when the record's forecast is calculated by the FCP in batch or through Forecast Analysis, the future values are copied to the Forced System Forecasts, and copied into the Resultant **only where the period indicator is `N` or `H`**.
+
+**Forcing keeps the two arrays separate.** The FIF program balances the parent future forecast quantity to the sum of the children's quantity by period, and it does so twice over and independently: the Forced System parent forecast onto the Forced System of the children by percentage, and the Resultant parent forecast onto the Resultant of the children by percentage of **forcible** quantities. The vendor's stated reason is that this lets you compare the effect of simple statistical grouping against a Resultant that has been augmented by management intervention.
+
+**The Summing program is a third thing.** The vendor notes that the Summing program has similar balancing functionality but **only for Resultant Forecasts**, and it runs the other way: the sum of the children is brought up to the parent record. Running the Summing Resultant (SID) option after the FCP has run may itself cause a difference in the Resultant Forecast.
+
+> The only time the Forced System forecast and the Resultant forecast hold the same exact value is
+> immediately after the parent and child records in the group have been calculated, and before they have
+> been forced or summed.
+
+### `M` — Management forcible override
+
+Your input is used as the Resultant Forecast. The Resultant Forecast is **forcible**.
+
+> Resultant forecast = Your input (before forcing)
+
+### `N` — No override, unforcible
+
+The Unforced System Forecast is copied into the Resultant Forecast. Enter a zero quantity and the unforced system forecast becomes the resultant forecast. Unforcible from the group level, but may be modified when a total override is spread across periods.
+
+> Resultant forecast = Unforced system forecast
+
+### `O` — Original
+
+Displayed only for an Additional Demand Statistic (ADS) array, where it shows the original ADS1, ADS2 or ADS3 value generated by the system. **You cannot apply this indicator**, the system sets it. It is displayed instead of `H` or `N` to mark a system-generated original, and is **stored on the database as `H`**.
+
+### `P` — Promotion unforcible override
+
+Your input is used as the Resultant Forecast. The Resultant Forecast is **unforcible**.
+
+> Resultant forecast = Your input
+
+The Replace Promoted Demands option determines whether history is depromoted when the period moves into history.
+
+### `U` — Upward sum
+
+The Summary Forecast is copied to the Resultant Forecast and the default indicator is applied. The indicator then changes to the Resultant Forecast Indicator value set in the Indicators window.
+
+> Resultant forecast = Summary forecast
+
+**About the Summary Forecast.** The summary forecast is the lower level forecasts summed up to the upper level group. Forcing reconciles the sum of the lower level forecasts to the sum of the upper level forecasts so both levels of the pyramid are equal. If you enter an override for a particular item, the effect appears on the upper level summary forecast after the Summarize Demand program runs. Entering a `U` override at the upper level means you are **accepting** the lower level changes, so the Summary Forecast becomes the Resultant Forecast.
+
+### `R` — Replaced, forcible
+
+The Resultant Forecast equals an ADS1, ADS2 or ADS3 forecast. For an ADS array you can select `R`; after saving, the ADS indicator returns to its default and the Resultant Forecast indicator becomes `R`. **You cannot apply this indicator directly**, the system sets it.
+
+---
+
+## 3. The Forecast Indicators window: where defaults are set
+
+The Forecast Indicators window is reached from the Forecast Hierarchy page or the Global Forecasts page, and sets the default indicators applied when a demand override or forecast override is entered without one.
+
+On the Global Forecasts page, viewing a record **above the Source Level**, the window is titled "Non-Source Indicators" and an extra option appears:
+
+- **`I` — Indicator Ignored.** Pushes the value down the pyramid but **not** the indicator, so indicators at the lower level are unchanged. Any other default pushes both the value and the indicator down. Because Global Forecasts shows a dynamic pyramid, only Source Level records are updated.
+
+Defaults available by array:
+
+| Array | Available default indicators |
+|---|---|
+| **Resultant Forecast** | `M` Management Forcible Override, `P` Promoted Unforcible Override, `D` Direct Unforcible Override, `I` Indicator Ignored (non-source only) |
+| **Adjusted Demand** | `M` Management, `P` Promotion, `Z` Zero Weighted, `I` Indicator Ignored (non-source only) |
+| **ADS1, ADS2, ADS3** | `M` Management Forecast Override, `P` Promoted Unforcible Override, `D` Direct Unforcible Override, `I` Indicator Ignored (non-source only) |
+
+### Editing Totals: Override Unforcible `D` `P` `N`
+
+Applies when entering a **total** Resultant Forecast override where one or more periods carry a firm indicator. Also used when importing Resultant Forecasts to update a grid cell on the Forecast Hierarchy page.
+
+- **Selected.** Periods with `D` and `P` indicators are included in the distribution. The total is spread across all periods in proportion to the forecast, and the `D` and `P` indicators change to the default forecast indicator.
+- **Not selected.** Periods with unforced or firm overrides are not updated and their indicators do not change. The system first subtracts the single-period `P` and `D` values, then divides the remainder across the remaining periods in proportion to the forecast.
+
+### Editing Cells: Override Unforcible `D` `P` `N`
+
+Applies only to non-source records on the Global Forecasts page when entering a Resultant Forecast override in a cell where one or more records in the group carry a firm indicator. Same two behaviours as above, applied at group level.
+
+---
+
+## 4. Summing up: indicator priority
+
+When the Summarize Data (SID) program runs, the option selected on the Summarize Demand Run Option page determines which forecast arrays are summed and how the indicators are applied on the upper level record.
+
+**The priority of the forecast indicators is `P`, `D`, `M`/`R`, `N`/`H`/`C`.**
+
+| Priority | Indicator | Note |
+|---|---|---|
+| Highest | `P` | |
+| Second | `D` | |
+| Third | `M` or `R` | `R` is a Resultant indicator and not an ADS indicator. `M` and `R` are equal: do not replace `M` with `R`, or `R` with `M`, at the parent level |
+| Fourth | `N` or `H` or `C` | `C` is an ADS indicator and not a Resultant indicator. Do not replace `H` or `C` with `N`, or `N` with `H` or `C`, at the parent level |
+
+### The vendor's worked example
+
+A group with three items, before running SID:
+
+| Period | Group | Item 1 | Item 2 | Item 3 |
+|---|---|---|---|---|
+| 1 | `P` 4100 | `M` 22 | `P` 1000 | `H` 5 |
+| 2 | `P` 4200 | `M` 33 | `D` 2000 | `H` 6 |
+| 3 | `H` 4300 | `M` 44 | `R` 3000 | `H` 7 |
+| 4 | `H` 4400 | `N` 55 | `N` 4000 | `N` 8 |
+| 5 | `N` 4500 | `H` 66 | `H` 5000 | `H` 25 |
+| 6 | `D` 4600 | `N` 77 | `R` 6000 | `H` 26 |
+| 7 | `R` 4700 | `N` 88 | `D` 7000 | `H` 27 |
+
+Results by Sum Option:
+
+| Period | Overlay Group | Respect Group Priority | Overlay H Indicators Only | Sum Resultant, default `M` | Sum Resultant, default `P` | Sum Resultant, default `D` | Sum Resultant, default `H` |
+|---|---|---|---|---|---|---|---|
+| 1 | `P` 1027 | `P` 1027 | `P` 1027 | `P` 1027 | `P` 1027 | `P` 1027 | `P` 1027 |
+| 2 | `P` 2039 | `P` 4200 | `P` 2039 | `P` 2039 | `P` 2039 | `P` 2039 | `P` 2039 |
+| 3 | `M` 3051 | `M` 3051 | `M` 3051 | `M` 3051 | `P` 3051 | `D` 3051 | `H` 3051 |
+| 4 | `H` 4063 | `H` 4063 | `H` 4063 | `M` 4063 | `P` 4063 | `D` 4063 | `H` 4063 |
+| 5 | `N` 5091 | `N` 5091 | `N` 5091 | `N` 5091 | `N` 5091 | `N` 5091 | `N` 5091 |
+| 6 | `D` 6103 | `D` 4600 | `D` 6103 | `D` 6103 | `D` 6103 | `D` 6103 | `D` 6103 |
+| 7 | `D` 7115 | `D` 7115 | `R` 7115 | `R` 7115 | `R` 7115 | `R` 7115 | `R` 7115 |
+
+Note periods 2 and 6 under **Respect Group Priority**: the group value is left untouched (4200 and 4600) rather than replaced by the sum of the children, because the group's own indicator outranks what came up from below.
+
+### ADS arrays
+
+For an ADS array the `O` indicator is displayed for system-generated originals, and the available override indicators are `M`, `P` and `D`. The vendor gives a second worked example on the same pattern for a group with three items where the ADS default indicator is `O`.
+
+---
+
+## 5. What this means for HERO
+
+**This section is Hasbro interpretation, not vendor text.** Written 28 August 2026.
+
+1. **This page is the mechanism behind fact 106.** The Forecast Calculation Range does not zero anything directly. It zeroes through the FCP, and the FCP only writes into periods indicated `N` or `H`. Periods indicated `M` are left as they were, quantity and indicator both. That is the whole of why `M` preserves an out-of-range value and `H` loses it. The open item that stood against Jarred Bultema from 21 August is **closed by vendor documentation**, not by observation.
+
+2. **`N` carries the same exposure as `H`.** Hasbro uses only `M` and `H` (fact 114), so `N` should not appear. If it does, it behaves like `H` for this purpose and must not be read as neutral.
+
+3. **`M` is forcible, and that is a real limit.** It stops the recalculation. It does not stop FIF from redistributing a value from a parent. The two unforcible values, `D` and `P`, are not in use at Hasbro. Anyone saying "it is marked `M`, it is safe" should be asked safe from what. See fact 115.
+
+4. **The roll up is the Summing program, and the range does not govern it.** The vendor states plainly that summing brings the sum of the children up to the parent and operates only on Resultant Forecasts. The Forecast Calculation Range governs the FCP and is respected by FIF. This is the documented basis for fact 107.
+
+5. **Indicator priority matters for anything we do at Level 2.5 or above.** `P` and `D` outrank `M`, and `M` outranks `H`. We do not currently use `P` or `D`, so in practice our parent records resolve between `M` and `H` with `M` winning. Worth knowing before anyone proposes adopting a third value.
+
+6. **The default indicator is a configuration choice we have not documented.** The Indicators window sets what gets applied when someone overrides without specifying. `[GAP — Jarred Bultema / Genpact]` What our Resultant Forecast default indicator is set to, and whether it differs by market or workflow.
+
+---
+
+## Gaps and Open Questions
+
+| # | Question | Owner |
+|---|---|---|
+| 1 | What is the Resultant Forecast **default indicator** in our configuration, and does it vary by market or workflow? A user overriding without specifying gets whatever this is set to | Jarred Bultema / Genpact |
+| 2 | Which **Sum Option** do we run on the Summarize Demand Run Option page? The worked example in section 4 shows the parent indicator and value coming out differently for each of the seven, and fact 107 depends on this pass | Jarred Bultema / Genpact |
+| 3 | Do we run **Summing Resultant (SID)** after the FCP? The vendor warns this alone can create a difference in the Resultant | Jarred Bultema / Genpact |
+| 4 | Is the **Adjusted Demand** indicator set (`M`, `P`, `Z`) in use anywhere in our history-cleansing practice? `Z` Zero Weighted looks related to the Z-period concept already taught in Module 2 | Rene Bartoli / Jarred Bultema |
+| 5 | Confirm that the FCR pipeline's `Management Indicators.csv` files write this field and no other. The mapping is inferred from matching values, per-week structure and behaviour, and was confirmed by Rene Bartoli on 28 August; a check against the load specification would settle it beyond doubt | Genpact |

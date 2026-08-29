@@ -464,6 +464,7 @@ Use **enrichments** for dated business events. Use **reconciliation** when the a
 | `EXCESS_DEPLETION` | Depletion-style adjustment (excess inventory) | — |
 | `DEMAND_PHASE_SHIFT` | Re-phasing demand between weeks (pull-forward / push-out, e.g. deals): author a **positive + negative pair** — a positive row where the demand lands, a negative row where it is taken from | — |
 | `SUPPLY_SHORTAGE_COMP` | Compensating item for a shortage | Shortage Planning SKU |
+| `NON_STATISTICAL_DEMAND` | Full forecast volume for a part of the portfolio a market has agreed **not** to forecast statistically | — |
 | `MARKETING` | Marketing overlay | `ALL_FORECAST_PARTNERS` allowed |
 | `DEMAND_PLANNING` | Demand-planning overlay | `ALL_FORECAST_PARTNERS` allowed |
 
@@ -492,6 +493,14 @@ If the phasing issue stems from the **baseline / history** — defects or one-of
 **Warning — No single-row move; SUPPLY_SHORTAGE_COMP stays tracking-only**
 
 A single `DEMAND_PHASE_SHIFT` row does **not** automatically move demand — it takes **two rows** (positive where the demand lands, negative where it comes from). Do **not** confuse it with **Channel Shift** (a reconciliation control): Channel Shift moves demand between channels (`DOM` ↔ `DI`) and creates the offsetting negative **automatically**; `DEMAND_PHASE_SHIFT` moves demand between **weeks** and both legs are authored manually. `SUPPLY_SHORTAGE_COMP` remains **tracking metadata**: it does not move volume between SKUs. Tracking-only refers to the forward forecast. The relationship it records is used at history cleansing, where it raises the adjusted demand of the item that was unavailable and reduces the same quantity from the substitute. See [How history cleansing works](../workflows/forecast-range-calculation.md#how-history-cleansing-works).
+
+**Tip — NON_STATISTICAL_DEMAND: a label of its own for volume with no baseline to sit on**
+
+Use `NON_STATISTICAL_DEMAND` for a part of the portfolio a market has agreed **not** to forecast statistically. It captures the **full forecast volume** for that segment, so it carries a label of its own instead of being indistinguishable from an adjustment layered on top of a baseline. What decides scope is the market-level agreement, not the channel and not the item class; today that means Direct Import and FAN in the UK pilot, and FAN in the United States.
+
+<!-- TODO: confirm with Rene --> The literal value as it appears in the template's Enrichment Type field. `NON_STATISTICAL_DEMAND` follows the convention of every other type on this page, but the exact string has not been confirmed against the live template.
+
+**It does not retire the base-trend route.** A market whose non-statistical demand is recurring at SKU and customer level may reasonably prefer to keep using a Level 1 base trend adjustment for it instead, and choosing that is not an error. Both routes are supported, and which one to use is the market's call, not a rule this manual sets. See [Forecast Calculation Range & Disaggregation](../workflows/forecast-range-calculation.md) and [Logility array & mart mapping](../reference/logility-array-mart-mapping.md) for how the type behaves once captured, including that it is not separately labelled in the export change-review report.
 
 **Note — TMO comes from FAST**
 
@@ -561,7 +570,13 @@ On the reconciliation tab, edit only these fields:
 - **Channel Shift Proportion**
 - **Channel Shift Start Week** / **End Week**
 
-Treat item-dimension fields, Lifecycle Status, Blended A-Price, baseline totals, and the rendered baseline / sales-enrichment / marketing-and-demand-planning weekly columns as **read-only context**.
+Treat item-dimension fields, Lifecycle Status, Blended A-Price, baseline totals, and the rendered baseline / enrichment / prior-cycle / preliminary-forecast / sales-enrichment / marketing-and-demand-planning weekly columns as **read-only context**.
+
+**Note — The Level 2.5 adjustment is visible here, as read-only context**
+
+The forecast-partner (Level 1) template carries a read-only **L2.5 adjustment** column alongside the read-only baseline, enrichment, prior-cycle and preliminary-forecast context. In the `_ALL_FORECAST_PARTNERS_` BU-SKU template the labels invert: the editable column there is Level 2.5, and the read-only cross-level context column is labelled **L1 base trend adjustment**.
+
+What still holds is the **timing**: a Level 2.5 change is not visible at Level 1 until post-processing has run, which is minutes after upload (see [Timing & system sync](../workflows/timing-system-sync.md)), not instantly on save. Treat visibility and timing as two separate questions. A Level 1 user is not blind to a Level 2.5 change in their template; they may just be looking a few minutes too early.
 
 **Warning — Two rules to remember**
 
@@ -636,6 +651,22 @@ A BU-SKU weekly entry sets the **desired BU-SKU weekly total for the reconciliat
 
 This is the opposite of standard reconciliation, which says *"apply this exact delta to this exact Level 1 row."*
 
+**Note — This applies to every enrichment type, not only Base Trend Adjustments**
+
+The baseline-share fan-out described here is HERO's own proportional step for any Level 2.5 capture reaching Level 1, whatever enrichment type carries it.
+
+**Note — Earlier enrichments and reconciliation do not change the weights**
+
+The weights used to split a new Level 2.5 target are calculated fresh from the current baseline, at the level and for the record in question, each time. **Earlier enrichments and carried-forward reconciliation changes do not affect these weights.** It is reasonable to assume they would; they do not. Also, because the basis is per record rather than a market-wide or brand-wide average, two SKUs sitting inside the same BU-SKU entry can be weighted differently.
+
+**Warning — The partial-resultant trap**
+
+Where some partners and weeks inside one Level 2.5 entry carry a baseline and others do not, baseline-share weighting concentrates the whole delta onto the minority that do. That can be worse than a flat split, and nothing about it looks broken on the surface. Check the Level 1 result after fan-out rather than assuming the split landed evenly.
+
+**Note — A Level 2.5 change is visible at Level 1, once fan-out runs**
+
+The Level 1 template carries the Level 2.5 adjustment as a read-only context column (see [Forecast Reconciliation Template](forecast-reconciliation-template.md)). The only limitation is timing: the value appears at Level 1 only after post-processing has run, which is minutes after upload, not instantly. Do not direct a Level 1 user to the dashboard for something their own template already shows them.
+
 ## Blank vs 0 vs signed value
 
 | Entry | Meaning |
@@ -683,6 +714,10 @@ Resolved dashboards refresh **after the backend processing run completes** — t
 [Open in Power BI](https://app.powerbi.com/groups/ffc77157-ca2d-4b70-9f14-2a1c3842f973/reports/1d7dcc05-0d12-40f8-bd0c-184b82bdd406/e26a15167349ce5185cc?ctid=701edd3e-c7a8-4789-b1ce-8a243620d68f&bookmarkGuid=92641236-1c4a-4f93-be93-803e0577ab14)
 
 Provides visualisations of baseline forecasts, enrichments, consensus forecasts, and key performance indicators, with drill-down to SKU-level detail. Domestic (DOM) and Direct Import (DI) data are separated; DI forecasts are reflected as base trend adjustments while Domestic forecasts include captain adjustments.
+
+**Note — One consolidated dashboard, scoped to what you are authorised for**
+
+The separate per-market reports have been replaced by this single consolidated dashboard. Opening it shows you the market you are authorised for, and nothing else. Members of a regional team see every market in their region that is already live on HERO, in one view, rather than switching between per-market reports.
 
 ## POS (Point of Sale) Glidepath
 
@@ -824,23 +859,26 @@ Explain why a download, an upload, a dashboard refresh, and a Logility publicati
 |---|---|---|
 | Download any workbook (enrichment-only, standard, or BU-SKU) | Current HERO / Logility data for the selected scope | Immediately, at download (a point-in-time extract) |
 | **Upload** a valid workbook | HERO raw authored state | Authoring state is captured **immediately**; the export later emits only the rows you changed |
-| A **Level 2.5 (BU-SKU) reconciliation** change broadcast down to Level 1, and shown in the dashboard | Resolved weekly reporting layer | After the next **fan-out** run — **not instantly** |
-| View **resolved dashboard / reporting** | Resolved weekly reporting layer | After the fan-out run completes |
+| A **Level 2.5 (BU-SKU) reconciliation** change broadcast down to Level 1, and shown in the dashboard | Resolved weekly reporting layer | **In minutes**, triggered by the upload itself — the scheduled wrappers below are a safety net, not the mechanism |
+| View **resolved dashboard / reporting** | Resolved weekly reporting layer | After the fan-out completes |
 | **Publish to Logility** | Resolved HERO state packaged into the export surfaces | **Only through the weekly Friday export pipeline** |
 
 ## The fan-out (how Level 2.5 changes reach Level 1)
 
-A Level 2.5 adjustment does not drop to Level 1 the instant you save it. A **post-processing ("fan-out") job** picks it up, distributes it down to the Level 1 partner rows, and refreshes the dashboard-facing Level 1 view.
+**The normal case is immediate.** When you upload a reconciliation or enrichment file, HERO triggers the post-processing refresh on the upload itself, and the partner grain reflects your change **in minutes**. This trigger has no schedule of its own; it runs because you uploaded, not because a time slot arrived. A user who has just uploaded does not wait for a slot.
 
-**Note — Fan-out schedule**
+**Note — Scheduled wrappers are the safety net, not the mechanism**
 
-The fan-out runs on a frequent, day-of-week schedule so Level 2.5 changes reach Level 1 quickly:
+Recurring wrappers around post-processing exist as a backstop, in case the immediate trigger is missed:
 
-- **Monday–Thursday (UK workday):** 08:00, 10:00, 12:00, 14:00, 16:00 and 18:00 `Europe/London`.
-- **Friday (UK morning):** 08:00, 10:00 and 12:00 `Europe/London`.
-- **Monday–Thursday late-night catch-up:** 23:00 `America/New_York` (≈04:00 `Europe/London` next day) — so UK users start the next workday with any late-uploaded changes already fanned out.
+| Wrapper | Days | Times | Timezone | Scope |
+|---|---|---|---|---|
+| UK workday | Monday to Thursday | 08:00, 11:00, 14:00 | `Europe/London` | United Kingdom |
+| US workday | Monday to Thursday | 12:00, 15:00, 18:00 | `America/New_York` | Hasbro U.S. |
 
-A Level 2.5 change becomes visible at Level 1 / in the dashboard at the **next** scheduled run.
+There are no Friday runs and no late-night catch-up run. If you have heard a six-run UK day, a Friday schedule, or a 23:00 catch-up described, that description does not match the current schedule; treat this table as the figure to use.
+
+The answer to "when will my Level 2.5 change reach Level 1" is **minutes after upload**, with the scheduled wrappers as a backstop, not "wait for the next slot."
 
 ## The dashboard has its own cadence
 
@@ -866,6 +904,12 @@ Still needing a person: anything changed directly in Logility, because HERO neve
 
 Uploading a workbook does **not** push Logility. HERO publishes to Logility **only through the weekly Friday noon Eastern export pipeline**. Anything authored during the week is held in HERO until that pipeline runs. (Downstream transport from Databricks into Logility is external orchestration — see [Batch orchestration & updates](../reference/batch-orchestration-updates.md).)
 
+**Note — What is sent is not what you typed**
+
+You author a **delta** in HERO (a plus or minus change). What the export sends is a **complete replacement value** for the affected array and week cell, not the delta itself. Those are two different things, and the distinction is behind several questions users ask about what shows up on the other side.
+
+HERO also **rounds output to whole units** at partner, SKU, and week grain. Where a Level 2.5 adjustment fans out to many partner cells as fractions, each cell is rounded on its own, so small aggregate differences can appear between a BU-SKU total and the sum of its partner rows. That rounding, not a calculation error, is usually the answer to "why doesn't my BU-SKU total tie exactly to the sum of the partners."
+
 ## Urgent changes — the three governed paths
 
 **Warning — The weekly export is not skippable — use one of these three paths instead**
@@ -881,7 +925,7 @@ HERO exports to Logility only through the weekly Friday export, regardless of ur
 **Tip — Four rules to live by**
 
 - A workbook download is a **point-in-time** extract of the current state.
-- A successful upload updates HERO **authoring** state immediately, but the dashboard and Level 1 view only catch up at the **next fan-out run** (multiple times per UK workday — see the schedule above).
+- A successful upload updates HERO **authoring** state immediately, and the dashboard and Level 1 view catch up **in minutes**, triggered by the upload itself, not by waiting for a scheduled slot.
 - **Re-download** if someone else has touched the same scope — especially before a later-stage reconciliation session.
 - Publication to Logility happens **only through the Friday export pipeline** — not on upload.
 
@@ -990,7 +1034,18 @@ The canonical term is **Forecast Calculation Range**. An underlying pipeline gui
 
 ## What the forecast range is
 
+**Note — A continuous period, not a year bucket**
+
+The Forecast Calculation Range carries one start date and one end date. Every period outside those two dates is out of range, whatever calendar year it falls in. "We only use the range for 2027" is a statement about **when the mechanism was adopted**, not about how far it reaches: a range loaded for a 2027 need, on a SKU that also traded in 2026, puts the 2026 weeks out of range for that record too. This is the point to get straight before reasoning about any range-related question below; every other distinction on this page sits on top of it.
+
 The FCR is a **per-product window of Start and End weeks** that tells Logility when a product should be planned: *"this product should be available from week X to week Y."* It is the gate that decides which weeks — and, at customer level, which customers — receive a forecast.
+
+**Two distinct mechanisms are easy to conflate, so keep them apart:**
+
+> The **Forecast Calculation Range** defines which customer and which periods receive part of the resultant, the baseline.
+> The **portfolio extension** defines which customers can hold forecast for a SKU at all, whether or not that forecast was generated statistically.
+
+They fail differently. No extension means there is nowhere for the volume to land, and it can genuinely be lost. A closed range means no resultant, so the volume lands but lands flat, at zero.
 
 ## How the range is generated
 
@@ -1003,9 +1058,26 @@ The range is built bottom-up in four steps, starting from launch data:
 
 After initial load, **Logility is the source of truth** for the range.
 
+**Note — A start date in the earlier calendar year is expected, not an anomaly**
+
+A start date is derived as **On-Shelf Date minus Lead Time**, which is exactly what pulls a January on-shelf date back to a December start in the prior year. Where an item already had forecast, the full year ahead was taken; where it did not, the derived start date can fall in the prior year. Treat this as the pipeline working as designed, not as a data issue.
+
+**The early-delivery failure case** follows the same logic in the other direction: where shipments went out earlier than the lead-time calculation anticipated (for example, in October against a lead time that only reaches back to November), those earlier weeks fall outside the range. Whether that volume survives or is lost then follows the Management Indicator rule below, the same as any other out-of-range period.
+
+**Note — How the range is built differs by market (say which one applies)**
+
+Do not present either of these as the single global rule.
+
+- **North America** built the range initially from the **Sales Forecast**, a deliberate decision valid for **2026 and 2027**. From there, and for any newly generated portfolio, the range depends entirely on the P2M and lead-time pipeline above.
+- **United Kingdom and EMEA** used the Sales Forecast differently: as the **disaggregation base at Level 1**, aggregated up to Level 2, with the resulting Level 2 surface used to disaggregate the Resultant. This is a statement about the disaggregation surface, not about how the range itself was built, and it must not be merged with the North America statement above. It also explains why Level 1 in these markets already carried values before any range existed, which matters later on this page.
+
+`[GAP: Rene Bartoli]` Whether the North America approach travels to Asia Pacific and Latin America, or is North America only.
+
 ## How you control / adjust it
 
 Commercial teams receive **Excel files with the proposed Start/End dates** for each SKU and forecast partner and **adjust them manually** using customer knowledge — delayed launches, exclusivity, and so on. The Level 1 files carry blank "New Start / End Date" override columns and a **status flag** showing whether the range matches Logility or differs. The adjusted dates are then updated in Logility.
+
+Maintenance runs through two routes, and which one applies depends on whether the change is inside the monthly cycle. **In cycle**, the commercial team owns the adjustment, made in the template generated by Genpact for that purpose; this is the normal path. **Outside the monthly cycle**, a planner requests the adjustment directly from the Genpact team in Logility; this is an exception route, not self-service. Either way, a Level 2.5 item sitting in a window where the range is not open is not a case to work around at Level 2.5 (see the Management Indicator section below); it is a range correction, on one of these two routes.
 
 ## Why it matters for disaggregation
 
@@ -1015,7 +1087,34 @@ By default a SKU can extend to **all** forecast partners, which spreads demand t
 
 - **Exclusives** — for a single-customer SKU (e.g. an Amazon exclusive), **set/adjust the end date** so other partners are excluded and the forecast does not spread to them.
 - **Stopping a SKU for a customer** — set an end date to stop forecasting that SKU/customer. This is distinct from a phase-out enrichment (which takes the item off normal carry-forward more broadly).
-- **Missing or inactive items lose forecast** — if a SKU is inactive or missing at any hierarchy level during disaggregation, the system can assign **zeros**, losing the forecast. Complete, accurate data at every level is required for correct allocation.
+- **An out-of-range value is not automatically a data-quality failure.** Whether it survives or is removed depends on the Management Indicator, below. Do not treat every zero outside the range as missing or bad data before checking the indicator.
+
+## The Management Indicator decides what survives outside the range
+
+The range does not zero anything by itself. It zeroes values **through the Calculate Forecasts program (FCP)**, and the FCP only writes into a period where the **Management Indicator** allows it. The flag has to be present at **Levels 3, 2 and 1** for the affected periods; marking only one of the three is not protection.
+
+| Indicator | What happens to an out-of-range value | Hasbro's name |
+|---|---|---|
+| `M` | **Preserved.** The FCP leaves the quantity and the indicator as they were, because the flag tells the system a person is deliberately overriding the statistically generated value. | Manual |
+| `H` | **Removed.** The FCP zeroes it. | Historical |
+
+Hasbro uses only these two values. If `N` (No override) is ever seen, treat it as carrying the same exposure as `H`; it is not a neutral state.
+
+**Warning — `M` protects against the recalculation, not against forcing**
+
+`M` is a **forcible** indicator: it stops the Calculate Forecasts program from overwriting the value, which is the protection above, but it does **not** stop the Force Forecasts (FIF) program from redistributing that same value from a parent. "I marked it `M`, it is safe" is right about the range and not a general statement. One qualifier in Hasbro's favour: periods outside the range are processed by FIF as though inhibited, so an `M` value outside the range is protected from the FCP by its own indicator and separately not forced by FIF because the range has stopped the forcing. Two different doors, both closed.
+
+## The range constrains the force down, not the roll up
+
+What the range removes on the way **down** the hierarchy stays removed. Values already sitting at a **lower** level are aggregated **upward without the range acting on them**, because the roll up is performed by a different mechanism entirely, the **Summing program**, which brings the sum of the children up to the parent and is not governed by the Forecast Calculation Range. This is why a Level 3 total can look correct while Levels 2 and 1 are empty underneath it, and why a Level 1 value can roll up into a Level 3 number that does not reconcile with the range supposedly governing it.
+
+This is not a theoretical asymmetry. In UK and EMEA, Level 1 was already populated (see the market note above) before any range existed, so those Level 1 values survived the range and rolled up regardless of what the range says.
+
+**Warning — Deleting a Level 1 forecast propagates upward, and the volume does not come back**
+
+Level 1 work is never overwritten by disaggregation, which is the protection users rely on day to day. The same property cuts the other way: clearing a customer's Level 1 forecast sends that zero up through the summing pass, and because the total is never pushed back down again, the **Level 3 number is what gets overwritten**. The volume does not return on its own.
+
+Of the three levels (volume sitting at Level 3, at Level 2, and at Level 1 while out of range), the **Level 2 case has not yet been exercised in the system**. The expected behaviour, by the same logic above, is that an out-of-range Level 2 value is not forced down to Level 1, and that a Level 1 zero then rolls up over it, but this is expected, not confirmed (see the Gaps block at the end of this page).
 
 ## Scope, validation, and data quality
 
@@ -1049,10 +1148,15 @@ The rules on this page are the starting point, not a finished design. They will 
 - [Forecast Reconciliation Template (FRT)](../tools/forecast-reconciliation-template.md) — the in-template "set an end date to stop forecasting" usage.
 - [BU-SKU / Level 2.5 mode](../tools/bu-sku-level-25-mode.md) — note the difference: the **range** decides *which customers* receive a forecast; **Level 2.5** decides *how an aggregate adjustment is split* across them.
 - [Batch orchestration & updates](../reference/batch-orchestration-updates.md)
+- [Rules for FCR adjustment within cycle](../special-considerations/fcr-adjustment-rules.md) — what to do when forecast is lost because of the range, and the `(M)` tag used there.
 
-**Success — No open questions identified**
+**Warning — Gaps & Open Questions**
 
-No open questions were identified from the available source material.
+- **Level 2 out-of-range scenario, not yet exercised.** The expected behaviour under the roll-up rule above is that an out-of-range Level 2 value is not forced down to Level 1 and is then rolled over by a Level 1 zero. `[GAP: test pending]` A dummy-data case in Logility to confirm it.
+- **Whether the North America range-construction decision travels beyond North America.** `[GAP: Rene Bartoli]` Asia Pacific and Latin America are not yet addressed.
+- **Naming convention across the range-related labels** ("Forecast Calculation Range", "forecast range", "portfolio extension") is still unsettled. `[GAP: Rene Bartoli]` Until decided, confirm which one a question is really about rather than assuming.
+- **Whether a corrective Management Indicator pass over 2026 is planned**, or the affected volume is recaptured case by case. `[GAP: Rene Bartoli]`
+- Directional, not a commitment: the scale of any 2026 forecast loss from this mechanism is not quantified in any source available to this manual.
 
 ---
 
@@ -1167,6 +1271,10 @@ When you type a BU-SKU weekly value, you are setting the **target adjustment** f
 `Final weekly total = Baseline + Reconciliation adjustment + Enrichments`
 
 The Level 2.5 edit fixes only the **reconciliation adjustment** piece. The other two pieces can still move — which is what the examples below show.
+
+**Note — The split, not just this mechanism**
+
+Baseline-share splitting applies to every enrichment type that fans out from Level 2.5 to Level 1, not only to Base Trend Adjustments. It is also **not affected by earlier enrichments or carried-forward reconciliation changes** already sitting on those Level 1 rows: the weights come fresh from the current baseline each time. Example 3 and Example 4 below show related but separate behaviour (enrichments and reconciliation as pieces that can move independently of your Level 2.5 target); the weights used to do the initial split are unaffected by any of it.
 
 In every example below there are two partners, **Target** and **Walmart**, that roll up to one **BU-SKU** total.
 
@@ -1490,14 +1598,17 @@ Single reference for HERO terms and acronyms.
 | **SKU hierarchy levels** | Nodes in the item hierarchy: L5 Brand/BU · L4 Global SKU/BU · L3 Parent SKU/BU/Channel · L2 Planning SKU/Customer · L1 Planning SKU/Customer/Channel. "Level 3" is a hierarchy node (e.g. Parent SKU / BU / Channel), **not** a review stage; the later-stage review stage is Level 2.5 / BU-SKU. |
 | **Base Trend Adjustment** | A direct week-level delta against the displayed baseline forecast. Persists across cycles until manually reversed — it is not a single-cycle entry. At Level 2.5 it disaggregates across **all** forecast partners by baseline proportion; it cannot be targeted at one account. |
 | **Cleansing** | Correction of the **Adjusted Demand array** so the statistical baseline learns real demand rather than what shipped. It runs in the opposite direction to the enrichment — when a period closes, cleansed history is actual shipments minus the `SET` — and never touches raw Actuals. See [How history cleansing works](../workflows/forecast-range-calculation.md#how-history-cleansing-works). |
-| **Frozen window** | The rolling lead-time horizon — months 0–4 counted from the current date, every cycle, not a one-off period after go-live — inside which HERO withholds UA1 authoring and the published value carries the live Logility UA1 / baseline instead. HERO authors UA1 in horizon months 5–21. |
+| **Frozen window** | The rolling lead-time horizon at the start of the UA1 authoring window, inside which HERO withholds UA1 authoring. It is stepping down cycle by cycle rather than staying fixed at months 0–4: September 2026 protects months 0–3, October 0–2, November 0–1, December 0 only, and from the January 2027 cycle there is no protection and HERO writes UA1 from month 0. The window itself does not disappear; what ends is HERO holding UA1 back inside it. The step-down is agreed direction for both pilot markets (United States and United Kingdom); it does not extend to markets that are not yet live on HERO. Inside the frozen window, the published value currently carries the current live Logility **baseline**, not the live UA1 array; the intent is to carry the live UA1 array, and the difference is a known gap that narrows as the step-down proceeds and closes when it completes. HERO authors UA1 in design horizon months 5–21, though the current build stops publishing UA1 after month 12, a build gap rather than a horizon change (see [Logility array & mart mapping](../reference/logility-array-mart-mapping.md)). |
 | **Version Change** | A net-zero move of demand from one planning SKU to another over selected weeks. |
 | **Channel Shift** | A move of some or all demand between `DOM` and `DI` over selected weeks. |
 | **TMO** | Trade / pallet adjustment that travels through the UA5 / TMO path. Sourced from FAST. |
 | **FAST** | The upstream system that is the source of truth for TMO; the ECT is seeded from it. |
 | **SPU** | Special Planning Unit — optional tracking metadata on TMO rows. |
 | **Phase-out** (`PHASE_OUT` in the tool) | An enrichment type captured in the enrichment capture template, used when an item should no longer behave like a normal carry-forward baseline (maps the depletion of available inventory). It is one of the UA1-mapped components (see [Logility array & mart mapping](../reference/logility-array-mart-mapping.md) for the full UA1 composition) and also flows to consensus by sign — positive values to ADS2, negative values to PROMO_LIFT. **Phase-out is the canonical name** (confirmed by Rene Bartoli, 12 July 2026); `PHASE_OUT` is that same name as it appears in the tool/enrichment-type field. `MDP_ENRICHMENT` is a legacy synonym found in older architecture material (Transmission Design Topics V1) and should not be used as current terminology. |
-| **Forecasting range** | The start / end dates over which a SKU is forecast for a partner; setting an end date stops future forecasting for that SKU/customer. |
+| **Forecast Calculation Range** (also called "forecasting range") | A continuous period, one start date and one end date, not a year bucket: every period outside those two dates is out of range whatever calendar year it falls in. Defines **which customer and which periods receive part of the resultant**, the baseline; setting an end date stops future forecasting for that SKU/customer. Distinct from the **portfolio extension**, which defines which customers can hold forecast for a SKU at all, whether or not that forecast was generated statistically. See [Forecast Calculation Range & Disaggregation](../workflows/forecast-range-calculation.md). |
+| **Management Indicator** | The per-item, per-level, per-week flag that tells Logility how to treat a period's forecast when it sits outside the Forecast Calculation Range. `M` (Manual) means the planner owns the number and an out-of-range value is preserved. `H` (Historical) means the statistical model owns it and an out-of-range value is removed. It is the same field Logility calls the Resultant Forecast Override Indicator; Hasbro uses two of its six user-settable values. See [Forecast Calculation Range & Disaggregation](../workflows/forecast-range-calculation.md). |
+| **`NON_STATISTICAL_DEMAND`** | An enrichment type capturing the full forecast volume for a part of the portfolio a market has agreed not to forecast statistically. Maps to UA1 on the Field Forecast side, with a sign-based Consensus contribution. See [Enrichment Capture Template](../tools/enrichment-capture-template.md). |
+| **Summing program** | The Logility pass that brings the sum of the children up to the parent record, operating only on Resultant Forecasts. It is **not** governed by the Forecast Calculation Range, which is why a value already sitting at a lower level survives the range and rolls up into a total that does not reconcile with the range supposedly governing it. See [Forecast Calculation Range & Disaggregation](../workflows/forecast-range-calculation.md). |
 | **Actualized period** | The historical portion of the year where the workbook shows exact shipment actuals when they exist. |
 | **RESULTANT_FORECAST** | The baseline consensus forecast before HERO adjustments. |
 | **ADS2** | Positive HERO adjustments other than TMO in the consensus path. |
@@ -1530,18 +1641,28 @@ Map HERO outputs to the Logility sales-forecast arrays and consensus path.
 
 HERO **reads** exactly one array from Logility: `RESULTANT_FORECAST`. Everything else on this page travels one way, **HERO to Logility**. HERO never reads UA1–UA6, ADS2, PROMO_LIFT or ADS3, so a change made directly in Logility on any of them is invisible to HERO. See [Direction of travel](batch-orchestration-updates.md) for the full mechanics.
 
+**Note — Users author deltas; what goes out is a replacement value**
+
+A HERO entry is a plus or minus delta against what was there before. The export sends **complete replacement values** for the affected array and week cells, not the delta itself. HERO also rounds output to whole units at partner, SKU and week grain, which is why a BU-SKU total can differ slightly from the sum of its own partner rows once many fractional Level 2.5 fan-out cells are each rounded on their own.
+
 | | Horizon HERO manages |
 |---|---|
-| UA1 | months 5–21 (suppressed inside the 0–4 frozen window) |
+| UA1 | design horizon months 5–21, suppressed inside the frozen window; the current build stops publishing UA1 after month 12 (see the note below the table) |
 | UA2–UA6, ADS2, PROMO_LIFT | months 0–21 |
 | RESULTANT_FORECAST | not written by HERO; changed in Logility by the baseline owner |
 | ADS3 | not written by HERO; calculated by Logility from its components |
+
+**Warning — UA1 horizon: design is 21, the build currently stops at 12**
+
+Month 21 is the design of record, matching UA2 to UA6, ADS2 and Promo Lift so that the Sales Forecast does not have a shorter reach than the Consensus arrays it is held equal to. Six current product-repository documents describe the built export window as stopping at month 12. **This is a known build gap, not a design change**, and Rene Bartoli is raising it with Jarred Bultema for correction. Do not teach month 12 as the target: if you observe UA1 not publishing beyond month 12 today, that is the known gap, not a defect in your own work. `[GAP: Jarred Bultema]` Confirmation that the export window has been extended to month 21.
+
+Separately, UA1 authoring is currently withheld inside a **frozen window** at the start of the horizon. That window is stepping down cycle by cycle and ends with the January 2027 cycle; see the [frozen window](../help/glossary.md) entry for the schedule. The frozen window and the month-12 build gap are two different limits and should not be merged into one statement.
 
 ## Sales forecast arrays
 
 | Array | Holds | Notes |
 |---|---|---|
-| **UA1** | Adjusted statistical baseline, and also the Sales (Fill) Forecast | Carries the baseline, the Level 1 base-trend adjustment, the Level 2.5 base-trend adjustment (after fan-out), version adjustments, channel shift, and the UA1-mapped enrichment types `PHASE_OUT`, `EXCESS_DEPLETION`, `DEMAND_PHASE_SHIFT` and `SUPPLY_SHORTAGE_COMP`. Level 1 `MARKETING` and `DEMAND_PLANNING` enrichments from the enrichment capture template do **not** land here; adjustments from the forecast reconciliation template **do**, whoever makes them (see [what routes an entry](batch-orchestration-updates.md)). Authored by HERO in horizon months 5–21; see the [frozen window](../help/glossary.md). |
+| **UA1** | Adjusted statistical baseline, and also the Sales (Fill) Forecast | Carries the baseline, the Level 1 base-trend adjustment, the Level 2.5 base-trend adjustment (after fan-out), version adjustments, channel shift, and five UA1-mapped enrichment types: `PHASE_OUT`, `EXCESS_DEPLETION`, `DEMAND_PHASE_SHIFT`, `SUPPLY_SHORTAGE_COMP` and `NON_STATISTICAL_DEMAND`. Level 1 `MARKETING` and `DEMAND_PLANNING` enrichments from the enrichment capture template do **not** land here; adjustments from the forecast reconciliation template **do**, whoever makes them (see [what routes an entry](batch-orchestration-updates.md)). Authored by HERO in design horizon months 5–21 (see the build-gap warning above); see the [frozen window](../help/glossary.md). |
 | **UA2** | Promotional activity | Promo-type sales adjustments. |
 | **UA3** | Sets / initial stocking | Set-type sales adjustments. |
 | **UA4** | Samples | Sample-type sales adjustments. |
@@ -1549,6 +1670,20 @@ HERO **reads** exactly one array from Logility: `RESULTANT_FORECAST`. Everything
 | **UA6** | Pre-orders | Pre-order rows. |
 | **UA7** | Previous-cycle sales forecast snapshot | Cycle comparison context. |
 | **UA8** | Total sales forecast | Sum of UA1 through UA6. |
+
+**Tip — The rule behind the UA1 list, so it doesn't need re-learning when it grows again**
+
+If an entry is an enrichment, is not `MARKETING`, is not `DEMAND_PLANNING`, and is not explicitly mapped to UA2 through UA6, it influences **UA1**. For completeness, the explicit mappings elsewhere are `RETAIL_PROMOTION` to UA2, `SET` to UA3, `SAMPLE` to UA4, `TMO` to UA5, `PRE_ORDER` to UA6. `MARKETING` and `DEMAND_PLANNING` have no Field Forecast array of their own and contribute to Consensus only.
+
+**Note — `NON_STATISTICAL_DEMAND` on the Field Forecast side**
+
+`NON_STATISTICAL_DEMAND` maps to UA1 with a sign-based Consensus contribution, and carries three riders worth knowing on top of the mapping itself:
+
+- **No percentage input.** There is no baseline to resolve a percentage against, so entries are quantities only.
+- **It inherits the UA1 window.** Its Field Forecast publication follows whatever UA1's window is at the time, so it is subject to the same frozen-window step-down and the same build gap as the rest of UA1. Its Consensus contribution, by contrast, stays eligible across the full 0–21 horizon regardless.
+- **It is not separately labelled in the export change-review report.** That report classifies every UA1 change as reconciliation or base-trend-adjustment activity, so this type cannot be told apart there even though it carries its own label inside HERO.
+
+See [Enrichment Capture Template](../tools/enrichment-capture-template.md) for what the type captures and when to choose it over a Level 1 base trend adjustment.
 
 ## Consensus path
 
@@ -1570,9 +1705,11 @@ Logility prevents any Level 1 combination from being **published** negative, app
 - [Calculation reference](../examples/calculation-reference.md)
 - [Glossary](../help/glossary.md)
 
-**Success — No open questions identified**
+**Warning — Gaps & Open Questions**
 
-No open questions were identified from the available source material.
+- **UA1 export window.** `[GAP: Jarred Bultema]` Confirmation that the build has been extended from month 12 to the design horizon of month 21.
+- **The literal `NON_STATISTICAL_DEMAND` value** as it appears in the template's Enrichment Type field is unconfirmed; it follows the naming convention of every other type in this table, but has not been verified against the live template. `[GAP: Rene Bartoli]`
+- Four Logility configuration questions raised by the vendor documentation behind this page and not yet answered: the Resultant Forecast default indicator, which Sum Option is run, whether Summing Resultant runs after the Calculate Forecasts program, and whether the Adjusted Demand indicator set (`M`, `P`, `Z`) is used in history cleansing. `[GAP: Jarred Bultema / Genpact]`
 
 ---
 
@@ -1590,11 +1727,11 @@ Explain the batch jobs behind HERO, the export to Logility, and the contingency 
 
 **Note — When changes take effect — in brief**
 
-A change is captured in HERO authoring state immediately. It reaches Level 1 and the dashboard after the next post-processing / fan-out run, and it reaches Logility only through the weekly Friday export pipeline. The fan-out runs **multiple times per UK workday** (Mon–Thu at 08:00 / 10:00 / 12:00 / 14:00 / 16:00 / 18:00 and Fri at 08:00 / 10:00 / 12:00 `Europe/London`, plus a Mon–Thu late-night catch-up at 23:00 `America/New_York`). The full schedule is in [Timing & system sync](../workflows/timing-system-sync.md).
+A change is captured in HERO authoring state immediately. An upload triggers the post-processing / fan-out refresh itself, so it reaches Level 1 and the dashboard **in minutes**, not on a schedule. Recurring wrappers around post-processing (UK workday Monday to Thursday at 08:00, 11:00, 14:00 `Europe/London`; US workday Monday to Thursday at 12:00, 15:00, 18:00 `America/New_York`) are a safety net in case the immediate trigger is missed, not the mechanism itself. The change reaches Logility only through the weekly Friday export pipeline. The full picture is in [Timing & system sync](../workflows/timing-system-sync.md).
 
 ## The batch jobs (what each one does)
 
-- **Post-processing / fan-out** — takes Level 2.5 changes authored in HERO, fans them out to the Level 1 partner rows, and refreshes the dashboard-facing Level 1 view. As of the **20 July 2026 release**, post-processing was improved for reliability as usage grows, with better **business-unit scoping** and more **runtime visibility** into the runs.
+- **Post-processing / fan-out** — takes Level 2.5 changes authored in HERO, fans them out to the Level 1 partner rows, and refreshes the dashboard-facing Level 1 view. Triggered on upload, with no schedule of its own; the recurring wrappers in [Timing & system sync](../workflows/timing-system-sync.md) are a safety net, not the normal path. As of the **20 July 2026 release**, post-processing was improved for reliability as usage grows, with better **business-unit scoping** and more **runtime visibility** into the runs.
 - **Weekly Logility export** — runs as the Friday noon Eastern export pipeline. It materializes the Logility pickup tables and, if the contingency path is used, the 8-file wide CSV set.
 
 **Warning — Scheduling is by day-of-week only**
@@ -1628,12 +1765,13 @@ The full source → array mapping (UA1–UA6, ADS2, and PROMO_LIFT, including ho
 
     Earlier versions of this page described the same behaviour as a temporary limitation, with a role-based exclusion waiting on a user-role validation layer. Routing by template is the ratified design, not an interim state. (Ratified by Rene Bartoli, 6 August 2026.)
 
-- **UA1 composition.** UA1 is the adjusted statistical baseline and also the Sales (Fill) Forecast. It carries the baseline, the Level 1 base-trend adjustment, the Level 2.5 base-trend adjustment (after fan-out), version adjustments, channel shift, and the UA1-mapped enrichment types `PHASE_OUT`, `EXCESS_DEPLETION`, `DEMAND_PHASE_SHIFT` and `SUPPLY_SHORTAGE_COMP`. The shorter formula `BASELINE + BASE_TREND + CHANNEL_SHIFT + PHASE_OUT` used in earlier material was the same fact at a lower level of detail.
-- **UA1 frozen horizon:** UA1 is authored by HERO in horizon months **5–21** (rolling, counted from the current date, every cycle — not a one-off period after go-live); in months **0–4** the published value carries the current live Logility UA1 / baseline rather than a HERO-authored overwrite. UA2–UA6, ADS2, and PROMO_LIFT are HERO-managed across months **0–21**.
+- **UA1 composition.** UA1 is the adjusted statistical baseline and also the Sales (Fill) Forecast. It carries the baseline, the Level 1 base-trend adjustment, the Level 2.5 base-trend adjustment (after fan-out), version adjustments, channel shift, and five UA1-mapped enrichment types: `PHASE_OUT`, `EXCESS_DEPLETION`, `DEMAND_PHASE_SHIFT`, `SUPPLY_SHORTAGE_COMP` and `NON_STATISTICAL_DEMAND`. The shorter formula `BASELINE + BASE_TREND + CHANNEL_SHIFT + PHASE_OUT` used in earlier material was the same fact at a lower level of detail. See [Logility array & mart mapping](logility-array-mart-mapping.md) for the generating rule behind the list.
+- **UA1 frozen horizon:** the design end is horizon month **21**, matching UA2 to UA6, ADS2 and Promo Lift. UA1 authoring is currently withheld inside a rolling frozen window at the start of the horizon, counted from the current date every cycle; that protection is stepping down cycle by cycle and ends with the January 2027 cycle (see [Logility array & mart mapping](logility-array-mart-mapping.md)). Inside the frozen window, the published value currently carries the current live Logility **baseline**, not the live UA1 array; the intent is to carry the live UA1 array, and this is a known gap that narrows as the protection steps down. UA2–UA6, ADS2, and PROMO_LIFT are HERO-managed across months **0–21**.
 - **What "changed" means for the export.** The export answers only *"did this value change in HERO since the last HERO export?"* It does not compare HERO against Logility. A direct Logility edit is neither detected nor deliberately overwritten, unless HERO also changed that same intersection during the week, in which case HERO overwrites the arrays it authors.
 - **Channel moves generate two updates.** Export keys include shipment channel, so DOM and DI are separate export combinations. Moving an enrichment from one channel to another updates both: the original aggregation is reduced and the new one is created. Multiple enrichment rows sharing SKU, customer, channel and week aggregate together.
 - **The zero floor lives in Logility.** Logility prevents any Level 1 combination from being published negative, applying the floor on both sides (RESULTANT_FORECAST + ADS2 + PROMO_LIFT, and the UA arrays). Inside HERO the only negative restriction is on UA1; every other array carries a negative straight out. Because the floor sits on the **total**, a negative hidden under positive components never surfaces downstream, so a published zero is not evidence that the inputs are clean.
-- **Output format:** emitted outbound values are fully populated, exported as whole integers, and rounded to the nearest whole unit with halves rounded away from zero.
+- **You author a delta, the export sends a replacement value.** The change you make in HERO is a plus or minus delta. What goes out to Logility is a complete replacement value for the affected array and week cell, not the delta itself.
+- **Output format:** emitted outbound values are fully populated, exported as whole integers, and rounded to the nearest whole unit with halves rounded away from zero. Rounding is applied per partner, SKU and week, so a Level 2.5 fan-out that splits a value across many fractional partner cells can leave a small aggregate difference between a BU-SKU total and the sum of its partner rows.
 - **Delta-table granularity:** the processing tables are weekly-grain, append-by-run history tables. Within a run, HERO emits only the final effective outbound row for each changed weekly key; later runs append new rows for the same weekly key.
 
 ## Orchestration chain (weekly)
@@ -1652,7 +1790,7 @@ Controlled manual runs via Run Options are available for testing, pilot validati
 
 ## Contingency CSV (manual fallback)
 
-If direct integration is not ready, HERO can produce a contingency CSV set for manual loading into Logility: **8 files** (UA1–UA6, Positive Enrichments → ADS2, and Negative Enrichments → PROMO_LIFT). Each file is a wide Level 1 file with 3 key columns and ordinal week columns 1–78. A row appears only if that file's measure changed for that Level 1 key, but every included row is fully populated. Clear rules apply: UA1 clears back to the live Logility UA1 / baseline; UA2–UA6, ADS2, and PROMO_LIFT clear to 0.
+If direct integration is not ready, HERO can produce a contingency CSV set for manual loading into Logility: **8 files** (UA1–UA6, Positive Enrichments → ADS2, and Negative Enrichments → PROMO_LIFT). Each file is a wide Level 1 file with 3 key columns and ordinal week columns 1–78. A row appears only if that file's measure changed for that Level 1 key, but every included row is fully populated. Clear rules apply: UA1 clears back to the live Logility baseline (the current implementation; the intent is the live UA1 array, see the frozen-horizon note above); UA2–UA6, ADS2, and PROMO_LIFT clear to 0.
 
 ## How this connects to the end-to-end process
 
@@ -1670,9 +1808,9 @@ No technical lock prevents changes after executive sign-off. The control is the 
 
 **Warning — Gaps & Open Questions**
 
-- **UA1 upper horizon — pending build confirmation.** Months 5–21 is the design of record (Rene Bartoli, 6 August 2026). On 30 July 2026 the built UA1 export window was described as reaching month 12, and confirmation that the build now matches the design is outstanding.
+- **UA1 upper horizon — design confirmed at 21, build confirmed at 12.** The design of record is month 21 (Rene Bartoli, 6 August 2026; reaffirmed 28 August 2026 to match UA2 to UA6, ADS2 and Promo Lift). The build currently stops publishing UA1 at month 12; this is a known build gap being raised for correction, not a design change. `[GAP — Jarred Bultema]` Confirmation that the export window has been extended to month 21.
 - **Frozen-window calculation when a cycle opens in the prior month.** A cycle formally opens the month before its name (the July 2026 cycle opened on 22 June 2026). Whether HERO's rolling window can therefore reach into the last month of the frozen period is not confirmed.
-- **UA2–UA6 direct-edit lockdown.** The Logility permission that allows direct edits on UA2–UA6 and PROMO_LIFT can be removed so that every change flows through HERO. Whether it has been applied, or remains a process rule only, is not confirmed. UA1 stays directly editable inside months 0–4 by design.
+- **UA2–UA6 direct-edit lockdown.** The Logility permission that allows direct edits on UA2–UA6 and PROMO_LIFT can be removed so that every change flows through HERO. Whether it has been applied, or remains a process rule only, is not confirmed. UA1 stays directly editable inside the frozen window by design, though that window is stepping down cycle by cycle (see [Logility array & mart mapping](logility-array-mart-mapping.md)).
 
 ---
 
@@ -1726,6 +1864,21 @@ State how this documentation is sourced, versioned, and kept honest about uncert
 
 This manual is consolidated from controlled source documents — primarily the **HERO User Manual (v0)** and the **BU-SKU Reconciliation Behavior Explainer**, with practical examples drawn from the **Module 2** enablement material. Do not add HERO functionality that is not supported by those sources.
 
+**Note — The HERO product repository is canonical for product behaviour**
+
+Confirmed by Rene Bartoli, 28 August 2026: the HERO product repository is the canonical source for **what the application does** (the export contract, arrays and horizons, workbook and upload behaviour, formulas, stale-template collisions, enrichment identity and status, the preliminary forecast, dashboard-versus-template timing, missing SKUs, and escalation). Where a page in this manual describes tool behaviour that their repository also documents, it should defer to that source rather than restate it, because their material changes with the code and this manual does not update on the same cadence. This manual remains the only source for the material their repository does not cover: the Forecast Calculation Range as a business process, the Management Indicator, proportioning, the enrichment taxonomy as a decision framework, roles, market scope, and the frozen-window policy as a business rule rather than a horizon number.
+
+## Authority tiers
+
+Adopted 28 August 2026, for this manual's own material. Where two documents disagree, use the higher tier and open a correction against the lower one.
+
+| Tier | Meaning |
+|---|---|
+| 1 | Current canonical |
+| 2 | Current specialised |
+| 3 | Proposed or in flight, and **not proof of deployment** |
+| 4 | Historical |
+
 ## Handling uncertainty
 
 **Warning — Never hide gaps**
@@ -1748,6 +1901,24 @@ Where a fact, owner, threshold, date, or policy is not fully defined, it is flag
 The **repository is the source of truth** for manual content. Changes arrive as instructions rather than as inbound packaged archives. The process owner's local folder is a **one-way, read-only copy** of the repository — delivered as a generated snapshot (a zip drop produced on each merge to `main`), copied in by hand, never edited in place and never shipped back as a master. This retires the earlier two-way packaged-archive round-trip, which was itself a place where the repository and the local copy could quietly drift apart.
 
 ## Revision log
+
+**2026-08-28** — Landed Canonical Facts sections 17 to 20 (facts 94 to 127), catching the manual up after three earlier update passes did not reach the site. Two of the changes correct guidance the manual was giving confidently and had to be fixed first:
+
+1. **The fan-out schedule is corrected.** The manual described a six-run UK weekday cadence plus Friday runs and a late-night catch-up; none of that exists. The actual mechanism is an immediate, upload-triggered refresh reaching Level 1 in minutes, with recurring UK and US wrappers as a safety net rather than the mechanism. Updated `workflows/timing-system-sync.md` and `reference/batch-orchestration-updates.md`.
+2. **Level 2.5 visibility in the Level 1 template is corrected.** A Level 1 user is not blind to a Level 2.5 adjustment in their template; the template carries it as a read-only context column, subject only to the same minutes-after-upload timing as everything else post-processing touches. Updated `tools/bu-sku-level-25-mode.md` and `tools/forecast-reconciliation-template.md`.
+3. **The Forecast Calculation Range chapter gained the mechanism it was missing**: the range is a continuous period rather than a year bucket, the Management Indicator (`M` preserves an out-of-range value, `H` removes it) decides what survives it, the range constrains the force down but not the roll up (a different mechanism, the Summing program, handles that), and how the range is built differs by market. Updated `workflows/forecast-range-calculation.md`.
+4. **A new recapture case.** When forecast is lost during disaggregation because the range ends before the Consensus Forecast does, the fix is a Level 1 recapture, never a Level 2.5 one; recapturing at Level 2.5 spreads the volume across every extended partner instead of reaching the one that lost it. Detection is manual today; no monitor exists for this yet. New Case 4 in `special-considerations/fcr-adjustment-rules.md`.
+5. **Fan-out weighting is described as baseline share**, with the addition that earlier enrichments and carried-forward reconciliation changes do not affect those weights. Updated `tools/bu-sku-level-25-mode.md` and `examples/bu-sku-worked-examples.md`.
+6. **A fifth UA1-mapped enrichment type, `NON_STATISTICAL_DEMAND`**, joins `PHASE_OUT`, `EXCESS_DEPLETION`, `DEMAND_PHASE_SHIFT` and `SUPPLY_SHORTAGE_COMP`, and the generating rule behind the list is now taught directly. It captures full forecast volume for a portfolio segment a market has agreed not to forecast statistically, and does not retire the Level 1 base-trend route as an alternative. Updated `reference/logility-array-mart-mapping.md` and `tools/enrichment-capture-template.md`; new glossary entry.
+7. **TMO's timing framing was checked and found not to be present** in this manual; no correction was needed.
+8. **The UA1 horizon and the frozen window step-down.** The design horizon is confirmed at month 21; the current build stops publishing UA1 at month 12, a known gap being raised for correction rather than a design change. Separately, the frozen window inside which HERO withholds UA1 authoring is stepping down cycle by cycle and is retired entirely from the January 2027 cycle, agreed direction in both pilot markets. Updated `help/glossary.md` and `reference/logility-array-mart-mapping.md`.
+9. **The frozen-window carry-forward is stated precisely**: it currently carries the live Logility baseline, not the live UA1 array as intended; the gap narrows as the step-down proceeds. Updated `help/glossary.md`.
+10. **What HERO actually sends to Logility.** Users author deltas; the export sends complete replacement values, and output is rounded to whole units at partner, SKU and week grain, which is the usual answer to a BU-SKU total not tying exactly to the sum of its partners. Updated `reference/logility-array-mart-mapping.md` and `workflows/timing-system-sync.md`.
+11. **New glossary entries**: Management Indicator, `NON_STATISTICAL_DEMAND`, Summing program, and a tightened Forecast Calculation Range entry that separates it explicitly from the portfolio extension.
+12. **One consolidated Power BI dashboard** replaces the earlier separate per-market reports; a user sees the market they are authorised for, and regional-team members see every live market in their region. Updated `tools/reference-views-dashboards.md`.
+13. **Documentation governance itself.** Recorded the HERO product repository as the canonical source for product behaviour, with this manual deferring to it on tool mechanics and remaining the only source for the business-process material it does not cover; adopted the four-tier authority model above.
+
+Sourced from `HERO_Canonical_Facts_OnePager_v11_2026-08-28`, the two Logility vendor WebHelp transcriptions in `update_kit/`, and the HERO product repository review in `update_kit/Repo_Docs_Review_2026-08-28.txt`.
 
 **2026-08-07** — Confirmed by Rene Bartoli (process owner) on 7 August 2026:
 
@@ -1882,6 +2053,7 @@ Give clear guidance on how to handle forecast adjustment opportunities found wit
 | **Case 3A** | Customer-level impact compensated through another product across all accounts | Brand Captain | Level 3 protected via product-level compensation |
 | **Case 3B** | Customer-level impact compensated through a specific account | Brand Captain + compensating KAM | Level 3 protected via account-level compensation |
 | **Case 3C** | One customer will not take a SKU, but total SKU volume should be preserved and redistributed | Brand Captain + Demand Planner | Level 3 stays stable; Level 1 reallocated |
+| **Case 4** | Forecast is lost during disaggregation because the forecasting range ends before the Consensus Forecast does | Demand Planner, recapturing at Level 1 | Volume recaptured on the named customer that lost it; Level 3 unaffected |
 
 ## Case 1 — Volume reallocation within the same customer
 
@@ -1917,6 +2089,10 @@ Because this changes the underlying **forecasting range**, it cannot be done thr
 2. Tags the record with the indicator **(M)** so the Genpact team does not overwrite it later.
 3. Sets the **Level 2** forecast for the relevant forecasting partner to **zero** for all applicable weeks.
 
+**Note — The `(M)` tag is the Management Indicator**
+
+This is not a one-off trick specific to Case 3C. `(M)` is the same **Management Indicator** used across the Forecast Calculation Range mechanism generally (see [Forecast Calculation Range & Disaggregation](../workflows/forecast-range-calculation.md)): it tells the Calculate Forecasts program to leave the tagged record's quantity and indicator as they are rather than overwriting it. The same tag, and the same protection, apply anywhere a value needs to survive outside the range.
+
 The team then waits for the **end-of-day disaggregation batch**, which recalculates Level 3 → Level 2 → Level 1. Finding no Level 2 forecast for that partner, it sets the corresponding Level 1 to zero, so the volume redistributes only across the remaining customers.
 
 **Note — When the change becomes visible**
@@ -1925,6 +2101,22 @@ After the disaggregation batch, the updated data is transmitted to the EDW table
 
 Result: **Level 3 stays stable**; **Level 1 is redistributed** only across the correct customers. Use this only when the business decision is to preserve the total SKU forecast and redistribute, rather than reduce the SKU or compensate through another product.
 
+## Case 4 — Forecast lost during disaggregation: recapture at Level 1
+
+Applies when a product has forecast for its partners only through a given month, and the forecasting range for those partners ends at that same point, while the Consensus Forecast still carries volume beyond it. Level 3 disaggregation into those customers then has nowhere to put the extra volume, and it disappears rather than landing anywhere wrong.
+
+**The correct action is to recapture the volume at Level 1**, against the specific Forecast Partner that should carry it.
+
+**Warning — Never recapture this at Level 2.5**
+
+Recapturing at Level 2.5 is accepted by the system and nothing looks wrong at the point of capture, but on fan-out that volume spreads across **all** extended Forecast Partners using baseline share, instead of reaching the one customer that actually lost it. The total ties out at the aggregate level and every level below it is wrong. Level 1 assigns the volume to a named Forecast Partner directly; Level 2.5 cannot target one.
+
+**The root-cause alternative.** Where the forecasting range genuinely should cover the weeks in question, fix the range instead of patching around it with a Level 1 recapture. A recapture treats the symptom; a range correction removes the cause.
+
+**Note — Detection is manual today**
+
+There is no automated alert for this scenario. The input-data monitor that would host a check like this is not currently deployed, so do not treat any monitor job name as an available gate. Finding this case today depends on someone noticing the gap between the Consensus Forecast and what the range is carrying, not on a system warning.
+
 ## Guiding principle
 
 Preserve the right level of accountability while keeping the process practical:
@@ -1932,6 +2124,7 @@ Preserve the right level of accountability while keeping the process practical:
 - **Customer-specific corrections** → KAM, through the Reconciliation template.
 - **Brand-level decisions** affecting total volume or requiring cross-account compensation → validated and coordinated by the Brand Captain.
 - **Preserving a total SKU forecast by redistributing across remaining customers** → Demand Planner, through the traditional Logility forecasting-range process so the disaggregation logic recalculates correctly.
+- **Forecast lost during disaggregation because the range ended early** → Demand Planner, recapturing at Level 1 against the named partner, never at Level 2.5.
 
 ## Persisting an approved decision into future cycles
 
@@ -1964,6 +2157,8 @@ Total up → **Base Trend Adjustment (~4 months)**. Share change only → **fixe
 - [BU-SKU / Level 2.5 mode](../tools/bu-sku-level-25-mode.md)
 - [Forecast Reconciliation Template (FRT)](../tools/forecast-reconciliation-template.md)
 
-**Success — No open questions identified**
+**Warning — Gaps & Open Questions**
 
-No open questions were identified from the available source material.
+- **Whether a forecast-lost check will be added when the input-data monitor is deployed.** `[GAP: Rene Bartoli / Jarred Bultema]` The monitor design does not currently include a check for this scenario, and the monitor itself is not deployed.
+- **Whether a corrective Management Indicator pass over 2026 is planned**, or whether affected volume is recaptured case by case instead. `[GAP: Rene Bartoli]`
+- Directional, not a commitment: cases of the Case 4 shape are expected to appear in the first cycle, and not all of them will resolve quickly.

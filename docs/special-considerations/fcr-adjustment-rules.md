@@ -19,6 +19,7 @@ Give clear guidance on how to handle forecast adjustment opportunities found wit
 | **Case 3A** | Customer-level impact compensated through another product across all accounts | Brand Captain | Level 3 protected via product-level compensation |
 | **Case 3B** | Customer-level impact compensated through a specific account | Brand Captain + compensating KAM | Level 3 protected via account-level compensation |
 | **Case 3C** | One customer will not take a SKU, but total SKU volume should be preserved and redistributed | Brand Captain + Demand Planner | Level 3 stays stable; Level 1 reallocated |
+| **Case 4** | Forecast is lost during disaggregation because the forecasting range ends before the Consensus Forecast does | Demand Planner, recapturing at Level 1 | Volume recaptured on the named customer that lost it; Level 3 unaffected |
 
 ## Case 1 — Volume reallocation within the same customer
 
@@ -54,12 +55,29 @@ Because this changes the underlying **forecasting range**, it cannot be done thr
 2. Tags the record with the indicator **(M)** so the Genpact team does not overwrite it later.
 3. Sets the **Level 2** forecast for the relevant forecasting partner to **zero** for all applicable weeks.
 
+!!! note "The `(M)` tag is the Management Indicator"
+    This is not a one-off trick specific to Case 3C. `(M)` is the same **Management Indicator** used across the Forecast Calculation Range mechanism generally (see [Forecast Calculation Range & Disaggregation](../workflows/forecast-range-calculation.md)): it tells the Calculate Forecasts program to leave the tagged record's quantity and indicator as they are rather than overwriting it. The same tag, and the same protection, apply anywhere a value needs to survive outside the range.
+
 The team then waits for the **end-of-day disaggregation batch**, which recalculates Level 3 → Level 2 → Level 1. Finding no Level 2 forecast for that partner, it sets the corresponding Level 1 to zero, so the volume redistributes only across the remaining customers.
 
 !!! note "When the change becomes visible"
     After the disaggregation batch, the updated data is transmitted to the EDW tables at **12:30 PM Eastern Time**. The changes become visible in HERO the **following day**, once the EDW tables are updated and HERO refreshes its data.
 
 Result: **Level 3 stays stable**; **Level 1 is redistributed** only across the correct customers. Use this only when the business decision is to preserve the total SKU forecast and redistribute, rather than reduce the SKU or compensate through another product.
+
+## Case 4 — Forecast lost during disaggregation: recapture at Level 1
+
+Applies when a product has forecast for its partners only through a given month, and the forecasting range for those partners ends at that same point, while the Consensus Forecast still carries volume beyond it. Level 3 disaggregation into those customers then has nowhere to put the extra volume, and it disappears rather than landing anywhere wrong.
+
+**The correct action is to recapture the volume at Level 1**, against the specific Forecast Partner that should carry it.
+
+!!! warning "Never recapture this at Level 2.5"
+    Recapturing at Level 2.5 is accepted by the system and nothing looks wrong at the point of capture, but on fan-out that volume spreads across **all** extended Forecast Partners using baseline share, instead of reaching the one customer that actually lost it. The total ties out at the aggregate level and every level below it is wrong. Level 1 assigns the volume to a named Forecast Partner directly; Level 2.5 cannot target one.
+
+**The root-cause alternative.** Where the forecasting range genuinely should cover the weeks in question, fix the range instead of patching around it with a Level 1 recapture. A recapture treats the symptom; a range correction removes the cause.
+
+!!! note "Detection is manual today"
+    There is no automated alert for this scenario. The input-data monitor that would host a check like this is not currently deployed, so do not treat any monitor job name as an available gate. Finding this case today depends on someone noticing the gap between the Consensus Forecast and what the range is carrying, not on a system warning.
 
 ## Guiding principle
 
@@ -68,6 +86,7 @@ Preserve the right level of accountability while keeping the process practical:
 - **Customer-specific corrections** → KAM, through the Reconciliation template.
 - **Brand-level decisions** affecting total volume or requiring cross-account compensation → validated and coordinated by the Brand Captain.
 - **Preserving a total SKU forecast by redistributing across remaining customers** → Demand Planner, through the traditional Logility forecasting-range process so the disaggregation logic recalculates correctly.
+- **Forecast lost during disaggregation because the range ended early** → Demand Planner, recapturing at Level 1 against the named partner, never at Level 2.5.
 
 ## Persisting an approved decision into future cycles
 
@@ -98,5 +117,7 @@ If the intent is that **Tesco should hold a larger share** of the SKU (without c
 - [BU-SKU / Level 2.5 mode](../tools/bu-sku-level-25-mode.md)
 - [Forecast Reconciliation Template (FRT)](../tools/forecast-reconciliation-template.md)
 
-!!! success "No open questions identified"
-    No open questions were identified from the available source material.
+!!! warning "Gaps & Open Questions"
+    - **Whether a forecast-lost check will be added when the input-data monitor is deployed.** `[GAP: Rene Bartoli / Jarred Bultema]` The monitor design does not currently include a check for this scenario, and the monitor itself is not deployed.
+    - **Whether a corrective Management Indicator pass over 2026 is planned**, or whether affected volume is recaptured case by case instead. `[GAP: Rene Bartoli]`
+    - Directional, not a commitment: cases of the Case 4 shape are expected to appear in the first cycle, and not all of them will resolve quickly.
