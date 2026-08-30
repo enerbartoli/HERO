@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Concentric rounded-square texture">
+  <!-- Generic concentric rounded-square motif evoking the Hasbro deck pattern.
+       White strokes so it reads as a subtle texture over any gradient; control via CSS opacity (~6%). -->
+  <g fill="none" stroke="#ffffff" transform="translate(900 280) rotate(16)">
+    <rect x="-60"  y="-60"  width="120"  height="120"  rx="34"  stroke-width="6"  opacity="0.9"/>
+    <rect x="-120" y="-120" width="240"  height="240"  rx="64"  stroke-width="6"  opacity="0.7"/>
+    <rect x="-180" y="-180" width="360"  height="360"  rx="92"  stroke-width="6"  opacity="0.55"/>
+    <rect x="-240" y="-240" width="480"  height="480"  rx="120" stroke-width="6"  opacity="0.4"/>
+    <rect x="-300" y="-300" width="600"  height="600"  rx="150" stroke-width="6"  opacity="0.28"/>
+    <rect x="-360" y="-360" width="720"  height="720"  rx="180" stroke-width="6"  opacity="0.18"/>
+  </g>
+  <g fill="none" stroke="#ffffff" transform="translate(180 640) rotate(16)">
+    <rect x="-50"  y="-50"  width="100"  height="100"  rx="28"  stroke-width="5"  opacity="0.5"/>
+    <rect x="-100" y="-100" width="200"  height="200"  rx="54"  stroke-width="5"  opacity="0.32"/>
+    <rect x="-150" y="-150" width="300"  height="300"  rx="80"  stroke-width="5"  opacity="0.18"/>
+  </g>
+</svg>

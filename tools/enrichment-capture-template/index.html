@@ -1,0 +1,2301 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Operational manual for HERO (Hasbro Enrichment & Reconciliation Optimizer) — UK pilot">
+      
+      
+      
+        <link rel="canonical" href="https://enerbartoli.github.io/HERO/tools/enrichment-capture-template/">
+      
+      
+        <link rel="prev" href="../hero-portal/">
+      
+      
+        <link rel="next" href="../forecast-reconciliation-template/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/img/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Enrichment Capture Template (ECT) - HERO User Manual</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#enrichment-capture-template-ect" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="HERO User Manual" class="md-header__button md-logo" aria-label="HERO User Manual" data-md-component="logo">
+      
+  <img src="../../assets/img/hasbro-logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            HERO User Manual
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Enrichment Capture Template (ECT)
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="HERO User Manual" class="md-nav__button md-logo" aria-label="HERO User Manual" data-md-component="logo">
+      
+  <img src="../../assets/img/hasbro-logo.png" alt="logo">
+
+    </a>
+    HERO User Manual
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../Priorization_Matrix/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Program tools
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Program tools
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://enerbartoli.github.io/mod1-knowledge-check/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Knowledge Check
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://hasbroinc.sharepoint.com/sites/GlobalPlanningCentralCommandCOE/HERO%20Enrichment/Forms/AllItems.aspx?viewid=8ec78d8e%2D6199%2D4641%2D8bb5%2D108cfbe7bc40&newTargetListUrl=%2Fsites%2FGlobalPlanningCentralCommandCOE%2FHERO%20Enrichment&viewpath=%2Fsites%2FGlobalPlanningCentralCommandCOE%2FHERO%20Enrichment%2FForms%2FAllItems%2Easpx" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Training Recordings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://hasbroinc.sharepoint.com/:f:/r/sites/GenpactStatFCSTAccelerationPrj2/Shared%20Documents/0.%20Baseline%20Management%20Playbook/01.%20Official%20Approved%20Versions_Read%20Only?csf=1&web=1&e=WtdKU6" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Forecasting Playbook
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://glidepath-hero-145364974494823.3.azure.databricksapps.com" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HERO Tool
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://app.powerbi.com/groups/ffc77157-ca2d-4b70-9f14-2a1c3842f973/reports/1d7dcc05-0d12-40f8-bd0c-184b82bdd406/e26a15167349ce5185cc?ctid=701edd3e-c7a8-4789-b1ce-8a243620d68f&bookmarkGuid=92641236-1c4a-4f93-be93-803e0577ab14" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HERO Dashboard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Role-based guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Role-based guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../roles/demand-planner/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Demand Planner
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../roles/sales/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sales
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../roles/marketing-gpl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Marketing / GPL
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/what-hero-is/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What HERO is
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/hero-in-the-cycle/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Where HERO fits in the planning flow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/roles-permissions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Roles & permissions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/statistical-baseline-scope/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Which items have a statistical baseline
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tools & templates
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Tools & templates
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../hero-portal/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HERO portal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Enrichment Capture Template (ECT)
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Enrichment Capture Template (ECT)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#who-should-read-this-page" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Who should read this page
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#purpose" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Purpose
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#when-to-use-it" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When to use it
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#supported-enrichment-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Supported enrichment types
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#working-in-the-template-excel-formulas-copying-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Working in the template (Excel, formulas, copying data)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cancelling-or-removing-an-enrichment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cancelling or removing an enrichment
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-pages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related pages
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../forecast-reconciliation-template/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Forecast Reconciliation Template (FRT)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../bu-sku-level-25-mode/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BU-SKU / Level 2.5 mode
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference-views-dashboards/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference views & dashboards
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workflows
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Workflows
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workflows/end-to-end-workflow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    End-to-end workflow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workflows/tab-by-tab-walkthrough/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tab-by-tab walkthrough
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workflows/timing-system-sync/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Timing & system sync
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workflows/field-by-field-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Field-by-field reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workflows/forecast-range-calculation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Forecast Calculation Range & Disaggregation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Examples
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Examples
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../examples/calculation-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Calculation reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../examples/bu-sku-worked-examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BU-SKU worked examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Help & troubleshooting
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Help & troubleshooting
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../help/validation-error-catalogue/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Validation & error catalogue
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../help/faq-common-gotchas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ & common gotchas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../help/glossary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Glossary
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/logility-array-mart-mapping/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Logility array & mart mapping
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/batch-orchestration-updates/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Batch orchestration & updates
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/deferred-in-v0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deferred in v0
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/documentation-governance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Documentation governance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
+        
+          
+          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Special Considerations During Pilot
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Special Considerations During Pilot
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../special-considerations/data-transmission-contingency/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data Transmission During Contingency
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../special-considerations/fcr-adjustment-rules/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Rules for FCR Adjustment Within Cycle
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#who-should-read-this-page" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Who should read this page
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#purpose" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Purpose
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#when-to-use-it" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When to use it
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#supported-enrichment-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Supported enrichment types
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#working-in-the-template-excel-formulas-copying-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Working in the template (Excel, formulas, copying data)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cancelling-or-removing-an-enrichment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cancelling or removing an enrichment
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-pages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related pages
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+
+<div class="hero-banner"
+     style="background-image:url('../../assets/img/bg-gradient-1.jpg')"
+     role="img"
+     aria-label="Tools & templates — section banner">
+  
+  <span class="hero-banner__texture"
+        style="background-image:url('../../assets/img/pattern-frames.svg'),url('../../assets/img/light-streaks.svg')"
+        aria-hidden="true"></span>
+  
+  
+  <img class="hero-banner__logo" src="../../assets/img/brands/nerf-logo.webp" alt="" aria-hidden="true">
+  
+  <span class="hero-banner__label">Tools & templates</span>
+</div>
+
+
+                  
+
+
+
+<!-- docs/tools/enrichment-capture-template.md -->
+
+<h1 id="enrichment-capture-template-ect">Enrichment Capture Template (ECT)<a class="headerlink" href="#enrichment-capture-template-ect" title="Permanent link">&para;</a></h1>
+<h2 id="who-should-read-this-page">Who should read this page<a class="headerlink" href="#who-should-read-this-page" title="Permanent link">&para;</a></h2>
+<p>Sales / KAM and Marketing / GPL users who author event-driven enrichments; Demand Planning when reviewing.</p>
+<h2 id="purpose">Purpose<a class="headerlink" href="#purpose" title="Permanent link">&para;</a></h2>
+<p>Explain when to use the <strong>Enrichment Capture Template (ECT)</strong> and which enrichment types it supports.</p>
+<h2 id="when-to-use-it">When to use it<a class="headerlink" href="#when-to-use-it" title="Permanent link">&para;</a></h2>
+<p>Use the enrichments workflow when you have a <strong>real-world event or overlay</strong> tied to an item, channel, and time period — promotions, sets, pre-orders, Trade / pallet adjustments (TMO), marketing inputs, and demand-planning overlays.</p>
+<div class="admonition tip">
+<p class="admonition-title">Enrichments vs reconciliation</p>
+<p>Use <strong>enrichments</strong> for dated business events. Use <strong>reconciliation</strong> when the ask is effectively <em>"change the final number for these weeks."</em> See <a href="../forecast-reconciliation-template/">Forecast Reconciliation Template (FRT)</a>.</p>
+</div>
+<h2 id="supported-enrichment-types">Supported enrichment types<a class="headerlink" href="#supported-enrichment-types" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Use for</th>
+<th>Required extra field</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>RETAIL_PROMOTION</code></td>
+<td>Promo / retail event</td>
+<td>Retail Promotion Mechanism; Price Discount % when relevant</td>
+</tr>
+<tr>
+<td><code>SET</code></td>
+<td>Set build / one-time pipeline fill</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>SAMPLE</code></td>
+<td>Free sample volume</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>PRE_ORDER</code></td>
+<td>Committed launch volume</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>TMO</code></td>
+<td>Trade / pallet adjustment</td>
+<td>Pallet Tag; SPU SKU optional</td>
+</tr>
+<tr>
+<td><code>PHASE_OUT</code></td>
+<td>Item should no longer carry a normal baseline</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>EXCESS_DEPLETION</code></td>
+<td>Depletion-style adjustment (excess inventory)</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>DEMAND_PHASE_SHIFT</code></td>
+<td>Re-phasing demand between weeks (pull-forward / push-out, e.g. deals): author a <strong>positive + negative pair</strong> — a positive row where the demand lands, a negative row where it is taken from</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>SUPPLY_SHORTAGE_COMP</code></td>
+<td>Compensating item for a shortage</td>
+<td>Shortage Planning SKU</td>
+</tr>
+<tr>
+<td><code>NON_STATISTICAL_DEMAND</code></td>
+<td>Full forecast volume for a part of the portfolio a market has agreed <strong>not</strong> to forecast statistically</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>MARKETING</code></td>
+<td>Marketing overlay</td>
+<td><code>ALL_FORECAST_PARTNERS</code> allowed</td>
+</tr>
+<tr>
+<td><code>DEMAND_PLANNING</code></td>
+<td>Demand-planning overlay</td>
+<td><code>ALL_FORECAST_PARTNERS</code> allowed</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Status values</p>
+<p><code>PROPOSED</code> = planned / working input · <code>CONFIRMED</code> = approved active input · <code>DECLINED</code> = preserved for visibility in the template and audit trail, but <strong>excluded from calculated downstream outputs</strong>. As of the <strong>20 July 2026 release</strong>, setting a row to <code>DECLINED</code> is the recommended way to remove its effect — see <em>Cancelling or removing an enrichment</em> below.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Re-phasing demand: use DEMAND_PHASE_SHIFT, not SET (ratified, 16 July 2026)</p>
+<p>When the business decision is to <strong>move existing demand between weeks</strong> (deals, pull-forwards, ladder buys — and in general demand timing changes that do <strong>not</strong> originate from problems in history), use a <code>DEMAND_PHASE_SHIFT</code> <strong>positive + negative pair</strong> instead of <code>SET</code>. Reserve <code>SET</code> for a <strong>true set build</strong>; if a true set build also pulls existing demand forward, offset it with <strong>negative <code>SET</code> rows</strong> on the weeks the demand comes from — the same enrichment type for both legs, consistent with the ladder rule (DPS pair). That <code>SET</code> pair does <strong>not</strong> cover the case where the baseline already carries the fill — see <em>NPI channel fill</em> below.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">NPI channel fill: negative base trend plus positive SET (corrected, 7 August 2026)</p>
+<p>When the Daybreak New Product Introduction (NPI) launch baseline <strong>already embeds the channel fill</strong> in its curve, this is not a <code>SET</code> pair. Enter a <strong>negative base trend adjustment in F1</strong> for the excess the baseline encoded, plus a <strong>positive <code>SET</code> of equal magnitude in F1</strong> to make the fill visible as a discrete commitment for allocation and supply sizing. Both legs sit on exactly the same weeks — the launch window — so neither carries into the next cycle and neither needs manual retirement.</p>
+<p>The leg types differ on purpose. Base trend adjustments are not cleansed from history; they adjust the forward baseline. History cleansing runs in the <strong>opposite direction</strong> to the enrichment, so cleansed history is actual shipments minus the <code>SET</code>, which leaves replenishment demand only and stops the model relearning the fill next year. Two offsetting <code>SET</code> rows would hold the F1 total just as well, but they net to zero in the cleansing calculation and the fill would be relearned.</p>
+<p>The two magnitudes do not have to match: the negative base trend is the excess the baseline assumed, the positive <code>SET</code> is the fill actually agreed, and where they differ the total moves, which is correct. True up the <code>SET</code> against the fill actually shipped before the period closes, or the residual enters next year's baseline.</p>
+<p>Where the baseline does <strong>not</strong> carry the fill — new distribution, new stores, a partner the baseline has never served — there is no excess to correct, so no negative base trend. Enter a positive <code>SET</code> for the one-time fill, and if the new distribution also lifts the ongoing run rate, capture that lift as a separate positive base trend adjustment. The question that separates the two cases is simply: does the baseline already carry this volume?</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Boundary with reconciliation</p>
+<p>If the phasing issue stems from the <strong>baseline / history</strong> — defects or one-off events in history whose adjustment was not made in time, or that cannot be explained by commercial actions — correct it through <strong>reconciliation</strong> (base trend adjustment), not an enrichment. <code>DEMAND_PHASE_SHIFT</code> is for known commercial timing events; reconciliation is for history-driven baseline corrections.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">No single-row move; SUPPLY_SHORTAGE_COMP stays tracking-only</p>
+<p>A single <code>DEMAND_PHASE_SHIFT</code> row does <strong>not</strong> automatically move demand — it takes <strong>two rows</strong> (positive where the demand lands, negative where it comes from). Do <strong>not</strong> confuse it with <strong>Channel Shift</strong> (a reconciliation control): Channel Shift moves demand between channels (<code>DOM</code> ↔ <code>DI</code>) and creates the offsetting negative <strong>automatically</strong>; <code>DEMAND_PHASE_SHIFT</code> moves demand between <strong>weeks</strong> and both legs are authored manually. <code>SUPPLY_SHORTAGE_COMP</code> remains <strong>tracking metadata</strong>: it does not move volume between SKUs. Tracking-only refers to the forward forecast. The relationship it records is used at history cleansing, where it raises the adjusted demand of the item that was unavailable and reduces the same quantity from the substitute. See <a href="../../workflows/forecast-range-calculation/#how-history-cleansing-works">How history cleansing works</a>.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">NON_STATISTICAL_DEMAND: a label of its own for volume with no baseline to sit on</p>
+<p>Use <code>NON_STATISTICAL_DEMAND</code> for a part of the portfolio a market has agreed <strong>not</strong> to forecast statistically. It captures the <strong>full forecast volume</strong> for that segment, so it carries a label of its own instead of being indistinguishable from an adjustment layered on top of a baseline. What decides scope is the market-level agreement, not the channel and not the item class; today that means Direct Import and FAN in the UK pilot, and FAN in the United States.</p>
+<p><!-- TODO: confirm with Rene --> The literal value as it appears in the template's Enrichment Type field. <code>NON_STATISTICAL_DEMAND</code> follows the convention of every other type on this page, but the exact string has not been confirmed against the live template.</p>
+<p><strong>It does not retire the base-trend route.</strong> A market whose non-statistical demand is recurring at SKU and customer level may reasonably prefer to keep using a Level 1 base trend adjustment for it instead, and choosing that is not an error. Both routes are supported, and which one to use is the market's call, not a rule this manual sets. See <a href="../../workflows/forecast-range-calculation/">Forecast Calculation Range &amp; Disaggregation</a> and <a href="../../reference/logility-array-mart-mapping/">Logility array &amp; mart mapping</a> for how the type behaves once captured, including that it is not separately labelled in the export change-review report.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">TMO comes from FAST</p>
+<p><code>TMO</code> rows are sourced from <strong>FAST</strong> and the template is seeded from FAST once a month. Do <strong>not</strong> author or edit TMO directly in the template — that would desynchronise FAST and Logility.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Confirmed vs Proposed horizon</p>
+<p>Use <code>CONFIRMED</code> for near-term events inside the supply window; use <code>PROPOSED</code> for longer-horizon events that are not yet locked. <code>EXCESS_DEPLETION</code> and <code>PHASE_OUT</code> are separate types in the tool; "Phase-Out" is the business term for taking an item off normal carry-forward, and excess-inventory depletion is captured the same way.</p>
+</div>
+<h2 id="working-in-the-template-excel-formulas-copying-data">Working in the template (Excel, formulas, copying data)<a class="headerlink" href="#working-in-the-template-excel-formulas-copying-data" title="Permanent link">&para;</a></h2>
+<p>The HERO templates are <strong>ordinary Excel files</strong> — while you prepare your entries you can use anything Excel offers: copy/paste from other files, <code>VLOOKUP</code> and other formulas, and so on. Before you <strong>upload</strong> the file to HERO, take these precautions (mostly good practice, not always hard rules):</p>
+<ul>
+<li><strong>Don't overwrite rows.</strong></li>
+<li><strong>Replace any formulas with their values</strong> before uploading (copy → paste as values). The upload expects static values, not live formulas.</li>
+<li><strong>Avoid blank rows</strong> — don't leave empty lines between enrichments. As of the <strong>20 July 2026 release</strong>, upload validation detects mid-sheet blank rows (and blanked headers) and rejects the upload with an explanation, instead of silently dropping the data below them.</li>
+<li><strong>Insert any new or copied row below the last row that has data.</strong></li>
+</ul>
+<h2 id="cancelling-or-removing-an-enrichment">Cancelling or removing an enrichment<a class="headerlink" href="#cancelling-or-removing-an-enrichment" title="Permanent link">&para;</a></h2>
+<div class="admonition warning">
+<p class="admonition-title">Never delete rows</p>
+<p>Do <strong>not</strong> delete enrichment rows. Every enrichment must stay traceable through its key (Enrichment ID) — deleting a row breaks that audit trail.</p>
+</div>
+<p>As of the <strong>20 July 2026 release</strong>, the recommended way to cancel an enrichment is to set its <strong>Status</strong> to <code>DECLINED</code>. A <code>DECLINED</code> row is preserved in the template and the audit trail for visibility, but is <strong>excluded from calculated downstream outputs</strong> — its effect is removed from the forecast while the record of the decision remains.</p>
+<div class="admonition note">
+<p class="admonition-title">Previous method: zeroing the quantity</p>
+<p>Before the 20 July 2026 release, Status was a log-only field and the only way to remove an enrichment's effect was to <strong>zero the quantity</strong> (set <em>Expected Shipment Lift</em> to 0). Zeroing still removes the effect, but <code>DECLINED</code> is now the preferred method because it removes the effect <em>and</em> records the decision explicitly in the audit trail.</p>
+</div>
+<h2 id="related-pages">Related pages<a class="headerlink" href="#related-pages" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../../workflows/field-by-field-reference/">Field-by-field reference</a></li>
+<li><a href="../../workflows/tab-by-tab-walkthrough/">Tab-by-tab walkthrough</a></li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Gaps &amp; Open Questions</p>
+<ul>
+<li>The 16 July 2026 decision is <strong>formally ratified</strong>; taxonomy and training sources were corrected the same day (Taxonomy Playbook v2, Examples for Enrichment Training v2, Enrichment Training Examples Deck v2, Scenarios &amp; Examples v2, MOD2 deck v4, EU Day1 deck v3). Superseded versions should be retired/archived so only the 2026-07-16 versions circulate.</li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      © 2026 Hasbro. All rights reserved. All audio, visual and textual content on this site (including all names, characters, images, trademarks and logos) are protected by trademarks, copyrights and other Intellectual Property rights owned by Hasbro or its subsidiaries, licensors, licensees, suppliers and accounts.
+    </div>
+  
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.top", "navigation.tracking", "navigation.indexes", "toc.follow", "content.code.copy", "content.tooltips", "search.highlight", "search.suggest"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+<script>
+(function () {
+  var GPT_URL  = "https://chatgpt.com/g/g-6a39688f2e0c81918486c4d724888f96-brave-hero-assistant";
+  var LOGO_URL = "../../assets/img/hero-logo-icon.jpg";
+
+  /* ── Header button — injected once, survives instant navigation ── */
+  function injectHeader() {
+    if (document.querySelector(".ask-brave-header-btn")) return;
+    var title = document.querySelector(".md-header__title");
+    if (!title) return;
+    var btn = document.createElement("a");
+    btn.className = "ask-brave-header-btn";
+    btn.href      = GPT_URL;
+    btn.target    = "_blank";
+    btn.rel       = "noopener noreferrer";
+    btn.setAttribute("aria-label", "Ask Brave — HERO Assistant");
+    btn.innerHTML = "💬 <span class='ask-brave-header-btn__text'>Ask Brave</span>";
+    title.insertAdjacentElement("afterend", btn);
+  }
+
+  /* ── Sidebar card — re-injected on every page change ── */
+  function injectSidebar() {
+    var inner = document.querySelector(".md-sidebar--secondary .md-sidebar__inner");
+    if (!inner) return;
+    /* Remove stale card from previous page before appending fresh one */
+    var old = inner.querySelector(".ask-brave-card");
+    if (old) old.remove();
+    var card = document.createElement("div");
+    card.className = "ask-brave-card";
+    card.innerHTML =
+      '<img class="ask-brave-card__logo" src="' + LOGO_URL + '" alt="H.E.R.O. Tool" loading="lazy">' +
+      '<p class="ask-brave-card__eyebrow">Have a question?</p>' +
+      '<p class="ask-brave-card__title">💬 Ask Brave</p>' +
+      '<p class="ask-brave-card__sub">HERO Assistant</p>' +
+      '<a class="ask-brave-card__btn" href="' + GPT_URL + '" target="_blank" rel="noopener noreferrer">Open assistant ↗</a>';
+    inner.appendChild(card);
+    var sidebar = document.querySelector(".md-sidebar--secondary");
+    if (sidebar) {
+      sidebar.removeAttribute("hidden");
+      sidebar.style.removeProperty("display");
+    }
+  }
+
+  /* Initial load */
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", function () { injectHeader(); injectSidebar(); });
+  } else {
+    injectHeader(); injectSidebar();
+  }
+
+  /*
+    Hook into Material's instant navigation.
+    document$ is a global RxJS Subject exposed by Material for MkDocs that
+    emits after each page swap — the correct replacement for DOMContentLoaded
+    when navigation.instant is enabled.
+    Fallback: popstate for non-instant environments.
+  */
+  if (typeof document$ !== "undefined") {
+    document$.subscribe(function () { requestAnimationFrame(injectSidebar); });
+  } else {
+    window.addEventListener("popstate", injectSidebar);
+  }
+})();
+</script>
+
+  </body>
+</html>
