@@ -28,8 +28,10 @@ python3 tools/generate_manual_full.py
 The generator reads `mkdocs.yml`'s nav order, concatenates every
 `docs/**/*.md` page in that order, flattens the MkDocs `!!! type "label"`
 admonitions into plain Markdown, and fails loudly if a page under `docs/` is
-missing from the nav or a nav entry points at a missing file. Bump `VERSION`
-and `DATE` at the top of the script when the manual is republished.
+missing from the nav or a nav entry points at a missing file. The version and
+date are never hardcoded: the version comes from the `VERSION` file at the
+repo root (bump it when the manual reaches a new published version), and the
+date is always today's, so neither can go stale by being forgotten.
 
 **Do not edit the generated file by hand.** CI enforces this:
 `.github/workflows/ci.yml` runs `mkdocs build --strict` and
