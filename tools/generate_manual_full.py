@@ -22,10 +22,20 @@ Usage:
   python3 tools/generate_manual_full.py --check     # verify it is up to date
                                                      # (exit 1 if stale/missing)
 
-The version and date are constants below. Bump them when the manual reaches a
-new published version; the file name and header follow. ``--check`` regenerates
-in memory and compares against the committed file of the current version, so a
-docs change that is not regenerated fails the check.
+The version and date are never hardcoded here, so neither can go stale by
+being forgotten in this file:
+
+  * the **version** is read from the ``VERSION`` file at the repo root — the
+    one place a human bumps it, when the manual reaches a new published
+    version;
+  * the **date** is the wall-clock date of the run (nobody types it).
+
+The output filename and the in-file header are always built from that same
+pair, so they cannot disagree. ``--check`` finds the committed
+``HERO_Manual_Full_v*.md``, reads the version/date back out of *its own
+filename*, regenerates in memory using that exact pair, and compares — so the
+check is a pure function of the committed state, not of today's date, and a
+docs change that is not regenerated still fails it.
 
 No third-party dependencies beyond PyYAML, which ships with MkDocs (already a
 repo dependency via ``requirements.txt``).
@@ -34,6 +44,8 @@ repo dependency via ``requirements.txt``).
 from __future__ import annotations
 
 import argparse
+import datetime
+import glob
 import os
 import re
 import sys
@@ -47,13 +59,10 @@ except ImportError:  # pragma: no cover - environment guard
     )
     raise SystemExit(2)
 
-# --- Consolidated-manual version. Bump when the manual is republished. --------
-VERSION = "8"
-DATE = "2026-08-07"
-
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DOCS_DIR = os.path.join(REPO_ROOT, "docs")
 MKDOCS_YML = os.path.join(REPO_ROOT, "mkdocs.yml")
+VERSION_FILE = os.path.join(REPO_ROOT, "VERSION")
 
 PAGE_SEPARATOR = "\n\n---\n\n"
 
@@ -63,10 +72,53 @@ _ADMONITION_RE = re.compile(
     r'(?:\s+"(?P<title>.*)")?\s*$'
 )
 _FENCE_RE = re.compile(r'^\s*(```+|~~~+)')
+_OUTPUT_GLOB = "HERO_Manual_Full_v*.md"
+_OUTPUT_RE = re.compile(r'^HERO_Manual_Full_v(?P<version>[^_]+)_(?P<date>\d{4}-\d{2}-\d{2})\.md$')
+_HEADER_RE = re.compile(r'^\*\*Version (?P<version>\S+) - (?P<date>\d{4}-\d{2}-\d{2})\*\*$', re.MULTILINE)
 
 
-def output_filename(version: str = VERSION, date: str = DATE) -> str:
+def read_repo_version() -> str:
+    """The manual's published-version number, read from the one file that
+    carries it. A human bumps this file when the manual reaches a new
+    published version; nothing here should ever hardcode it again."""
+    try:
+        with open(VERSION_FILE, "r", encoding="utf-8") as fh:
+            version = fh.read().strip()
+    except FileNotFoundError:
+        raise SystemExit(f"ERROR: {VERSION_FILE} is missing. Create it with the manual's version number.")
+    if not version:
+        raise SystemExit(f"ERROR: {VERSION_FILE} is empty.")
+    return version
+
+
+def today() -> str:
+    """The build date. Nobody types this; it is always today."""
+    return datetime.date.today().isoformat()
+
+
+def output_filename(version: str, date: str) -> str:
     return f"HERO_Manual_Full_v{version}_{date}.md"
+
+
+def find_committed_output():
+    """The single committed ``HERO_Manual_Full_v*.md`` at the repo root, its
+    version and date as read from its own filename. Used by ``--check`` so
+    the check never depends on today's date, only on what is committed."""
+    matches = sorted(glob.glob(os.path.join(REPO_ROOT, _OUTPUT_GLOB)))
+    if not matches:
+        return None
+    if len(matches) > 1:
+        names = ", ".join(os.path.basename(m) for m in matches)
+        raise SystemExit(
+            f"ERROR: more than one consolidated manual file at the repo root ({names}). "
+            "Remove the stale one(s); exactly one should exist."
+        )
+    path = matches[0]
+    name = os.path.basename(path)
+    m = _OUTPUT_RE.match(name)
+    if not m:
+        raise SystemExit(f"ERROR: {name} does not match the expected HERO_Manual_Full_v<N>_<date>.md pattern.")
+    return path, m.group("version"), m.group("date")
 
 
 # ---------------------------------------------------------------------------
@@ -210,7 +262,7 @@ def flatten_admonitions(text: str) -> str:
 # ---------------------------------------------------------------------------
 # Assembly
 # ---------------------------------------------------------------------------
-def build_manual(version: str = VERSION, date: str = DATE) -> str:
+def build_manual(version: str, date: str) -> str:
     nav_pages = validate(load_nav_pages())
 
     header = (
@@ -244,23 +296,42 @@ def main(argv=None):
         action="store_true",
         help="Verify the committed consolidated file is up to date; exit 1 if not.",
     )
-    parser.add_argument("--version", default=VERSION, help="Override version tag.")
-    parser.add_argument("--date", default=DATE, help="Override date (YYYY-MM-DD).")
+    parser.add_argument(
+        "--version",
+        default=None,
+        help="Override the version (default: read from the VERSION file).",
+    )
+    parser.add_argument(
+        "--date",
+        default=None,
+        help="Override the date, YYYY-MM-DD (default: today; ignored by --check, "
+        "which always uses the committed file's own date).",
+    )
     args = parser.parse_args(argv)
 
-    content = build_manual(args.version, args.date)
-    out_path = os.path.join(REPO_ROOT, output_filename(args.version, args.date))
-    rel_out = os.path.relpath(out_path, REPO_ROOT)
-
     if args.check:
-        if not os.path.isfile(out_path):
+        found = find_committed_output()
+        if found is None:
             sys.stderr.write(
-                f"ERROR: {rel_out} is missing. "
+                f"ERROR: no {_OUTPUT_GLOB} found at the repo root. "
                 f"Regenerate with: python3 tools/generate_manual_full.py\n"
             )
             return 1
+        out_path, version, date = found
+        rel_out = os.path.relpath(out_path, REPO_ROOT)
+
         with open(out_path, "r", encoding="utf-8") as fh:
             current = fh.read()
+
+        header_match = _HEADER_RE.search(current)
+        if not header_match or header_match.group("version") != version or header_match.group("date") != date:
+            sys.stderr.write(
+                f"ERROR: {rel_out}'s filename says version {version} / {date}, but its own "
+                f"header does not say the same thing. Regenerate; never hand-edit either.\n"
+            )
+            return 1
+
+        content = build_manual(version, date)
         if current != content:
             sys.stderr.write(
                 f"ERROR: {rel_out} is out of date with respect to docs/.\n"
@@ -270,6 +341,19 @@ def main(argv=None):
             return 1
         print(f"OK: {rel_out} is up to date ({len(load_nav_pages())} nav pages).")
         return 0
+
+    version = args.version or read_repo_version()
+    date = args.date or today()
+    content = build_manual(version, date)
+    out_path = os.path.join(REPO_ROOT, output_filename(version, date))
+    rel_out = os.path.relpath(out_path, REPO_ROOT)
+
+    # Exactly one consolidated manual file should exist at the repo root, so a
+    # stale version/date can never sit next to the current one.
+    for stale in glob.glob(os.path.join(REPO_ROOT, _OUTPUT_GLOB)):
+        if os.path.abspath(stale) != os.path.abspath(out_path):
+            os.remove(stale)
+            print(f"Removed stale {os.path.relpath(stale, REPO_ROOT)}.")
 
     with open(out_path, "w", encoding="utf-8") as fh:
         fh.write(content)

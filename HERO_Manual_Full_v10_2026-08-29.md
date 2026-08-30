@@ -7,7 +7,7 @@
 
 # HERO User Manual - Full Consolidated Manual
 
-**Version 8 - 2026-08-07**
+**Version 10 - 2026-08-29**
 
 This file concatenates every page of the HERO User Manual in nav order, with MkDocs admonition syntax flattened to plain Markdown. It is generated from the site source; do not edit it by hand (see README.md).
 
