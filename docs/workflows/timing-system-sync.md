@@ -16,25 +16,37 @@ Explain why a download, an upload, a dashboard refresh, and a Logility publicati
 |---|---|---|
 | Download any workbook (enrichment-only, standard, or BU-SKU) | Current HERO / Logility data for the selected scope | Immediately, at download (a point-in-time extract) |
 | **Upload** a valid workbook | HERO raw authored state | Authoring state is captured **immediately**; the export later emits only the rows you changed |
-| A **Level 2.5 (BU-SKU) reconciliation** change broadcast down to Level 1, and shown in the dashboard | Resolved weekly reporting layer | **In minutes**, triggered by the upload itself (the scheduled wrappers below are a safety net, not the mechanism) |
-| View **resolved dashboard / reporting** | Resolved weekly reporting layer | After the fan-out completes |
-| **Publish to Logility** | Resolved HERO state packaged into the export surfaces | **Only through the weekly Friday export pipeline** |
+| A **Level 1** reconciliation or enrichment write | Forecast-partner rows | **Immediate.** No post-processing is needed. |
+| A **Level 2.5 (BU-SKU) reconciliation** change broadcast down to Level 1, and shown in the dashboard | Resolved weekly reporting layer | **Saved immediately, distributed on the next scheduled fan-out run for your market.** See the fan-out section below; the run times differ by market. |
+| View **resolved dashboard / reporting** | Resolved weekly reporting layer | After the fan-out for your market completes |
+| **Publish to Logility** | Resolved HERO state packaged into the export surfaces | **Only through the weekly export pipeline, on the day and time set for your market.** See the export section below. |
 
 ## The fan-out (how Level 2.5 changes reach Level 1)
 
-**The normal case is immediate.** When you upload a reconciliation or enrichment file, HERO triggers the post-processing refresh on the upload itself, and the partner grain reflects your change **in minutes**. This trigger has no schedule of its own; it runs because you uploaded, not because a time slot arrived. A user who has just uploaded does not wait for a slot.
+A Level 2.5 adjustment is **saved immediately**, but it does not fan out to forecast partners immediately. HERO post-processing has to distribute the adjustment and rebuild the partner-level surfaces before it shows up at Level 1. **Scheduled processing is the normal path for a Level 2.5 change, not a fallback for something else.**
 
-!!! note "Scheduled wrappers are the safety net, not the mechanism"
-    Recurring wrappers around post-processing exist as a backstop, in case the immediate trigger is missed:
+!!! note "The fan-out: distributes Level 2.5 down to Level 1"
+    Each market has its own job, at its own times, Monday to Thursday:
 
-    | Wrapper | Days | Times | Timezone | Scope |
-    |---|---|---|---|---|
-    | UK workday | Monday to Thursday | 08:00, 11:00, 14:00 | `Europe/London` | United Kingdom |
-    | US workday | Monday to Thursday | 12:00, 15:00, 18:00 | `America/New_York` | Hasbro U.S. |
+    | Market | Days | Fan-out runs |
+    |---|---|---|
+    | United Kingdom | Monday to Thursday | 08:00, 11:00 and 14:00 `Europe/London` |
+    | Hasbro U.S. | Monday to Thursday | 12:00, 15:00 and 18:00 `America/New_York` |
 
-    There are no Friday runs and no late-night catch-up run. If you have heard a six-run UK day, a Friday schedule, or a 23:00 catch-up described, that description does not match the current schedule; treat this table as the figure to use.
+    Use the row for **your own market**. A United Kingdom user does not have runs at 12:00, 15:00 and 18:00 Eastern, and a United States user does not have runs at 08:00, 11:00 and 14:00 London; the two rows are not interchangeable. Only the United Kingdom and Hasbro U.S. are live with a defined fan-out schedule. For any other market, including Asia Pacific and Latin America, the honest answer is that no fan-out schedule has been defined yet, not a copy of either row above.
 
-The answer to "when will my Level 2.5 change reach Level 1" is **minutes after upload**, with the scheduled wrappers as a backstop, not "wait for the next slot."
+**Level 1 writes remain immediate** and need no post-processing; that is the distinction to hold onto. Level 1 lands on save. Level 2.5 lands on the next fan-out run for that market, which by design can be later the same day, not within minutes of saving.
+
+## The weekly export to Logility
+
+This is a **separate process from the fan-out above**, and it runs on a different day, once a week, inside the export pipeline:
+
+| Market | Day | Export pipeline post-processing runs at |
+|---|---|---|
+| United Kingdom | Friday | 10:15 `America/New_York` |
+| Hasbro U.S. | Saturday | 12:00 `America/New_York` |
+
+Do not merge this table with the fan-out table above; they are different jobs, on different days, and mixing them produces a schedule that matches neither.
 
 ## The dashboard has its own cadence
 
@@ -48,14 +60,14 @@ The Power BI dashboard is not refreshed by your upload. It is rebuilt on a sched
 ## What runs on its own, and what still needs a person
 
 !!! tip "HERO does run scheduled jobs"
-    Running without anyone triggering it: ingestion of the Resultant baseline on its own scheduled path, the cycle refresh and post-processing jobs that build each cycle's render snapshots, the previous-cycle computation, dashboard materialisation and the Power BI refresh, and the Friday export batch — which runs whether or not anything changed that week.
+    Running without anyone triggering it: ingestion of the Resultant baseline on its own scheduled path, the fan-out jobs above, the cycle refresh and post-processing jobs that build each cycle's render snapshots, the previous-cycle computation, dashboard materialisation and the Power BI refresh, and the weekly export pipeline for each market, which runs whether or not anything changed that week.
 
     Still needing a person: anything changed directly in Logility, because HERO never reads it. Seeing a new cycle, because your workbook is a point-in-time snapshot that has to be re-downloaded. And clearing a stale adjustment, because a display fix corrects what you see, not what you entered.
 
 ## Publication to Logility
 
-!!! warning "Logility is updated only through the Friday export"
-    Uploading a workbook does **not** push Logility. HERO publishes to Logility **only through the weekly Friday noon Eastern export pipeline**. Anything authored during the week is held in HERO until that pipeline runs. (Downstream transport from Databricks into Logility is external orchestration — see [Batch orchestration & updates](../reference/batch-orchestration-updates.md).)
+!!! warning "Logility is updated only through the weekly export"
+    Uploading a workbook does **not** push Logility. HERO publishes to Logility **only through the weekly export pipeline for your market** (see the table above: Friday for the United Kingdom, Saturday for Hasbro U.S.). Anything authored during the week is held in HERO until that pipeline runs for your market. (Downstream transport from Databricks into Logility is external orchestration; see [Batch orchestration & updates](../reference/batch-orchestration-updates.md).)
 
 !!! note "What is sent is not what you typed"
     You author a **delta** in HERO (a plus or minus change). What the export sends is a **complete replacement value** for the affected array and week cell, not the delta itself. Those are two different things, and the distinction is behind several questions users ask about what shows up on the other side.
@@ -64,8 +76,8 @@ The Power BI dashboard is not refreshed by your upload. It is rebuilt on a sched
 
 ## Urgent changes — the three governed paths
 
-!!! warning "The weekly export is not skippable — use one of these three paths instead"
-    HERO exports to Logility only through the weekly Friday export, regardless of urgency. If a change cannot wait for that cadence, it must go through one of these three governed paths, depending on what it is:
+!!! warning "The weekly export is not skippable, use one of these three paths instead"
+    HERO exports to Logility only through the weekly export for your market, regardless of urgency. If a change cannot wait for that cadence, it must go through one of these three governed paths, depending on what it is:
 
     1. **Commercial enrichments** (promos, sets, samples, pre-orders, TMOs) **always** go through HERO — even inside the months 0–4 frozen window. Never enter these directly in Logility.
     2. **Time-sensitive enrichment changes** (e.g. a DI-to-DOM flip): capture it in HERO and flag it as time-sensitive. A weekly report surfaces it to Demand Planning, who executes it in Logility within the agreed weekly window.
@@ -75,9 +87,9 @@ The Power BI dashboard is not refreshed by your upload. It is rebuilt on a sched
 
 !!! tip "Four rules to live by"
     - A workbook download is a **point-in-time** extract of the current state.
-    - A successful upload updates HERO **authoring** state immediately, and the dashboard and Level 1 view catch up **in minutes**, triggered by the upload itself, not by waiting for a scheduled slot.
-    - **Re-download** if someone else has touched the same scope — especially before a later-stage reconciliation session.
-    - Publication to Logility happens **only through the Friday export pipeline** — not on upload.
+    - A successful upload updates HERO **authoring** state immediately. A Level 1 write is done at that point. A Level 2.5 write still needs its market's next fan-out run before it reaches Level 1 or the dashboard.
+    - **Re-download** if someone else has touched the same scope, especially before a later-stage reconciliation session.
+    - Publication to Logility happens **only through the weekly export pipeline for your market**, not on upload.
 
 ## Related pages
 
@@ -85,5 +97,5 @@ The Power BI dashboard is not refreshed by your upload. It is rebuilt on a sched
 - [Where HERO fits in the planning flow](../getting-started/hero-in-the-cycle.md)
 - [FAQ & common gotchas](../help/faq-common-gotchas.md)
 
-!!! success "No open questions identified"
-    No open questions were identified from the available source material.
+!!! warning "Gaps & Open Questions"
+    - **Fan-out schedules for Asia Pacific and Latin America.** `[GAP: Rene Bartoli / Jarred Bultema]` Not yet configured. Until they are, the answer for those markets is that no fan-out schedule is defined, not a copy of the United Kingdom or Hasbro U.S. rows above.

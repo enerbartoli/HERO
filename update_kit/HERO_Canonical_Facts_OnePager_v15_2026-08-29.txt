@@ -1,4 +1,4 @@
-# HERO Canonical Facts, One-Pager (v11, 28 August 2026)
+# HERO Canonical Facts, One-Pager (v15, 29 August 2026)
 
 _Top-authority document for Brave (the HERO Assistant). When any other document conflicts with this page, THIS PAGE WINS._
 
@@ -18,12 +18,45 @@ _v9 supersedes v8 (27 August 2026). It adds section 18 with four facts, 102 to 1
 _v10 supersedes v9 (28 August 2026). It adds section 19 with ten facts, 106 to 115, on the Forecast Calculation Range, the Management Indicator and the 2026 forecast losses. Fact 106 states that Management Indicator `M` preserves an out-of-range value while `H` and `N` lose it, and gives the vendor mechanism: the range zeroes through the Calculate Forecasts program, which only writes into periods indicated `N` or `H`. **This closes the open item standing against fact 87 since 21 August.** Fact 107 states that the range constrains the force down but not the roll up, because the roll up is the Summing program. Fact 112 states that a range is a continuous period rather than a year bucket, which is why a range loaded for 2027 can reach 2026. Fact 114 identifies our Management Indicator as the Logility Resultant Forecast Override Indicator and records that only `M` and `H` are in use. Fact 115 warns that `M` is forcible, so it protects against the recalculation and not against forcing. **No existing fact was renumbered, reworded or moved.**_
 **Acronyms used on this page.** HERO = Hasbro Enrichment and Reconciliation Optimizer (canonical spelling, singular "Enrichment"). UA1–UA6 = the User Adjustment arrays in Logility. ADS2 / ADS3 = Logility adjustment and consensus arrays. BTA = Base Trend Adjustment. NFR = Non-Forecast-Related. L1 = Level 1 (9-digit SKU x customer). L2.5 = Level 2.5 (BU-SKU). NPI = New Product Introduction. EDW = Enterprise Data Warehouse. TMO = the TMO enrichment type. FAN = the fan / action-figure item class. P2M = Plan to Market. GCO = Global Commercial Organisation.
 
-
-_v11 supersedes v10 (28 August 2026), which was built the same day and **never uploaded**. v11 carries sections 19 and 20 together. Section 20 adds twelve facts, 116 to 127, from the approved UA1 protection step-down and from the HERO product repository, which Rene Bartoli confirmed on 28 August 2026 as the canonical source for product behaviour. Fact 116 sets the cycle-by-cycle end of UA1 protection, approved in both pilot markets. Fact 117 confirms the horizon ends at month 21 and records that the build currently ends it at month 12, closing the verification item open against fact 11 since 30 July. Fact 118 **supersedes fact 60**: the fan-out runs on upload in minutes, and the scheduled wrappers are a safety net. Fact 119 **closes fact 104**. Fact 121 **corrects fact 101**. Fact 126 corrects the detection half of fact 98. Fact 127 records the two-pack authority split and adopts the repository's four-tier model. **No existing fact was renumbered, reworded or moved.**_
 ---
 
+## Before you quote any fact, check these two indexes
+
+Facts are never deleted from this page, so an older or broader fact can still be retrieved and read as current. **Check here first.**
+
+### Superseded: quote the replacement, not the original
+
+| Superseded | Replaced by | What changed |
+|---|---|---|
+| **Fact 60**, the fan-out schedule | **Fact 118** | Fact 60's body has been **deleted**. It carried a timetable that was wrong in every part. If any schedule resembling it appears in another knowledge file, that file is stale |
+| **Fact 101**, Level 2.5 not visible at Level 1 | **Fact 121** | The Level 1 template does carry the Level 2.5 adjustment, as a read-only column. Only the timing caveat survives |
+| **Fact 104**, `NON_STATISTICAL_DEMAND` mapping unknown | **Fact 119** | It maps to UA1 with a sign-based Consensus contribution |
+| **Fact 98**, lost-forecast handling | **Fact 126** | The recapture rule stands; the alert does not exist, so detection is manual |
+
+### Narrower than they look: do not generalise these
+
+| Fact | What it actually covers | What it does **not** cover |
+|---|---|---|
+| **Fact 93**, the FAST and non-FAST blocs | **How a TMO is captured**, and enrichment process rules as taught | **Schedules, configuration, horizons, windows, or which markets are live.** See facts 128 to 130. North America, Asia Pacific and Latin America share a TMO rule and do **not** share a fan-out schedule |
+| **Fact 118**, the fan-out and export schedules | **The United Kingdom and Hasbro U.S. only** | Any other market. Asia Pacific and Latin America have **no defined fan-out schedule**; the answer there is "not yet defined", never a copy of another market's times |
+
+**Two standing rules that come out of these.**
+
+**Any timing answer must come from fact 118**, and only for the two markets it names. Ignore every other schedule in every other knowledge file, including the consolidated manual, whose current snapshot predates these corrections.
+
+**A configuration value never travels between markets by inference.** A business rule may travel; a schedule, horizon or window does not. If it is not written on this page for that market, it is unknown, and the correct answer is to say so.
+
+
+
+_v11 supersedes v10 (28 August 2026), which was built the same day and **never uploaded**. v11 carries sections 19 and 20 together. Section 20 adds twelve facts, 116 to 127, from the approved UA1 protection step-down and from the HERO product repository, which Rene Bartoli confirmed on 28 August 2026 as the canonical source for product behaviour. Fact 116 sets the cycle-by-cycle end of UA1 protection, approved for the United States and pending for the United Kingdom. Fact 117 confirms the horizon ends at month 21 and records that the build currently ends it at month 12, closing the verification item open against fact 11 since 30 July. Fact 118 **supersedes fact 60**. _(The v11 wording of that clause was itself wrong and is corrected in v14; see the indexes below.)_ Fact 119 **closes fact 104**. Fact 121 **corrects fact 101**. Fact 126 corrects the detection half of fact 98. Fact 127 records the two-pack authority split and adopts the repository's four-tier model. **No existing fact was renumbered, reworded or moved.**_
+---
+
+
+_v14 supersedes v11 (29 August 2026). **v11 was live in Brave for one day and produced two wrong answers.** Fact 118 is rewritten: a Level 2.5 change is **saved** immediately but **distributed on the next scheduled fan-out run for its market**, and the fan-out is a **different process** from the weekly export post-processing, on different days and at different times per market. Section 21 is added, facts 128 to 130, bounding fact 93: the FAST and non-FAST split explains **TMO capture only**, Asia Pacific and Latin America have **no defined fan-out schedule**, and a configuration value never travels between markets by inference. Fact 116 gains the United Kingdom approval of 28 August. Two indexes are added near the top so a reader who lands on an older or broader fact is redirected before quoting it. **No fact is renumbered or moved; only 118 and 116 are reworded.**_
 ## 1. How the data moves
 
+
+_v15 supersedes v14 (29 August 2026, same day, v14 never uploaded). One structural change: **the body of fact 60 has been removed** and replaced with a pointer to fact 118. Every earlier attempt to correct the fan-out schedule left fact 60's text in place and relied on a later fact declaring supersession. Retrieval kept finding fact 60 and quoting it, three times. Deleting the text is the only thing that stops it. The number is retained; no knowledge check cites fact 60. Fact 118 also no longer repeats the old figures. **No fact is renumbered or moved.**_
 1. **The flow is one-way, with exactly one exception.** Everything HERO manages travels HERO to Logility. Only the **Resultant** travels Logility to HERO. HERO **never reads** UA1, UA2–UA6, ADS2, Promo Lift or ADS3. _(Ratified 6 August 2026. This replaces any earlier wording describing UA2–UA6 as "always synced HERO to Logility"; there is no sync and no feedback loop.)_
 
 2. **A direct edit in Logility is invisible to HERO.** No download and no upload will ever bring it in. It exists in HERO only if someone deliberately makes the equivalent change inside HERO.
@@ -205,7 +238,7 @@ _v11 supersedes v10 (28 August 2026), which was built the same day and **never u
 
 59. **The enrichment calendar is not independent.** It follows the IBP cycle calendar, which is set by the **ADS3 summarization weekend**: that weekend closes one cycle and opens the next. Logility recalculates ADS3 and publishes it to Supply Planning at that summarization. _(22 July 2026.)_ Caveat: HERO cannot read the SharePoint calendar, so calendar changes have to be propagated into HERO manually. WK31 added a protected calendar-reference worksheet in the template; whether that fully removes the manual propagation step is not confirmed.
 
-60. **Fan-out schedule.** The fan-out (post-processing that distributes L2.5 changes down to L1 and refreshes the L1 view behind the dashboard) runs on a day-of-week schedule: Monday to Thursday at 08:00, 10:00, 12:00, 14:00, 16:00 and 18:00, Friday at 08:00, 10:00 and 12:00 (`Europe/London`), plus a Monday to Thursday catch-up at 23:00 (`America/New_York`). _(Per the HERO Manual. This is the canonical answer; earlier KB statements quoting a "~90-minute fan-out job", "~30 to 35 minutes" or "under 40 minutes" were durations of individual runs under specific scopes, not the cadence, and should not be quoted as the schedule.)_
+60. **Fan-out schedule. SUPERSEDED on 29 August 2026. The current schedules are in fact 118.** The timetable this fact used to carry was wrong in every part and **its text has been removed** so that it cannot be retrieved and quoted as current. Do not attempt to reconstruct it. The fan-out and the weekly export post-processing are **two different processes** with different days and different times **per market**, and both are stated in fact 118. _(Body replaced 29 August 2026 on Rene Bartoli's instruction. The number is retained because this page is cited by number; verified that no knowledge check cites fact 60.)_
 
 61. **Dashboard refresh is 90 minutes for now**, with a target of one hour maximum. The constraint is hosting: the dashboard runs in an individual session. _(31 July 2026.)_ The "15 minutes" figure used in a training session was the wrong reference: it described the time between a load and the underlying data update, not the dashboard's own cadence.
 
@@ -548,20 +581,37 @@ Both sources are filed and the citations above point at their permanent location
 
     This closes the `[VERIFY AGAINST BUILD]` item open against fact 11 since 30 July 2026. The answer is that the build reaches month 12 and must be extended.
 
-118. **The fan-out runs on upload, in minutes, and the scheduled runs are a safety net.** This **supersedes fact 60 entirely**, which was wrong on the times, missed the United States wrapper, and missed the immediate path, which is the one users actually experience. _(Rene Bartoli, from the HERO repository at release 2.26.0, 28 August 2026.)_
+118. **A Level 2.5 change is saved immediately but does not fan out immediately. Scheduled post-processing is the normal path for it, not a fallback.** This **supersedes fact 60 entirely**. _(Jarred Bultema, 28 August 2026. He authors the product documentation, which makes this canonical.)_
 
-    **Path 1, immediate, and this is the normal case.** When a reconciliation or enrichment file is uploaded, the application triggers the refresh through `jobs.run_now` and the partner grain is reflected **in minutes**. This job is trigger-only and carries **no schedule** (`resources/model-workflow-resource.yml:762`). A user who has just uploaded does not wait for a slot.
+    In his words:
 
-    **Path 2, scheduled wrappers, the safety net.** Recurring wrappers around `hero_post_processing_job`:
+    > "Your L2.5 change is saved immediately, but it does not fan out to forecast partners immediately. HERO post-processing must distribute the adjustment and rebuild the partner-level surfaces. Scheduled processing is therefore still the normal path for L2.5, not merely a safety net."
 
-    | Wrapper | Days | Times | Timezone | Scope |
-    |---|---|---|---|---|
-    | UK workday | Monday to Thursday | 08:00, 11:00, 14:00 | `Europe/London` | UNITED KINGDOM |
-    | US workday | Monday to Thursday | 12:00, 15:00, 18:00 | `America/New_York` | HASBRO U.S. |
+    **These are two different processes, and they must not be merged into one schedule.**
 
-    **What fact 60 got wrong**, recorded so the old figures cannot come back: it gave six UK runs a day at 08:00, 10:00, 12:00, 14:00, 16:00 and 18:00, Friday runs at 08:00, 10:00 and 12:00, and a Monday to Thursday catch-up at 23:00 `America/New_York`. **None of those are correct.** There are three UK runs, no Friday runs, no late-night catch-up, and there is a US wrapper that fact 60 did not mention. Fact 60 cited the HERO Manual as its source, which made it circular; the manual pages `workflows/timing-system-sync.md` and `reference/batch-orchestration-updates.md` carry the same wrong figures and must be corrected.
+    **The fan-out**, which distributes a Level 2.5 adjustment down to the forecast partners. It runs **Monday to Thursday**, and **each market has its own job at its own times**:
 
-    **The answer to "when will my Level 2.5 change reach Level 1"** is therefore: minutes after upload, with the scheduled wrappers as a backstop. Not "wait for the next slot".
+    | Market | Days | Fan-out runs |
+    |---|---|---|
+    | United Kingdom | Monday to Thursday | 08:00, 11:00 and 14:00 `Europe/London` |
+    | Hasbro U.S. | Monday to Thursday | 12:00, 15:00 and 18:00 `America/New_York` |
+
+    **The weekly export post-processing**, which is a separate process that produces the export to Logility. It runs **inside the export pipeline**, once a week, on a different day per market:
+
+    | Market | Day | Export pipeline post-processing |
+    |---|---|---|
+    | United Kingdom | Friday | 10:15 `America/New_York` |
+    | Hasbro U.S. | Saturday | 12:00 `America/New_York` |
+
+    **Never present these as one combined timetable, and never quote one market's times to the other.** A United Kingdom user does not have runs at 12:00, 15:00 and 18:00 Eastern, and a United States user does not have runs at 08:00, 11:00 and 14:00 London. If the market is not known, ask before answering with times.
+
+    **Level 1 writes remain immediate** and need no post-processing. That is the distinction to teach: Level 1 lands on save, Level 2.5 lands on the next fan-out run for that market.
+
+    Frequency can be increased if the business needs it, but there is a practical limit to how often this can run. Do not state a future cadence.
+
+    **What fact 60 got wrong**, stated without repeating the figures so they cannot be retrieved from here either: it gave twice the correct number of United Kingdom weekday runs, invented a late-night catch-up that does not exist, treated the Friday and Saturday export-pipeline runs as ordinary weekday slots, and named no United States schedule at all. Its body has now been removed from this page.
+
+    `[SUPERSEDED — do not reuse]` **An earlier version of this fact was published to Brave in v11 on 28 August and was wrong.** It said the fan-out happened **in minutes** on upload and that the scheduled runs were a **safety net**. That came from over-reading a `jobs.run_now` trigger in the repository: the trigger is real, but it is not what distributes a Level 2.5 adjustment to forecast partners. Jarred Bultema corrected it on 28 August and v12 carries the correction. **If Brave was asked about Level 2.5 timing between the v11 upload and the v12 replacement, it answered wrongly.** If that wording resurfaces anywhere, it is wrong.
 
 119. **`NON_STATISTICAL_DEMAND` maps to UA1 on the Field Forecast side, with a sign-based Consensus contribution.** _(HERO repository, `HERO_Logility_Export_Array_Mapping_Reference.md`, corroborated in `HERO_TMO_Export_Handling.md`.)_ **This closes fact 104.** Three riders come with it and all three matter more than the mapping:
 
@@ -620,3 +670,35 @@ Product-behaviour material that belongs in their pack under fact 127 and is **no
 - `[GAP — Jarred Bultema]` Confirmation that the UA1 export window has been extended to month 21, per fact 117.
 - `[GAP — Rene Bartoli / Jarred Bultema]` Whether a forecast-lost check joins the monitor when it is deployed, per fact 126.
 - **Their register's own tension, for their team not ours.** `SUPPLY_SHORTAGE_COMP` is a proposal dated 9 April 2026 in one repository document, absent from the enrichment list in their Current System Overview, and listed as a UA1 residual type with "current code status: aligned" in their array mapping reference. Our fact 80 is newer than their proposal and covers the history-cleansing surface theirs does not address. **No change to fact 80 on this evidence.**
+
+---
+
+## 21. Scope limits on the market blocs (29 August 2026)
+
+128. **The FAST and non-FAST split explains how TMOs are captured. It explains nothing else.** Fact 93 divides the world into Europe, which operates with FAST, and everywhere else, which does not. **That division exists to answer one question: who captures a TMO and where.** _(Rene Bartoli, 29 August 2026.)_
+
+    It does **not** govern:
+
+    - job schedules of any kind, including the fan-out and the export pipeline
+    - system or environment configuration
+    - which markets are live on HERO
+    - horizons, windows or cycle calendars
+    - anything operational that is set per market in the platform
+
+    **Fact 93's sentence that "the process rules in the North America material apply across the whole non-Europe bloc" is about the enrichment process as taught, not about system configuration.** Two markets can share an enrichment rule and run on completely different schedules, because one is a business rule and the other is a deployment setting.
+
+    So when a question is about **how to capture a TMO**, use the two branches in facts 89 to 92. When a question is about **anything else**, the FAST distinction is irrelevant and should not be mentioned. Bringing it up elsewhere implies a shared configuration that does not exist.
+
+129. **Only the United Kingdom and Hasbro U.S. have defined fan-out schedules. Asia Pacific and Latin America do not.** The schedules in fact 118 cover the two markets live on HERO. **The fan-out processes for Asia Pacific and Latin America have not been defined.** _(Rene Bartoli, 29 August 2026.)_
+
+    **Never state, infer or extrapolate a schedule for a market that does not appear in fact 118.** If asked about timing for Asia Pacific or Latin America, the answer is that it is **not yet defined**, not a copy of the North America times. Sharing a rule set with North America on TMO capture says nothing about when a job runs.
+
+    This is the same shape as the failure that produced facts 89 to 93: a rule captured from one market's material, stated without a qualifier, and generalised to everyone. The lesson repeats because the temptation repeats.
+
+130. **When a fact says a rule travels across markets, check what kind of rule it is before applying it.** A **business or process rule**, such as who captures a TMO or how an enrichment type behaves, can reasonably travel. A **configuration value**, such as a schedule, a horizon, a window or an environment setting, is set per market and **never travels by inference**. _(Rene Bartoli, 29 August 2026.)_
+
+    If a market's configuration value is not written down somewhere on this page, it is unknown. Say so. Do not fill it from a neighbouring market, however closely the two are grouped elsewhere.
+
+### Open items on this section
+
+- `[GAP — Rene Bartoli / Jarred Bultema]` The fan-out schedules for Asia Pacific and Latin America, once those markets are configured. Until then fact 129 stands and the answer is "not defined".

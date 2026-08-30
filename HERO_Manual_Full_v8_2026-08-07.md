@@ -576,7 +576,7 @@ Treat item-dimension fields, Lifecycle Status, Blended A-Price, baseline totals,
 
 The forecast-partner (Level 1) template carries a read-only **L2.5 adjustment** column alongside the read-only baseline, enrichment, prior-cycle and preliminary-forecast context. In the `_ALL_FORECAST_PARTNERS_` BU-SKU template the labels invert: the editable column there is Level 2.5, and the read-only cross-level context column is labelled **L1 base trend adjustment**.
 
-What still holds is the **timing**: a Level 2.5 change is not visible at Level 1 until post-processing has run, which is minutes after upload (see [Timing & system sync](../workflows/timing-system-sync.md)), not instantly on save. Treat visibility and timing as two separate questions. A Level 1 user is not blind to a Level 2.5 change in their template; they may just be looking a few minutes too early.
+What still holds is the **timing**: a Level 2.5 change is not visible at Level 1 until the next scheduled fan-out run for that market has completed (see [Timing & system sync](../workflows/timing-system-sync.md)), not instantly on save. Treat visibility and timing as two separate questions. A Level 1 user is not blind to a Level 2.5 change in their template; they may just be looking before that market's next fan-out run.
 
 **Warning — Two rules to remember**
 
@@ -665,7 +665,7 @@ Where some partners and weeks inside one Level 2.5 entry carry a baseline and ot
 
 **Note — A Level 2.5 change is visible at Level 1, once fan-out runs**
 
-The Level 1 template carries the Level 2.5 adjustment as a read-only context column (see [Forecast Reconciliation Template](forecast-reconciliation-template.md)). The only limitation is timing: the value appears at Level 1 only after post-processing has run, which is minutes after upload, not instantly. Do not direct a Level 1 user to the dashboard for something their own template already shows them.
+The Level 1 template carries the Level 2.5 adjustment as a read-only context column (see [Forecast Reconciliation Template](forecast-reconciliation-template.md)). The only limitation is timing: the value appears at Level 1 only after the next scheduled fan-out run for that market (see [Timing & system sync](../workflows/timing-system-sync.md)), not instantly on save. Do not direct a Level 1 user to the dashboard for something their own template already shows them, once the fan-out has run.
 
 ## Blank vs 0 vs signed value
 
@@ -859,26 +859,38 @@ Explain why a download, an upload, a dashboard refresh, and a Logility publicati
 |---|---|---|
 | Download any workbook (enrichment-only, standard, or BU-SKU) | Current HERO / Logility data for the selected scope | Immediately, at download (a point-in-time extract) |
 | **Upload** a valid workbook | HERO raw authored state | Authoring state is captured **immediately**; the export later emits only the rows you changed |
-| A **Level 2.5 (BU-SKU) reconciliation** change broadcast down to Level 1, and shown in the dashboard | Resolved weekly reporting layer | **In minutes**, triggered by the upload itself (the scheduled wrappers below are a safety net, not the mechanism) |
-| View **resolved dashboard / reporting** | Resolved weekly reporting layer | After the fan-out completes |
-| **Publish to Logility** | Resolved HERO state packaged into the export surfaces | **Only through the weekly Friday export pipeline** |
+| A **Level 1** reconciliation or enrichment write | Forecast-partner rows | **Immediate.** No post-processing is needed. |
+| A **Level 2.5 (BU-SKU) reconciliation** change broadcast down to Level 1, and shown in the dashboard | Resolved weekly reporting layer | **Saved immediately, distributed on the next scheduled fan-out run for your market.** See the fan-out section below; the run times differ by market. |
+| View **resolved dashboard / reporting** | Resolved weekly reporting layer | After the fan-out for your market completes |
+| **Publish to Logility** | Resolved HERO state packaged into the export surfaces | **Only through the weekly export pipeline, on the day and time set for your market.** See the export section below. |
 
 ## The fan-out (how Level 2.5 changes reach Level 1)
 
-**The normal case is immediate.** When you upload a reconciliation or enrichment file, HERO triggers the post-processing refresh on the upload itself, and the partner grain reflects your change **in minutes**. This trigger has no schedule of its own; it runs because you uploaded, not because a time slot arrived. A user who has just uploaded does not wait for a slot.
+A Level 2.5 adjustment is **saved immediately**, but it does not fan out to forecast partners immediately. HERO post-processing has to distribute the adjustment and rebuild the partner-level surfaces before it shows up at Level 1. **Scheduled processing is the normal path for a Level 2.5 change, not a fallback for something else.**
 
-**Note — Scheduled wrappers are the safety net, not the mechanism**
+**Note — The fan-out: distributes Level 2.5 down to Level 1**
 
-Recurring wrappers around post-processing exist as a backstop, in case the immediate trigger is missed:
+Each market has its own job, at its own times, Monday to Thursday:
 
-| Wrapper | Days | Times | Timezone | Scope |
-|---|---|---|---|---|
-| UK workday | Monday to Thursday | 08:00, 11:00, 14:00 | `Europe/London` | United Kingdom |
-| US workday | Monday to Thursday | 12:00, 15:00, 18:00 | `America/New_York` | Hasbro U.S. |
+| Market | Days | Fan-out runs |
+|---|---|---|
+| United Kingdom | Monday to Thursday | 08:00, 11:00 and 14:00 `Europe/London` |
+| Hasbro U.S. | Monday to Thursday | 12:00, 15:00 and 18:00 `America/New_York` |
 
-There are no Friday runs and no late-night catch-up run. If you have heard a six-run UK day, a Friday schedule, or a 23:00 catch-up described, that description does not match the current schedule; treat this table as the figure to use.
+Use the row for **your own market**. A United Kingdom user does not have runs at 12:00, 15:00 and 18:00 Eastern, and a United States user does not have runs at 08:00, 11:00 and 14:00 London; the two rows are not interchangeable. Only the United Kingdom and Hasbro U.S. are live with a defined fan-out schedule. For any other market, including Asia Pacific and Latin America, the honest answer is that no fan-out schedule has been defined yet, not a copy of either row above.
 
-The answer to "when will my Level 2.5 change reach Level 1" is **minutes after upload**, with the scheduled wrappers as a backstop, not "wait for the next slot."
+**Level 1 writes remain immediate** and need no post-processing; that is the distinction to hold onto. Level 1 lands on save. Level 2.5 lands on the next fan-out run for that market, which by design can be later the same day, not within minutes of saving.
+
+## The weekly export to Logility
+
+This is a **separate process from the fan-out above**, and it runs on a different day, once a week, inside the export pipeline:
+
+| Market | Day | Export pipeline post-processing runs at |
+|---|---|---|
+| United Kingdom | Friday | 10:15 `America/New_York` |
+| Hasbro U.S. | Saturday | 12:00 `America/New_York` |
+
+Do not merge this table with the fan-out table above; they are different jobs, on different days, and mixing them produces a schedule that matches neither.
 
 ## The dashboard has its own cadence
 
@@ -894,15 +906,15 @@ If you have heard "15 minutes" quoted, that figure described something else — 
 
 **Tip — HERO does run scheduled jobs**
 
-Running without anyone triggering it: ingestion of the Resultant baseline on its own scheduled path, the cycle refresh and post-processing jobs that build each cycle's render snapshots, the previous-cycle computation, dashboard materialisation and the Power BI refresh, and the Friday export batch — which runs whether or not anything changed that week.
+Running without anyone triggering it: ingestion of the Resultant baseline on its own scheduled path, the fan-out jobs above, the cycle refresh and post-processing jobs that build each cycle's render snapshots, the previous-cycle computation, dashboard materialisation and the Power BI refresh, and the weekly export pipeline for each market, which runs whether or not anything changed that week.
 
 Still needing a person: anything changed directly in Logility, because HERO never reads it. Seeing a new cycle, because your workbook is a point-in-time snapshot that has to be re-downloaded. And clearing a stale adjustment, because a display fix corrects what you see, not what you entered.
 
 ## Publication to Logility
 
-**Warning — Logility is updated only through the Friday export**
+**Warning — Logility is updated only through the weekly export**
 
-Uploading a workbook does **not** push Logility. HERO publishes to Logility **only through the weekly Friday noon Eastern export pipeline**. Anything authored during the week is held in HERO until that pipeline runs. (Downstream transport from Databricks into Logility is external orchestration — see [Batch orchestration & updates](../reference/batch-orchestration-updates.md).)
+Uploading a workbook does **not** push Logility. HERO publishes to Logility **only through the weekly export pipeline for your market** (see the table above: Friday for the United Kingdom, Saturday for Hasbro U.S.). Anything authored during the week is held in HERO until that pipeline runs for your market. (Downstream transport from Databricks into Logility is external orchestration; see [Batch orchestration & updates](../reference/batch-orchestration-updates.md).)
 
 **Note — What is sent is not what you typed**
 
@@ -912,9 +924,9 @@ HERO also **rounds output to whole units** at partner, SKU, and week grain. Wher
 
 ## Urgent changes — the three governed paths
 
-**Warning — The weekly export is not skippable — use one of these three paths instead**
+**Warning — The weekly export is not skippable, use one of these three paths instead**
 
-HERO exports to Logility only through the weekly Friday export, regardless of urgency. If a change cannot wait for that cadence, it must go through one of these three governed paths, depending on what it is:
+HERO exports to Logility only through the weekly export for your market, regardless of urgency. If a change cannot wait for that cadence, it must go through one of these three governed paths, depending on what it is:
 
 1. **Commercial enrichments** (promos, sets, samples, pre-orders, TMOs) **always** go through HERO — even inside the months 0–4 frozen window. Never enter these directly in Logility.
 2. **Time-sensitive enrichment changes** (e.g. a DI-to-DOM flip): capture it in HERO and flag it as time-sensitive. A weekly report surfaces it to Demand Planning, who executes it in Logility within the agreed weekly window.
@@ -925,9 +937,9 @@ HERO exports to Logility only through the weekly Friday export, regardless of ur
 **Tip — Four rules to live by**
 
 - A workbook download is a **point-in-time** extract of the current state.
-- A successful upload updates HERO **authoring** state immediately, and the dashboard and Level 1 view catch up **in minutes**, triggered by the upload itself, not by waiting for a scheduled slot.
-- **Re-download** if someone else has touched the same scope — especially before a later-stage reconciliation session.
-- Publication to Logility happens **only through the Friday export pipeline** — not on upload.
+- A successful upload updates HERO **authoring** state immediately. A Level 1 write is done at that point. A Level 2.5 write still needs its market's next fan-out run before it reaches Level 1 or the dashboard.
+- **Re-download** if someone else has touched the same scope, especially before a later-stage reconciliation session.
+- Publication to Logility happens **only through the weekly export pipeline for your market**, not on upload.
 
 ## Related pages
 
@@ -935,9 +947,9 @@ HERO exports to Logility only through the weekly Friday export, regardless of ur
 - [Where HERO fits in the planning flow](../getting-started/hero-in-the-cycle.md)
 - [FAQ & common gotchas](../help/faq-common-gotchas.md)
 
-**Success — No open questions identified**
+**Warning — Gaps & Open Questions**
 
-No open questions were identified from the available source material.
+- **Fan-out schedules for Asia Pacific and Latin America.** `[GAP: Rene Bartoli / Jarred Bultema]` Not yet configured. Until they are, the answer for those markets is that no fan-out schedule is defined, not a copy of the United Kingdom or Hasbro U.S. rows above.
 
 ---
 
@@ -1553,7 +1565,7 @@ No. Logility applies a zero floor at Level 1, so no Level 1 combination is ever 
 Download a fresh one. A template carries the scope you selected **at download time**, and an upload is agnostic to what the dropdowns say now. HERO validates the upload against the latest backend state, so a stale template, or one downloaded at an over-broad scope such as ALL BRANDS, can quietly replace someone else's work in the overlapping scope.
 
 **I made an urgent change and Logility doesn't show it yet — is HERO broken?**
-No. HERO exports to Logility only once a week (Friday), by design — see [Timing & system sync](../workflows/timing-system-sync.md). If a change genuinely cannot wait, there are three governed paths, depending on what it is:
+No. HERO exports to Logility only once a week, by design, on a day set per market (Friday for the United Kingdom, Saturday for Hasbro U.S.). See [Timing & system sync](../workflows/timing-system-sync.md). If a change genuinely cannot wait, there are three governed paths, depending on what it is:
 
 1. **Commercial enrichments** (promos, sets, samples, pre-orders, TMOs) **always** go through HERO — even inside the months 0–4 frozen window. Never enter these directly in Logility.
 2. **Time-sensitive enrichment changes** (e.g. a DI-to-DOM flip): capture it in HERO and flag it as time-sensitive. A weekly report surfaces it to Demand Planning, who executes it in Logility within the agreed weekly window.
@@ -1729,12 +1741,12 @@ Explain the batch jobs behind HERO, the export to Logility, and the contingency 
 
 **Note — When changes take effect — in brief**
 
-A change is captured in HERO authoring state immediately. An upload triggers the post-processing / fan-out refresh itself, so it reaches Level 1 and the dashboard **in minutes**, not on a schedule. Recurring wrappers around post-processing (UK workday Monday to Thursday at 08:00, 11:00, 14:00 `Europe/London`; US workday Monday to Thursday at 12:00, 15:00, 18:00 `America/New_York`) are a safety net in case the immediate trigger is missed, not the mechanism itself. The change reaches Logility only through the weekly Friday export pipeline. The full picture is in [Timing & system sync](../workflows/timing-system-sync.md).
+A change is captured in HERO authoring state immediately. A Level 1 write needs no post-processing. A Level 2.5 write is saved immediately but is distributed to Level 1 and the dashboard only on the **next scheduled fan-out run for its market** (Monday to Thursday, at times set per market, not a single shared time). That reaches Logility separately, only through the **weekly export pipeline for that market** (a different process, once a week, on a different day per market). The full picture, with both schedules, is in [Timing & system sync](../workflows/timing-system-sync.md).
 
 ## The batch jobs (what each one does)
 
-- **Post-processing / fan-out** — takes Level 2.5 changes authored in HERO, fans them out to the Level 1 partner rows, and refreshes the dashboard-facing Level 1 view. Triggered on upload, with no schedule of its own; the recurring wrappers in [Timing & system sync](../workflows/timing-system-sync.md) are a safety net, not the normal path. As of the **20 July 2026 release**, post-processing was improved for reliability as usage grows, with better **business-unit scoping** and more **runtime visibility** into the runs.
-- **Weekly Logility export** — runs as the Friday noon Eastern export pipeline. It materializes the Logility pickup tables and, if the contingency path is used, the 8-file wide CSV set.
+- **Post-processing / fan-out.** Takes Level 2.5 changes authored in HERO, fans them out to the Level 1 partner rows, and refreshes the dashboard-facing Level 1 view. Runs Monday to Thursday, on a schedule set per market; it is the normal path for a Level 2.5 change to reach Level 1, not a fallback behind something faster. As of the **20 July 2026 release**, post-processing was improved for reliability as usage grows, with better **business-unit scoping** and more **runtime visibility** into the runs.
+- **Weekly Logility export.** A separate process from the fan-out above: it runs once a week, inside the export pipeline, on a day and time set per market. It materializes the Logility pickup tables and, if the contingency path is used, the 8-file wide CSV set.
 
 **Warning — Scheduling is by day-of-week only**
 
@@ -1778,9 +1790,10 @@ The full source → array mapping (UA1–UA6, ADS2, and PROMO_LIFT, including ho
 
 ## Orchestration chain (weekly)
 
-**HERO-owned weekly export step**
+**HERO-owned weekly export step, per market**
 
-- **Job 1 (Hasbro / Databricks)** — Fridays at 12:00pm Eastern; runs the final post-processing step and then materializes the HERO field-forecast and consensus export artifacts.
+- **United Kingdom (Hasbro / Databricks)** runs Friday at 10:15 `America/New_York`; runs the final post-processing step for that market and then materializes its HERO field-forecast and consensus export artifacts.
+- **Hasbro U.S. (Hasbro / Databricks)** runs Saturday at 12:00 `America/New_York`; same steps, on its own schedule.
 
 **Downstream orchestration (external, not HERO jobs)**
 
@@ -1788,7 +1801,7 @@ After the HERO export completes, downstream Hasbro / Logility transport and extr
 
 **Note — Manual runs & transport**
 
-Controlled manual runs via Run Options are available for testing, pilot validation, and fallback operation. The recurring HERO publish cadence itself is the scheduled Friday export pipeline; any downstream pickup from Databricks into Logility should be understood as downstream orchestration rather than a separate HERO authoring rule.
+Controlled manual runs via Run Options are available for testing, pilot validation, and fallback operation. The recurring HERO publish cadence itself is the scheduled weekly export pipeline, on the day set for each market; any downstream pickup from Databricks into Logility should be understood as downstream orchestration rather than a separate HERO authoring rule.
 
 ## Contingency CSV (manual fallback)
 
@@ -1796,7 +1809,7 @@ If direct integration is not ready, HERO can produce a contingency CSV set for m
 
 ## How this connects to the end-to-end process
 
-Baseline generated upstream (Logility / Daybreak) → enrichment capture and reconciliation in HERO (with Level 2.5 changes fanned out to Level 1) → dashboard shows the number **before and after** adjustment → executive sign-off → the weekly Friday export publishes the deltas into the Logility arrays / export surfaces.
+Baseline generated upstream (Logility / Daybreak) → enrichment capture and reconciliation in HERO (with Level 2.5 changes fanned out to Level 1 on the next scheduled run for that market) → dashboard shows the number **before and after** adjustment → executive sign-off → the weekly export for that market publishes the deltas into the Logility arrays / export surfaces.
 
 **Note — Governance after sign-off is audit-based, not lock-based**
 
@@ -1906,8 +1919,8 @@ The **repository is the source of truth** for manual content. Changes arrive as 
 
 **2026-08-28**: Landed Canonical Facts sections 17 to 20 (facts 94 to 127), catching the manual up after three earlier update passes did not reach the site. Two of the changes correct guidance the manual was giving confidently and had to be fixed first:
 
-1. **The fan-out schedule is corrected.** The manual described a six-run UK weekday cadence plus Friday runs and a late-night catch-up; none of that exists. The actual mechanism is an immediate, upload-triggered refresh reaching Level 1 in minutes, with recurring UK and US wrappers as a safety net rather than the mechanism. Updated `workflows/timing-system-sync.md` and `reference/batch-orchestration-updates.md`.
-2. **Level 2.5 visibility in the Level 1 template is corrected.** A Level 1 user is not blind to a Level 2.5 adjustment in their template; the template carries it as a read-only context column, subject only to the same minutes-after-upload timing as everything else post-processing touches. Updated `tools/bu-sku-level-25-mode.md` and `tools/forecast-reconciliation-template.md`.
+1. **The fan-out schedule is corrected.** The manual described a six-run UK weekday cadence plus Friday runs and a late-night catch-up; none of that exists. Updated `workflows/timing-system-sync.md` and `reference/batch-orchestration-updates.md`. *(This entry's own description of the fix was itself wrong for one day and is corrected by item 1 of the 2026-08-29 entry below: the fan-out is not a minutes-after-upload mechanism with the schedule as a safety net, it is a separate, saved-immediately-but-distributed-on-the-next-run process, distinct from the weekly export.)*
+2. **Level 2.5 visibility in the Level 1 template is corrected.** A Level 1 user is not blind to a Level 2.5 adjustment in their template; the template carries it as a read-only context column, subject only to the fan-out timing, not a separate visibility limit. Updated `tools/bu-sku-level-25-mode.md` and `tools/forecast-reconciliation-template.md`. *(The timing description here is corrected by the 2026-08-29 entry below; see item 1's annotation above.)*
 3. **The Forecast Calculation Range chapter gained the mechanism it was missing**: the range is a continuous period rather than a year bucket, the Management Indicator (`M` preserves an out-of-range value, `H` removes it) decides what survives it, the range constrains the force down but not the roll up (a different mechanism, the Summing program, handles that), and how the range is built differs by market. Updated `workflows/forecast-range-calculation.md`.
 4. **A new recapture case.** When forecast is lost during disaggregation because the range ends before the Consensus Forecast does, the fix is a Level 1 recapture, never a Level 2.5 one; recapturing at Level 2.5 spreads the volume across every extended partner instead of reaching the one that lost it. Detection is manual today; no monitor exists for this yet. New Case 4 in `special-considerations/fcr-adjustment-rules.md`.
 5. **Fan-out weighting is described as baseline share**, with the addition that earlier enrichments and carried-forward reconciliation changes do not affect those weights. Updated `tools/bu-sku-level-25-mode.md` and `examples/bu-sku-worked-examples.md`.
@@ -1921,6 +1934,13 @@ The **repository is the source of truth** for manual content. Changes arrive as 
 13. **Documentation governance itself.** Recorded the HERO product repository as the canonical source for product behaviour, with this manual deferring to it on tool mechanics and remaining the only source for the business-process material it does not cover; adopted the four-tier authority model above.
 
 Sourced from `HERO_Canonical_Facts_OnePager_v11_2026-08-28`, the two Logility vendor WebHelp transcriptions in `update_kit/`, and the HERO product repository review in `update_kit/Repo_Docs_Review_2026-08-28.txt`.
+
+**2026-08-29**: Landed Canonical Facts section 21 (facts 128 to 130) and corrected the 2026-08-28 entry's own fan-out fix, which was wrong for one day.
+
+1. **The fan-out is corrected a second time.** The 28 August fix over-read an upload trigger in the product repository and taught that a Level 2.5 change reaches Level 1 in minutes, with the scheduled runs as a safety net. That is wrong. A Level 2.5 change is saved immediately but is distributed to forecast partners only on the **next scheduled fan-out run for its market**; scheduled processing is the normal path, not a fallback. The fan-out and the **weekly export post-processing** are two different processes, on different days, at different times, per market, and must never be shown as one combined schedule. Updated `workflows/timing-system-sync.md`, `reference/batch-orchestration-updates.md`, and `help/faq-common-gotchas.md`.
+2. **Market-bloc scope is bounded.** The Europe and non-Europe grouping used elsewhere in this manual explains how a TMO is captured, and nothing else. It does not govern job schedules, system configuration, which markets are live, or horizons and windows. A business or process rule, such as an enrichment rule, may reasonably travel between markets that share it; a configuration value, such as a schedule, a horizon or a window, is set per market and never travels by inference. Today, only the United Kingdom and Hasbro U.S. have a defined fan-out schedule; Asia Pacific and Latin America do not, and the honest answer there is "not yet defined," not a copy of either defined market's times.
+
+Sourced from `HERO_Canonical_Facts_OnePager_v15_2026-08-29`.
 
 **2026-08-07** — Confirmed by Rene Bartoli (process owner) on 7 August 2026:
 

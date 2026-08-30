@@ -33,7 +33,7 @@ This is the opposite of standard reconciliation, which says *"apply this exact d
     Where some partners and weeks inside one Level 2.5 entry carry a baseline and others do not, baseline-share weighting concentrates the whole delta onto the minority that do. That can be worse than a flat split, and nothing about it looks broken on the surface. Check the Level 1 result after fan-out rather than assuming the split landed evenly.
 
 !!! note "A Level 2.5 change is visible at Level 1, once fan-out runs"
-    The Level 1 template carries the Level 2.5 adjustment as a read-only context column (see [Forecast Reconciliation Template](forecast-reconciliation-template.md)). The only limitation is timing: the value appears at Level 1 only after post-processing has run, which is minutes after upload, not instantly. Do not direct a Level 1 user to the dashboard for something their own template already shows them.
+    The Level 1 template carries the Level 2.5 adjustment as a read-only context column (see [Forecast Reconciliation Template](forecast-reconciliation-template.md)). The only limitation is timing: the value appears at Level 1 only after the next scheduled fan-out run for that market (see [Timing & system sync](../workflows/timing-system-sync.md)), not instantly on save. Do not direct a Level 1 user to the dashboard for something their own template already shows them, once the fan-out has run.
 
 ## Blank vs 0 vs signed value
 
