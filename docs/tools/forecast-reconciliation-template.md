@@ -30,7 +30,7 @@ Use reconciliation when the business needs to **directly change the final week-l
 !!! note "The Level 2.5 adjustment is visible here, as read-only context"
     The forecast-partner (Level 1) template carries a read-only **L2.5 adjustment** column alongside the read-only baseline, enrichment, prior-cycle and preliminary-forecast context. In the `_ALL_FORECAST_PARTNERS_` BU-SKU template the labels invert: the editable column there is Level 2.5, and the read-only cross-level context column is labelled **L1 base trend adjustment**.
 
-    What still holds is the **timing**: a Level 2.5 change is not visible at Level 1 until post-processing has run, which is minutes after upload (see [Timing & system sync](../workflows/timing-system-sync.md)), not instantly on save. Treat visibility and timing as two separate questions. A Level 1 user is not blind to a Level 2.5 change in their template; they may just be looking a few minutes too early.
+    What still holds is the **timing**: a Level 2.5 change is not visible at Level 1 until the next scheduled fan-out run for that market has completed (see [Timing & system sync](../workflows/timing-system-sync.md)), not instantly on save. Treat visibility and timing as two separate questions. A Level 1 user is not blind to a Level 2.5 change in their template; they may just be looking before that market's next fan-out run.
 
 !!! warning "Two rules to remember"
     - **Deltas, not absolutes** — reconciliation does not support an absolute overwrite. Enter a plus/minus change.

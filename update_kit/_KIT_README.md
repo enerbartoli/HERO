@@ -12,7 +12,7 @@ What is in this kit, and how much authority each file carries. Read this before 
 
 | File | Authority |
 |---|---|
-| `HERO_Canonical_Facts_OnePager_v11_2026-08-28.txt` | **Highest.** Ratified by Rene Bartoli. Where the manual and this file disagree, this file wins. The spec lands its sections 17 to 20, facts 94 to 127. Facts are cited by number from the knowledge checks, so never renumber or restate one loosely. |
+| `HERO_Canonical_Facts_OnePager_v15_2026-08-29.txt` | **Highest.** Ratified by Rene Bartoli. Where the manual and this file disagree, this file wins. The spec lands its sections 17 to 21, facts 94 to 130. Facts are cited by number from the knowledge checks, so never renumber or restate one loosely. |
 
 ## Evidence behind the spec
 

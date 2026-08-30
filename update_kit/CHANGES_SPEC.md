@@ -1,8 +1,8 @@
 # HERO Manual Update Spec — 2026-08-28
 
-**Source of truth:** `HERO_Canonical_Facts_OnePager_v11_2026-08-28.txt` in this kit. Ratified by Rene Bartoli. Where the manual and this file conflict, **this file wins**. The two Logility vendor transcriptions and the HERO product-team pack in this kit are the evidence behind it.
+**Source of truth:** `HERO_Canonical_Facts_OnePager_v15_2026-08-29.txt` in this kit. Ratified by Rene Bartoli. Where the manual and this file conflict, **this file wins**. The two Logility vendor transcriptions and the HERO product-team pack in this kit are the evidence behind it.
 
-**Scope:** the manual is four Canonical Facts sections behind. This spec lands sections **17, 18, 19 and 20**, facts 94 to 127, in one pass.
+**Scope:** the manual is four Canonical Facts sections behind. This spec lands sections **17 to 21**, facts 94 to 130, in one pass. Fourteen changes.
 
 **Read before starting:** `_KIT_README.md` in this kit, then `Repo_Docs_Review_2026-08-28.txt` for the reasoning behind changes 1 and 2.
 
@@ -10,30 +10,47 @@
 
 ## Change 1 — Fan-out timing: the figures on two pages are wrong [REQUIRED, DO THIS FIRST]
 
-This is the highest-priority change in the spec. Two pages state a fan-out schedule that does not exist, and users act on it every cycle.
+Two pages state a fan-out schedule that does not exist, and users act on it every cycle. This is the highest-priority change in the spec.
 
 **What the manual says today (wrong, remove it):**
 
-- `docs/workflows/timing-system-sync.md` (~lines 30-32): "Monday–Thursday (UK workday): 08:00, 10:00, 12:00, 14:00, 16:00 and 18:00 `Europe/London`", "Friday (UK morning): 08:00, 10:00 and 12:00 `Europe/London`", "Monday–Thursday late-night catch-up: 23:00 `America/New_York`".
+- `docs/workflows/timing-system-sync.md` (~lines 30-32): "Monday-Thursday (UK workday): 08:00, 10:00, 12:00, 14:00, 16:00 and 18:00 `Europe/London`", "Friday (UK morning): 08:00, 10:00 and 12:00 `Europe/London`", "Monday-Thursday late-night catch-up: 23:00 `America/New_York`".
 - `docs/reference/batch-orchestration-updates.md` (~line 14): the same figures inside an admonition, plus "The fan-out runs **multiple times per UK workday**".
 
-**What is actually true (Canonical Facts 118):** there are **two paths**, and the immediate one is the normal case.
+### What is actually true
 
-1. **Immediate, on upload.** When a reconciliation or enrichment file is uploaded, the application triggers the refresh through `jobs.run_now` and the partner grain is reflected **in minutes**. This job is trigger-only and carries **no schedule**. A user who has just uploaded does not wait for a slot.
-2. **Scheduled wrappers, a safety net.** Recurring wrappers around `hero_post_processing_job`:
+In the words of the author of the product documentation:
 
-   | Wrapper | Days | Times | Timezone | Scope |
-   |---|---|---|---|---|
-   | UK workday | Monday to Thursday | 08:00, 11:00, 14:00 | `Europe/London` | UNITED KINGDOM |
-   | US workday | Monday to Thursday | 12:00, 15:00, 18:00 | `America/New_York` | HASBRO U.S. |
+> Your Level 2.5 change is saved immediately, but it does not fan out to forecast partners immediately. HERO post-processing must distribute the adjustment and rebuild the partner-level surfaces. **Scheduled processing is therefore the normal path for Level 2.5, not a fallback.**
 
-**Do:**
+**There are two different processes here. Do not merge them into one table.** The manual's previous version did exactly that and it produced wrong answers downstream.
 
-- Replace the schedule block in `docs/workflows/timing-system-sync.md` with the two-path model above. Lead with the immediate path, because that is what a user experiences. Present the wrappers as a backstop, not as the mechanism.
+**Process one, the fan-out**, which distributes a Level 2.5 adjustment down to the Level 1 partner rows. It runs Monday to Thursday, and **each market has its own job at its own times**:
+
+| Market | Days | Fan-out runs |
+|---|---|---|
+| United Kingdom | Monday to Thursday | 08:00, 11:00 and 14:00 `Europe/London` |
+| Hasbro U.S. | Monday to Thursday | 12:00, 15:00 and 18:00 `America/New_York` |
+
+**Process two, the weekly export post-processing**, which produces the export to Logility. It runs **inside the export pipeline**, once a week, on a different day per market:
+
+| Market | Day | Runs at |
+|---|---|---|
+| United Kingdom | Friday | 10:15 `America/New_York` |
+| Hasbro U.S. | Saturday | 12:00 `America/New_York` |
+
+**Level 1 writes remain immediate** and need no post-processing. That distinction is the point of the page: Level 1 lands on save, Level 2.5 lands on the next fan-out run for its market.
+
+### Do
+
+- Rewrite the schedule block in `docs/workflows/timing-system-sync.md` using the two-process model above, as **two separate tables under two separate headings**. Lead with "saved immediately, distributed on the next fan-out run for your market".
+- **Do not promise minutes.** **Do not call the scheduled runs a safety net, a backstop or a fallback.** They are the normal path for Level 2.5.
+- **Do not present a single combined timetable**, and **never write one market's times in a way that reads as applying to the other**. Add a line telling the reader to use the row for their own market.
+- **Only the United Kingdom and Hasbro U.S. have defined fan-out schedules.** Markets that are not live on HERO, including Asia Pacific and Latin America, have **no defined schedule**. If the page implies otherwise anywhere, correct it. Never extrapolate one market's times to another.
 - Replace the admonition text in `docs/reference/batch-orchestration-updates.md` the same way and fix its cross-reference to the timing page.
-- There are **no Friday runs** and **no 23:00 catch-up**. Do not carry either forward in any form.
-- Note that the US wrapper is new to the manual; there was no US schedule documented at all.
-- Grep the whole `docs/` tree for `08:00`, `10:00`, `16:00`, `23:00`, `Europe/London` and `catch-up` and fix every occurrence.
+- The UK weekday cadence is **three** runs, not six. There is **no 23:00 catch-up**.
+- Frequency can be increased if the business needs it, but there is a practical limit. Do not state a future cadence.
+- Grep the whole `docs/` tree for `10:00`, `16:00`, `23:00` and `catch-up`, and remove every occurrence tied to this schedule. Leave the weekly export job timings in the cycle-calendar tables alone; those are a different process with their own context.
 
 ---
 
@@ -209,3 +226,15 @@ These are genuinely open. Record them in the relevant page's Gaps block, do not 
 - Whether a corrective Management Indicator pass over 2026 is planned, or the affected volume is recaptured case by case. Owner: Rene Bartoli. Page: `fcr-adjustment-rules.md`.
 - The literal `NON_STATISTICAL_DEMAND` string as it appears in the template. Owner: Rene Bartoli.
 - Four Logility configuration questions raised by the vendor documentation and not yet answered: the Resultant Forecast default indicator, which Sum Option is run, whether Summing Resultant runs after the Calculate Forecasts program, and whether the Adjusted Demand indicator set (`M`, `P`, `Z`) is used in history cleansing. Owner: Jarred Bultema / Genpact. Page: `logility-array-mart-mapping.md`.
+
+---
+
+## Change 14 — Do not let a market bloc imply a shared schedule [REQUIRED, verify + correct]
+
+Facts 128 to 130. The manual, like the knowledge base, groups markets into Europe (which operates with FAST) and everywhere else. **That grouping exists to explain how a TMO is captured, and nothing else.**
+
+- It does **not** govern job schedules, system configuration, which markets are live, horizons, windows or cycle calendars.
+- A **process rule** may travel across markets. A **configuration value**, such as a schedule or a horizon, is set per market and **never travels by inference**.
+- Only the United Kingdom and Hasbro U.S. are live with defined schedules. For any other market the honest answer is **not yet defined**.
+
+**Do:** grep `docs/` for statements that a rule applies to "North America, Asia Pacific and Latin America" or to "the non-FAST markets", and check each one. Where the statement is about **TMO capture or an enrichment process rule**, leave it. Where it is about **a schedule, a configuration value or a system behaviour**, scope it to the markets that actually have one, or state that it is undefined elsewhere. Add a short note to `docs/reference/documentation-governance.md` recording the distinction.

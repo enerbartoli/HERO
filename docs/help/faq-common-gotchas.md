@@ -73,7 +73,7 @@ No. Logility applies a zero floor at Level 1, so no Level 1 combination is ever 
 Download a fresh one. A template carries the scope you selected **at download time**, and an upload is agnostic to what the dropdowns say now. HERO validates the upload against the latest backend state, so a stale template, or one downloaded at an over-broad scope such as ALL BRANDS, can quietly replace someone else's work in the overlapping scope.
 
 **I made an urgent change and Logility doesn't show it yet — is HERO broken?**
-No. HERO exports to Logility only once a week (Friday), by design — see [Timing & system sync](../workflows/timing-system-sync.md). If a change genuinely cannot wait, there are three governed paths, depending on what it is:
+No. HERO exports to Logility only once a week, by design, on a day set per market (Friday for the United Kingdom, Saturday for Hasbro U.S.). See [Timing & system sync](../workflows/timing-system-sync.md). If a change genuinely cannot wait, there are three governed paths, depending on what it is:
 
 1. **Commercial enrichments** (promos, sets, samples, pre-orders, TMOs) **always** go through HERO — even inside the months 0–4 frozen window. Never enter these directly in Logility.
 2. **Time-sensitive enrichment changes** (e.g. a DI-to-DOM flip): capture it in HERO and flag it as time-sensitive. A weekly report surfaces it to Demand Planning, who executes it in Logility within the agreed weekly window.

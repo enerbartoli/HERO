@@ -11,12 +11,12 @@ Anyone tracing how HERO (Hasbro Enrichment & Reconciliation Optimizer) processes
 Explain the batch jobs behind HERO, the export to Logility, and the contingency path — the system mechanics beneath the timing rules.
 
 !!! note "When changes take effect — in brief"
-    A change is captured in HERO authoring state immediately. An upload triggers the post-processing / fan-out refresh itself, so it reaches Level 1 and the dashboard **in minutes**, not on a schedule. Recurring wrappers around post-processing (UK workday Monday to Thursday at 08:00, 11:00, 14:00 `Europe/London`; US workday Monday to Thursday at 12:00, 15:00, 18:00 `America/New_York`) are a safety net in case the immediate trigger is missed, not the mechanism itself. The change reaches Logility only through the weekly Friday export pipeline. The full picture is in [Timing & system sync](../workflows/timing-system-sync.md).
+    A change is captured in HERO authoring state immediately. A Level 1 write needs no post-processing. A Level 2.5 write is saved immediately but is distributed to Level 1 and the dashboard only on the **next scheduled fan-out run for its market** (Monday to Thursday, at times set per market, not a single shared time). That reaches Logility separately, only through the **weekly export pipeline for that market** (a different process, once a week, on a different day per market). The full picture, with both schedules, is in [Timing & system sync](../workflows/timing-system-sync.md).
 
 ## The batch jobs (what each one does)
 
-- **Post-processing / fan-out** — takes Level 2.5 changes authored in HERO, fans them out to the Level 1 partner rows, and refreshes the dashboard-facing Level 1 view. Triggered on upload, with no schedule of its own; the recurring wrappers in [Timing & system sync](../workflows/timing-system-sync.md) are a safety net, not the normal path. As of the **20 July 2026 release**, post-processing was improved for reliability as usage grows, with better **business-unit scoping** and more **runtime visibility** into the runs.
-- **Weekly Logility export** — runs as the Friday noon Eastern export pipeline. It materializes the Logility pickup tables and, if the contingency path is used, the 8-file wide CSV set.
+- **Post-processing / fan-out.** Takes Level 2.5 changes authored in HERO, fans them out to the Level 1 partner rows, and refreshes the dashboard-facing Level 1 view. Runs Monday to Thursday, on a schedule set per market; it is the normal path for a Level 2.5 change to reach Level 1, not a fallback behind something faster. As of the **20 July 2026 release**, post-processing was improved for reliability as usage grows, with better **business-unit scoping** and more **runtime visibility** into the runs.
+- **Weekly Logility export.** A separate process from the fan-out above: it runs once a week, inside the export pipeline, on a day and time set per market. It materializes the Logility pickup tables and, if the contingency path is used, the 8-file wide CSV set.
 
 !!! warning "Scheduling is by day-of-week only"
     HERO can only run a job "at this time on this day of the week." It does **not** read the 53-week fiscal planning calendar, so batch timing is expressed as weekday schedules, not planning-cycle dates.
@@ -57,16 +57,17 @@ The full source → array mapping (UA1–UA6, ADS2, and PROMO_LIFT, including ho
 
 ## Orchestration chain (weekly)
 
-**HERO-owned weekly export step**
+**HERO-owned weekly export step, per market**
 
-- **Job 1 (Hasbro / Databricks)** — Fridays at 12:00pm Eastern; runs the final post-processing step and then materializes the HERO field-forecast and consensus export artifacts.
+- **United Kingdom (Hasbro / Databricks)** runs Friday at 10:15 `America/New_York`; runs the final post-processing step for that market and then materializes its HERO field-forecast and consensus export artifacts.
+- **Hasbro U.S. (Hasbro / Databricks)** runs Saturday at 12:00 `America/New_York`; same steps, on its own schedule.
 
 **Downstream orchestration (external, not HERO jobs)**
 
 After the HERO export completes, downstream Hasbro / Logility transport and extraction steps pick up those artifacts for processing on the Logility side. These are external orchestration steps, not HERO-internal jobs, and any specific timings or run controls for them are owned in the downstream orchestration spec rather than the HERO repo.
 
 !!! note "Manual runs & transport"
-    Controlled manual runs via Run Options are available for testing, pilot validation, and fallback operation. The recurring HERO publish cadence itself is the scheduled Friday export pipeline; any downstream pickup from Databricks into Logility should be understood as downstream orchestration rather than a separate HERO authoring rule.
+    Controlled manual runs via Run Options are available for testing, pilot validation, and fallback operation. The recurring HERO publish cadence itself is the scheduled weekly export pipeline, on the day set for each market; any downstream pickup from Databricks into Logility should be understood as downstream orchestration rather than a separate HERO authoring rule.
 
 ## Contingency CSV (manual fallback)
 
@@ -74,7 +75,7 @@ If direct integration is not ready, HERO can produce a contingency CSV set for m
 
 ## How this connects to the end-to-end process
 
-Baseline generated upstream (Logility / Daybreak) → enrichment capture and reconciliation in HERO (with Level 2.5 changes fanned out to Level 1) → dashboard shows the number **before and after** adjustment → executive sign-off → the weekly Friday export publishes the deltas into the Logility arrays / export surfaces.
+Baseline generated upstream (Logility / Daybreak) → enrichment capture and reconciliation in HERO (with Level 2.5 changes fanned out to Level 1 on the next scheduled run for that market) → dashboard shows the number **before and after** adjustment → executive sign-off → the weekly export for that market publishes the deltas into the Logility arrays / export surfaces.
 
 !!! note "Governance after sign-off is audit-based, not lock-based"
     No technical lock prevents changes after executive sign-off. The control is the cycle-change filter — every change is visible against the last ADS3 summarization — with escalation to leadership for anything that looks like re-inflating the forecast after sign-off. This is a deliberate design choice made after user pushback during discovery.
