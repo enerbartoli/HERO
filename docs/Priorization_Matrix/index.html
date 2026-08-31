@@ -926,7 +926,7 @@ function initApp() {
    plaintext), so the password is not visible in the source —
    but anyone technical can still bypass a static-site gate.
    ============================================================ */
-const PASS_HASH = "a05de11fe25663fb64efe30e3b0e357e17023a1e28ad2ae2e13953370bd8656c";
+const PASS_HASH = "3112727bdedc9e678230b70a47eb12222f8e6da33f24a9c5539f50cf4c84359c";
 
 async function sha256(text) {
   const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
