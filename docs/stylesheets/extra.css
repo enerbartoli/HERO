@@ -295,6 +295,87 @@
   text-decoration: none;
 }
 
+/* ═══════════════════════════════════════════════════════════════════════
+   HERO Intake — sidebar card stacked directly under the Ask Brave card
+   Deliberately lighter than the Brave card (white ground, navy buttons):
+   same radius/width so they read as siblings, but the yellow button stays
+   unique to Brave so the eye still lands there first.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.hero-intake-card {
+  margin-top: 0.7rem;
+  padding: 0.8rem 0.85rem 0.9rem;
+  background: #ffffff;
+  border-radius: 10px;
+  border: 2px solid #005EB8;
+  text-align: center;
+  box-shadow: 0 2px 7px rgba(0, 60, 119, 0.18);
+}
+
+.hero-intake-card__eyebrow {
+  margin: 0 0 0.1rem;
+  color: #005EB8;
+  font-size: 0.6rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.hero-intake-card__title {
+  margin: 0 0 0.1rem;
+  color: #002456;
+  font-size: 0.95rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.hero-intake-card__sub {
+  margin: 0 0 0.6rem;
+  color: #3d6a99;
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+}
+
+/* Buttons are stacked, so they fill the card width rather than sit inline */
+.hero-intake-card__btn {
+  display: block;
+  padding: 0.38rem 0.45rem;
+  background: #003C77;
+  color: #ffffff !important;
+  font-size: 0.63rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  border-radius: 5px;
+  text-decoration: none;
+  box-shadow: 0 2px 4px rgba(0, 36, 86, 0.20);
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.hero-intake-card__btn + .hero-intake-card__btn {
+  margin-top: 0.4rem;
+}
+
+.hero-intake-card__btn:hover {
+  background: #005EB8;
+  transform: translateY(-1px);
+  text-decoration: none;
+}
+
+/* The promise that makes the card worth clicking — keep it, do not trim */
+.hero-intake-card__note {
+  margin: 0.6rem 0 0;
+  color: #4a5b6e;
+  font-size: 0.58rem;
+  line-height: 1.35;
+}
+
+/* Dark mode: the light card would glare, so tone the ground down slightly */
+[data-md-color-scheme="slate"] .hero-intake-card {
+  background: #eef4fa;
+}
+
 /* Ensure right sidebar renders on pages without TOC headings on desktop */
 @media screen and (min-width: 76.1875em) {
   .md-sidebar--secondary[hidden] {
@@ -306,9 +387,10 @@
   }
 }
 
-/* Hide sidebar card on narrow screens where secondary sidebar collapses */
+/* Hide sidebar cards on narrow screens where secondary sidebar collapses */
 @media screen and (max-width: 76.1875em) {
-  .ask-brave-card {
+  .ask-brave-card,
+  .hero-intake-card {
     display: none;
   }
 }
