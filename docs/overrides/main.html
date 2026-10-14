@@ -3,8 +3,9 @@
 {#
   The HERO User Manual has moved to the HERO Enablement site.
   Every page this build produces — the home page and the generated 404.html
-  that GitHub Pages serves for unknown paths (old deep links) — redirects
-  there with a meta refresh plus a JavaScript fallback.
+  that GitHub Pages serves for unknown paths (old deep links) — shows a
+  "moved" notice. There is deliberately NO automatic redirect: users must
+  click the button, so they notice the change and update their bookmarks.
   The previous manual is preserved in git history and on the
   archive/pre-redirect-2026-10-13 branch.
 #}
@@ -12,12 +13,6 @@
 {% block extrahead %}
 {{ super() }}
 <meta name="robots" content="noindex">
-<meta http-equiv="refresh" content="3; url=https://hero-enablement.apps.ai-dev.tiamat.cloud">
-<script>
-  setTimeout(function () {
-    window.location.replace("https://hero-enablement.apps.ai-dev.tiamat.cloud");
-  }, 3000);
-</script>
 <style>
   .moved-notice { max-width: 40rem; margin: 3rem auto; text-align: center; }
   .moved-notice h1 { margin-bottom: 1rem; }
