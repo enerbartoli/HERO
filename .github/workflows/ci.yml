@@ -19,5 +19,6 @@ jobs:
       - run: pip install -r requirements.txt
       - name: Build the site (strict)
         run: mkdocs build --strict
-      - name: Consolidated manual is up to date with docs/
-        run: python3 tools/generate_manual_full.py --check
+      # The consolidated-manual drift check was retired with the site redirect:
+      # docs/ now holds only the "moved" notice, and HERO_Manual_Full_v*.md is
+      # kept frozen as the last full manual text (do not regenerate it).
