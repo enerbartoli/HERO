@@ -1,43 +1,17 @@
-<!-- docs/index.md -->
+---
+title: This site has moved
+hide:
+  - navigation
+  - toc
+---
 
-# HERO User Manual
+<!-- docs/index.md — the HERO User Manual has moved to the HERO Enablement site.
+     The redirect (meta refresh + JS fallback) lives in docs/overrides/main.html
+     so it also applies to the generated 404 page (deep links). -->
 
-Welcome to the operational manual for **HERO (Hasbro Enrichment & Reconciliation Optimizer)** — the business-user capture layer of the Forecast Enrichment Process.
-
-## Program tools
-
-<div class="tool-grid">
-<a class="tool-card" href="Priorization_Matrix/"><span class="tool-card__bar" style="background:#00AEEF"></span><span class="tool-card__body"><span class="tool-card__icon">📊</span><span class="tool-card__title">Prioritization Matrix</span><span class="tool-card__desc">Interactive enhancement prioritization matrix</span></span></a>
-<a class="tool-card" href="https://enerbartoli.github.io/mod1-knowledge-check/" target="_blank" rel="noopener"><span class="tool-card__bar" style="background:#005EB8"></span><span class="tool-card__body"><span class="tool-card__icon">🧠</span><span class="tool-card__title">Knowledge Check <span class="tool-card__ext">↗</span></span><span class="tool-card__desc">Self-assessment knowledge check</span></span></a>
-<a class="tool-card" href="https://hasbroinc.sharepoint.com/sites/GlobalPlanningCentralCommandCOE/HERO%20Enrichment/Forms/AllItems.aspx?viewid=8ec78d8e%2D6199%2D4641%2D8bb5%2D108cfbe7bc40&amp;newTargetListUrl=%2Fsites%2FGlobalPlanningCentralCommandCOE%2FHERO%20Enrichment&amp;viewpath=%2Fsites%2FGlobalPlanningCentralCommandCOE%2FHERO%20Enrichment%2FForms%2FAllItems%2Easpx" target="_blank" rel="noopener"><span class="tool-card__bar" style="background:#625DA3"></span><span class="tool-card__body"><span class="tool-card__icon">🎥</span><span class="tool-card__title">Training Recordings <span class="tool-card__ext">↗</span></span><span class="tool-card__desc">HERO training session recordings (SharePoint)</span></span></a>
-<a class="tool-card" href="https://hasbroinc.sharepoint.com/:f:/r/sites/GenpactStatFCSTAccelerationPrj2/Shared%20Documents/0.%20Baseline%20Management%20Playbook/01.%20Official%20Approved%20Versions_Read%20Only?csf=1&amp;web=1&amp;e=WtdKU6" target="_blank" rel="noopener"><span class="tool-card__bar" style="background:#003C77"></span><span class="tool-card__body"><span class="tool-card__icon">📘</span><span class="tool-card__title">Forecasting Playbook <span class="tool-card__ext">↗</span></span><span class="tool-card__desc">Baseline Management Playbook (SharePoint)</span></span></a>
-<a class="tool-card" href="https://glidepath-hero-145364974494823.3.azure.databricksapps.com" target="_blank" rel="noopener"><span class="tool-card__bar" style="background:#00A3AD"></span><span class="tool-card__body"><span class="tool-card__icon">🛠️</span><span class="tool-card__title">HERO Tool <span class="tool-card__ext">↗</span></span><span class="tool-card__desc">Open the HERO tool (Databricks)</span></span></a>
-<a class="tool-card" href="https://app.powerbi.com/groups/ffc77157-ca2d-4b70-9f14-2a1c3842f973/reports/1d7dcc05-0d12-40f8-bd0c-184b82bdd406/e26a15167349ce5185cc?ctid=701edd3e-c7a8-4789-b1ce-8a243620d68f&amp;experience=power-bi" target="_blank" rel="noopener"><span class="tool-card__bar" style="background:#F0A500"></span><span class="tool-card__body"><span class="tool-card__icon">📈</span><span class="tool-card__title">HERO Dashboard <span class="tool-card__ext">↗</span></span><span class="tool-card__desc">HERO tracking dashboard (Power BI)</span></span></a>
+<div class="moved-notice">
+  <h1>This site has moved</h1>
+  <p>The HERO User Manual and its training resources now live on the new HERO Enablement site. Please update your bookmarks — you'll be redirected automatically in a few seconds. If you are not redirected, use the button below.</p>
+  <p><a class="md-button md-button--primary" href="https://hero-enablement.apps.ai-dev.tiamat.cloud">Go to the HERO Enablement site →</a></p>
+  <p class="moved-notice__note">New address: https://hero-enablement.apps.ai-dev.tiamat.cloud</p>
 </div>
-
-## How to use this manual
-
-This is a **mechanical guide** to using HERO. It is not a substitute for training on the monthly planning process. Use it when you need to know what a field means, what a button does, how a template behaves, what happens after you upload, or how to interpret a validation message.
-
-!!! note "Conventions used throughout"
-    - **Editable** — you are expected to type into that field.
-    - **Read-only** — HERO fills the field for context or audit.
-    - **Resolved state** — the backend has refreshed the weekly reporting layer after uploads.
-
-## Find your starting point
-
-| If you are a… | Start here |
-|---|---|
-| Demand Planner | [Demand Planner guide](roles/demand-planner.md) |
-| Sales / Account Planner | [Sales guide](roles/sales.md) |
-| Marketing / GPL | [Marketing / GPL guide](roles/marketing-gpl.md) |
-| New to HERO | [What HERO is](getting-started/what-hero-is.md) |
-| Looking for a field definition | [Field-by-field reference](workflows/field-by-field-reference.md) |
-| Hit a validation error | [Validation & error catalogue](help/validation-error-catalogue.md) |
-
-## What HERO does, in one line
-
-HERO is where you **download** the latest workbook, **enter or review** commercial and planning changes, **upload** those changes back, and then **verify** the resolved outcome through reporting and downstream publication to Logility.
-
-!!! success "No open questions identified"
-    No open questions were identified from the available source material.
