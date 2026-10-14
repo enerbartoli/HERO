@@ -11,6 +11,10 @@ has moved" notice on the home page and a matching `404.html`, so old deep links
 deliberately **no automatic redirect**: visitors click the button to continue,
 so they notice the change and update their bookmarks.
 
+**Access requires the Hasbro network.** The notice reminds visitors to connect
+to the Hasbro VPN or the Hasbro office network, and clicking the button opens
+a pop-up repeating that reminder before they continue to the new site.
+
 The previous manual (all section pages, the Prioritization Matrix, and the
 site configuration) is preserved in git history and on the
 `archive/pre-redirect-2026-10-13` branch.
